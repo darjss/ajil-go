@@ -1,34 +1,32 @@
 {
-  "name": "@ajil-go/db",
-  "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./src/index.ts"
-    },
-    "./*": {
-      "types": "./dist/*.d.ts",
-      "default": "./src/*.ts"
-    }
-  },
-  "scripts": {
-    "build": "tsdown",
-    "db:push": "prisma db push",
-    "db:studio": "prisma studio",
-    "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev"
-  },
-  "devDependencies": {
-    "prisma": "^6.15.0",
-    "tsdown": "catalog:"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
-  "dependencies": {
-    "@prisma/client": "catalog:",
-    "@prisma/extension-accelerate": "^2.0.2",
-    "dotenv": "catalog:",
-    "zod": "catalog:"
-  }
+	"name": "@ajil-go/db",
+	"type": "module",
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"scripts": {
+		"db:push": "prisma db push",
+		"db:studio": "prisma studio",
+		"db:generate": "prisma generate",
+		"db:migrate": "prisma migrate dev"
+	},
+	"devDependencies": {
+		"prisma": "^7.0.0",
+		"@ajil-go/config": "workspace:*"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	},
+	"dependencies": {
+		"@prisma/client": "catalog:",
+		"@prisma/adapter-pg": "^7.0.0",
+		"pg": "^8.16.0",
+		"dotenv": "catalog:",
+		"zod": "^4.1.11"
+	}
 }

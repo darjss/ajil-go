@@ -1,6 +1,6 @@
 # ajil-go
 
-###
+This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines Next.js, Fastify, and more.
 
 ## Features
 
@@ -8,12 +8,13 @@
 - **Next.js** - Full-stack React framework
 - **TailwindCSS** - Utility-first CSS for rapid UI development
 - **shadcn/ui** - Reusable UI components
-- **Hono** - Lightweight, performant server framework
+- **Fastify** - Fast, low-overhead web framework
 - **Node.js** - Runtime environment
 - **Prisma** - TypeScript-first ORM
 - **PostgreSQL** - Database engine
-- **Biome** - Linting and formatting
+- **Authentication** - Better-Auth
 - **Turborepo** - Optimized monorepo build system
+- **Biome** - Linting and formatting
 
 ## Getting Started
 
@@ -56,9 +57,11 @@ The API is running at [http://localhost:3000](http://localhost:3000).
 ajil-go/
 ├── apps/
 │   ├── web/         # Frontend application (Next.js)
-│   └── server/      # Backend API (Hono)
+│   └── server/      # Backend API (Fastify)
 ├── packages/
 │   ├── api/         # API layer / business logic
+│   ├── auth/        # Authentication configuration & logic
+│   └── db/          # Database schema & queries
 ```
 
 ## Available Scripts
