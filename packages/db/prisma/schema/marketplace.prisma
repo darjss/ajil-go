@@ -1,0 +1,247 @@
+model Skill {
+  id          String      @id @default(cuid())
+  name        String      @unique
+  description String?
+  createdAt   DateTime    @default(now())
+
+  users       UserSkill[]
+  tasks       TaskSkill[]
+
+  @@map("skill")
+}
+
+model CustomSkill {
+  id          String      @id @default(cuid())
+  name        String
+  createdAt   DateTime    @default(now())
+
+  users       UserSkill[]
+  tasks       TaskSkill[]
+
+  @@map("custom_skill")
+}
+
+model UserSkill {
+  id            String       @id @default(cuid())
+  userId        String
+  skillId       String?
+  customSkillId String?
+  createdAt     DateTime     @default(now())
+
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill         Skill?       @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  customSkill   CustomSkill? @relation(fields: [customSkillId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, skillId])
+  @@unique([userId, customSkillId])
+  @@index([userId])
+  @@map("user_skill")
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  iconUrl     String?
+  createdAt   DateTime @default(now())
+
+  tasks       Task[]
+
+  @@map("category")
+}
+
+
+model Task {
+  id          String     @id @default(cuid())
+  title       String
+  description String
+  
+  
+  budgetMin   Float
+  budgetMax   Float?
+  finalPrice  Float?     
+  
+  isRemote    Boolean    @default(true)
+  address     String?
+  city        String?
+  latitude    Float?
+  longitude   Float?
+  
+  deadline    DateTime?
+  estimatedHours Float?
+  
+  status      TaskStatus @default(OPEN)
+  
+  posterId    String
+  poster      User       @relation("TaskPoster", fields: [posterId], references: [id], onDelete: Cascade)
+  
+  categoryId  String
+  category    Category   @relation(fields: [categoryId], references: [id])
+  
+  assignedBidId String?  @unique
+  assignedBid   TaskBid? @relation("AssignedBid", fields: [assignedBidId], references: [id])
+  
+  skills      TaskSkill[]
+  bids        TaskBid[]   @relation("TaskBids")
+  reviews     Review[]
+  messages    Message[]
+  attachments TaskAttachment[]
+  payment     Payment?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([posterId])
+  @@index([categoryId])
+  @@index([status])
+  @@index([city])
+  @@map("task")
+}
+
+enum TaskStatus {
+  OPEN        
+  ASSIGNED    
+  IN_PROGRESS // work has begun
+  COMPLETED   // work done, pending review
+  REVIEWED    // fully complete with reviews
+  CANCELLED   // task cancelled
+  DISPUTED    // in dispute
+}
+
+model TaskSkill {
+  id            String       @id @default(cuid())
+  taskId        String
+  skillId       String?
+  customSkillId String?
+
+  task          Task         @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  skill         Skill?       @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  customSkill   CustomSkill? @relation(fields: [customSkillId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, skillId])
+  @@unique([taskId, customSkillId])
+  @@index([taskId])
+  @@map("task_skill")
+}
+
+model TaskAttachment {
+  id        String   @id @default(cuid())
+  taskId    String
+  fileName  String
+  fileUrl   String
+  fileType  String
+  fileSize  Int
+
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([taskId])
+  @@map("task_attachment")
+}
+
+model TaskBid {
+  id             String    @id @default(cuid())
+  taskId         String
+  bidderId       String
+  amount         Float
+  message        String    // pitch/proposal
+  estimatedHours Float?
+  status         BidStatus @default(PENDING)
+
+  task           Task      @relation("TaskBids", fields: [taskId], references: [id], onDelete: Cascade)
+  bidder         User      @relation(fields: [bidderId], references: [id], onDelete: Cascade)
+  assignedTask   Task?     @relation("AssignedBid")
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([taskId, bidderId]) // one bid per user per task
+  @@index([taskId])
+  @@index([bidderId])
+  @@map("task_bid")
+}
+
+enum BidStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+
+
+model Review {
+  id        String     @id @default(cuid())
+  taskId    String
+  authorId  String
+  targetId  String
+  rating    Int        // 1-5
+  comment   String?
+  type      ReviewType
+
+  task      Task       @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  author    User       @relation("ReviewAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  target    User       @relation("ReviewTarget", fields: [targetId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime   @default(now())
+
+  @@unique([taskId, authorId]) // one review per person per task
+  @@index([targetId])
+  @@map("review")
+}
+
+enum ReviewType {
+  CLIENT_TO_WORKER  // task poster reviews worker
+  WORKER_TO_CLIENT  // worker reviews task poster
+}
+
+// ============================================
+// MESSAGING
+// ============================================
+
+model Message {
+  id        String   @id @default(cuid())
+  taskId    String
+  senderId  String
+  content   String
+  isRead    Boolean  @default(false)
+
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([taskId])
+  @@index([senderId])
+  @@map("message")
+}
+
+// ============================================
+// PAYMENTS (Simulated)
+// ============================================
+
+model Payment {
+  id          String        @id @default(cuid())
+  taskId      String        @unique
+  amount      Float
+  status      PaymentStatus @default(PENDING)
+  payerId     String        // task poster
+  payeeId     String        // worker
+
+  task        Task          @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime      @default(now())
+  completedAt DateTime?
+
+  @@index([payerId])
+  @@index([payeeId])
+  @@map("payment")
+}
+
+enum PaymentStatus {
+  PENDING   // awaiting task completion
+  HELD      // in escrow (simulated)
+  RELEASED  // paid to worker
+  REFUNDED  // returned to poster
+}

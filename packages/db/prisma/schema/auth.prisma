@@ -6,8 +6,30 @@ model User {
   image         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+  // Profile fields (managed by Better Auth additionalFields)
+  bio                     String?
+  phone                   String?
+  address                 String?
+  city                    String?
+  latitude                Float?
+  longitude               Float?
+  avgRatingAsClient       Float     @default(0)
+  avgRatingAsWorker       Float     @default(0)
+  completedTasksAsWorker  Int       @default(0)
+  completedTasksAsClient  Int       @default(0)
+
+  // Auth relations
   sessions      Session[]
   accounts      Account[]
+
+  // Task marketplace relations
+  skills            UserSkill[]
+  postedTasks       Task[]          @relation("TaskPoster")
+  bids              TaskBid[]
+  reviewsGiven      Review[]        @relation("ReviewAuthor")
+  reviewsReceived   Review[]        @relation("ReviewTarget")
+  messagesSent      Message[]
 
   @@unique([email])
   @@map("user")
