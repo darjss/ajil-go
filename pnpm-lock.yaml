@@ -183,6 +183,19 @@ importers:
 
   packages/config: {}
 
+  packages/contract:
+    dependencies:
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+      zod:
+        specifier: ^4.1.11
+        version: 4.1.13
+    devDependencies:
+      '@ajil-go/config':
+        specifier: workspace:*
+        version: link:../config
+
   packages/db:
     dependencies:
       '@prisma/adapter-pg':
@@ -210,6 +223,9 @@ importers:
       prisma:
         specifier: ^7.0.0
         version: 7.0.1(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(typescript@5.9.3)
+      tsx:
+        specifier: ^4.21.0
+        version: 4.21.0
 
 packages:
 

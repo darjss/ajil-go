@@ -16,6 +16,64 @@ export const auth = betterAuth<BetterAuthOptions>({
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
 		},
 	},
+	user: {
+		additionalFields: {
+			bio: {
+				type: "string",
+				required: false,
+				input: true,
+			},
+			phone: {
+				type: "string",
+				required: false,
+				input: true,
+			},
+			address: {
+				type: "string",
+				required: false,
+				input: true,
+			},
+			city: {
+				type: "string",
+				required: false,
+				input: true,
+			},
+			latitude: {
+				type: "number",
+				required: false,
+				input: true,
+			},
+			longitude: {
+				type: "number",
+				required: false,
+				input: true,
+			},
+			avgRatingAsClient: {
+				type: "number",
+				required: false,
+				defaultValue: 0,
+				input: false,
+			},
+			avgRatingAsWorker: {
+				type: "number",
+				required: false,
+				defaultValue: 0,
+				input: false,
+			},
+			completedTasksAsWorker: {
+				type: "number",
+				required: false,
+				defaultValue: 0,
+				input: false,
+			},
+			completedTasksAsClient: {
+				type: "number",
+				required: false,
+				defaultValue: 0,
+				input: false,
+			},
+		},
+	},
 	advanced: {
 		defaultCookieAttributes: {
 			sameSite: "none",

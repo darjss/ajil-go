@@ -13,20 +13,22 @@
 		"db:push": "prisma db push",
 		"db:studio": "prisma studio",
 		"db:generate": "prisma generate",
-		"db:migrate": "prisma migrate dev"
+		"db:migrate": "prisma migrate dev",
+		"db:seed": "tsx prisma/seed.ts"
 	},
 	"devDependencies": {
+		"@ajil-go/config": "workspace:*",
 		"prisma": "^7.0.0",
-		"@ajil-go/config": "workspace:*"
+		"tsx": "^4.21.0"
 	},
 	"peerDependencies": {
 		"typescript": "^5"
 	},
 	"dependencies": {
-		"@prisma/client": "catalog:",
 		"@prisma/adapter-pg": "^7.0.0",
-		"pg": "^8.16.0",
+		"@prisma/client": "catalog:",
 		"dotenv": "catalog:",
+		"pg": "^8.16.0",
 		"zod": "^4.1.11"
 	}
 }
