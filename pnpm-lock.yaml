@@ -183,6 +183,19 @@ importers:
 
   packages/config: {}
 
+  packages/contract:
+    dependencies:
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+      zod:
+        specifier: ^4.1.11
+        version: 4.1.13
+    devDependencies:
+      '@ajil-go/config':
+        specifier: workspace:*
+        version: link:../config
+
   packages/db:
     dependencies:
       '@prisma/adapter-pg':
