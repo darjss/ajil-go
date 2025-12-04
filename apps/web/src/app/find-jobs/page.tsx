@@ -4,6 +4,7 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import type { Route } from "next"
 import { useState } from "react"
 
 const jobListings = [
@@ -250,7 +251,7 @@ export default function FindJobsPage() {
                         </p>
                       </div>
                     </div>
-                    <Link href={`/job/${job.id}`}>
+                    <Link href={`/job/${job.id}` as Route}>
                       <Button className="bg-primary hover:bg-primary/90">Apply</Button>
                     </Link>
                   </div>

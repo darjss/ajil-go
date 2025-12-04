@@ -4,6 +4,7 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import type { Route } from "next"
 
 const companyDetails = {
   1: {
@@ -192,13 +193,13 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
               <section>
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-foreground">Open Jobs</h2>
-                  <Link href="/find-jobs" className="text-primary text-sm hover:underline font-medium">
+                  <Link href={"/find-jobs" as Route} className="text-primary text-sm hover:underline font-medium">
                     Show all jobs →
                   </Link>
                 </div>
                 <div className="grid md:grid-cols-2 gap-4">
                   {jobs.map((job) => (
-                    <Link key={job.id} href={`/job/${job.id}`}>
+                    <Link key={job.id} href={`/job/${job.id}` as Route }>
                       <div className="bg-card border border-border rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer">
                         <div className="flex items-start gap-3 mb-3">
                           <div

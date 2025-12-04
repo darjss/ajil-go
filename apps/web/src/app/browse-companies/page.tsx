@@ -4,6 +4,7 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import type { Route } from "next"
 
 const recommendedCompanies = [
   {
@@ -148,7 +149,7 @@ export default function BrowseCompaniesPage() {
 
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             {recommendedCompanies.map((company) => (
-              <Link key={company.id} href={`/company/${company.id}`}>
+              <Link key={company.id} href={`/company/${company.id}` as Route}>
                 <div className="bg-card border border-border rounded-lg p-6 hover:shadow-lg transition-shadow h-full cursor-pointer">
                   <div className="flex items-center gap-4 mb-4">
                     <div
