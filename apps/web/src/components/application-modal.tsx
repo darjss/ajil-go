@@ -53,20 +53,20 @@ export function ApplicationModal({ isOpen, jobTitle, companyName, onClose }: App
         {/* Content */}
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           <div>
-            <h3 className="font-semibold text-foreground mb-4">Submit your application</h3>
+            <h3 className="font-semibold text-foreground mb-4">Өргөдлөө илгээх</h3>
             <p className="text-sm text-muted-foreground mb-6">
-              The following is required and will only be shared with {companyName}
+              Дараах мэдээллийг заавал бөглөж, зөвхөн {companyName}-д илгээнэ.
             </p>
           </div>
 
           {/* Form Fields */}
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Full name</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Бүтэн нэр</label>
               <input
                 type="text"
                 name="fullName"
-                placeholder="Enter your fullname"
+                placeholder="Нэрээ оруулна уу"
                 value={formData.fullName}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
@@ -74,11 +74,11 @@ export function ApplicationModal({ isOpen, jobTitle, companyName, onClose }: App
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Email address</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Имэйл хаяг</label>
               <input
                 type="email"
                 name="email"
-                placeholder="Enter your email address"
+                placeholder="Имэйлээ оруулна уу"
                 value={formData.email}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
@@ -87,11 +87,11 @@ export function ApplicationModal({ isOpen, jobTitle, companyName, onClose }: App
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-2">Phone number</label>
+            <label className="block text-sm font-medium text-foreground mb-2">Утасны дугаар</label>
             <input
               type="tel"
               name="phone"
-              placeholder="Enter your phone number"
+              placeholder="Утасны дугаараа оруулна уу"
               value={formData.phone}
               onChange={handleChange}
               className="w-full px-4 py-3 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
@@ -99,11 +99,11 @@ export function ApplicationModal({ isOpen, jobTitle, companyName, onClose }: App
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-2">Current of previous job title</label>
+            <label className="block text-sm font-medium text-foreground mb-2">Одоогийн эсвэл өмнөх албан тушаал</label>
             <input
               type="text"
               name="jobTitle"
-              placeholder="What's your current or previous job title?"
+              placeholder="Одоогийн/өмнөх албан тушаал"
               value={formData.jobTitle}
               onChange={handleChange}
               className="w-full px-4 py-3 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
@@ -111,14 +111,14 @@ export function ApplicationModal({ isOpen, jobTitle, companyName, onClose }: App
           </div>
 
           <div className="border-t border-border pt-6">
-            <h4 className="font-semibold text-foreground mb-4">LINKS</h4>
+            <h4 className="font-semibold text-foreground mb-4">ХОЛБООСУУД</h4>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">LinkedIn URL</label>
+              <label className="block text-sm font-medium text-foreground mb-2">LinkedIn холбоос</label>
               <input
                 type="url"
                 name="linkedInUrl"
-                placeholder="Link to your LinkedIn URL"
+                placeholder="LinkedIn профайлын холбоос"
                 value={formData.linkedInUrl}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
@@ -126,11 +126,11 @@ export function ApplicationModal({ isOpen, jobTitle, companyName, onClose }: App
             </div>
 
             <div className="mt-4">
-              <label className="block text-sm font-medium text-foreground mb-2">Portfolio URL</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Портфолио холбоос</label>
               <input
                 type="url"
                 name="portfolioUrl"
-                placeholder="Link to your portfolio URL"
+                placeholder="Портфолио, вебсайт, Behance гэх мэт"
                 value={formData.portfolioUrl}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
@@ -139,16 +139,16 @@ export function ApplicationModal({ isOpen, jobTitle, companyName, onClose }: App
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-2">Additional information</label>
+            <label className="block text-sm font-medium text-foreground mb-2">Нэмэлт мэдээлэл</label>
             <textarea
               name="additionalInfo"
-              placeholder="Add a cover letter or anything else you want to share"
+              placeholder="Хуулга, уриалга эсвэл нэмэлт мэдээллээ бичээрэй"
               value={formData.additionalInfo}
               onChange={handleChange}
               rows={4}
               className="w-full px-4 py-3 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none"
             />
-            <p className="text-xs text-muted-foreground mt-2">Maximum 500 characters</p>
+            <p className="text-xs text-muted-foreground mt-2">Дээд тал нь 500 тэмдэгт</p>
           </div>
 
           <div className="flex items-center gap-2">
@@ -157,24 +157,25 @@ export function ApplicationModal({ isOpen, jobTitle, companyName, onClose }: App
               htmlFor="resume"
               className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-muted text-sm text-foreground"
             >
-              📎 Attach Resume/CV
+              📎 CV/Resume хавсаргах
             </label>
           </div>
 
           {/* Submit Button */}
           <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-12">
-            Submit Application
+            Өргөдөл илгээх
           </Button>
 
           <p className="text-xs text-center text-muted-foreground">
-            By sending the request you can confirm that you accept our{" "}
+            Өргөдлөө илгээснээр{" "}
             <a href="#" className="text-primary hover:underline">
-              Terms of Service
+              үйлчилгээний нөхцөл
             </a>{" "}
-            and{" "}
+            болон{" "}
             <a href="#" className="text-primary hover:underline">
-              Privacy Policy
+              нууцлалын бодлого
             </a>
+            -г зөвшөөрсөнд тооцно.
           </p>
         </form>
       </div>

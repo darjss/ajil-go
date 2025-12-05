@@ -9,35 +9,35 @@ function Footer() {
               <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
                 <span className="text-slate-900 font-bold text-xs">J</span>
               </div>
-              <span>JobHuntly</span>
+              <span>Ажил-GO</span>
             </div>
             <p className="text-sm text-gray-400">
-              Great platform for the job seeker that passionate about startups. Find your dream job easier.
+              Стартап сонирхдог ажил хайгчдад зориулсан гайхалтай платформ. Мөрөөдлийн ажлаа илүү амархан ол.
             </p>
           </div>
 
           {/* About */}
           <div className="flex flex-col gap-3">
-            <h3 className="font-semibold text-sm">About</h3>
+            <h3 className="font-semibold text-sm">Тухай</h3>
             <ul className="space-y-2 text-sm text-gray-400">
               <li>
                 <a href="#" className="hover:text-white transition-colors">
-                  Companies
+                  Компаниуд
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-white transition-colors">
-                  Pricing
+                  Үнийн санал
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-white transition-colors">
-                  Terms
+                  Үйлчилгээний нөхцөл
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-white transition-colors">
-                  Advice
+                  Зөвлөгөө
                 </a>
               </li>
             </ul>
@@ -45,26 +45,26 @@ function Footer() {
 
           {/* Resources */}
           <div className="flex flex-col gap-3">
-            <h3 className="font-semibold text-sm">Resources</h3>
+            <h3 className="font-semibold text-sm">Нөөц</h3>
             <ul className="space-y-2 text-sm text-gray-400">
               <li>
                 <a href="#" className="hover:text-white transition-colors">
-                  Help Docs
+                  Тусламжийн баримт
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-white transition-colors">
-                  Guide
+                  Хөтөч
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-white transition-colors">
-                  Updates
+                  Шинэчлэлүүд
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-white transition-colors">
-                  Contact Us
+                  Холбоо барих
                 </a>
               </li>
             </ul>
@@ -72,16 +72,16 @@ function Footer() {
 
           {/* Newsletter */}
           <div className="flex flex-col gap-3">
-            <h3 className="font-semibold text-sm">Get job notifications</h3>
-            <p className="text-xs text-gray-400">The latest job news, articles, sent to your inbox weekly.</p>
+            <h3 className="font-semibold text-sm">Ажлын мэдэгдэл авах</h3>
+            <p className="text-xs text-gray-400">Хамгийн сүүлийн ажлын мэдээ, нийтлэлүүдийг долоо хоног тутам хүлээн авна.</p>
             <div className="flex gap-2">
               <input
                 type="email"
-                placeholder="Email Address"
+                placeholder="Имэйл хаяг"
                 className="px-3 py-2 bg-slate-800 text-white placeholder-gray-500 rounded text-sm flex-1"
               />
               <button className="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded text-sm font-medium transition-colors">
-                Subscribe
+                Захиалах
               </button>
             </div>
           </div>
@@ -89,10 +89,10 @@ function Footer() {
 
         {/* Bottom */}
         <div className="border-t border-slate-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-400">
-          <p>2021 © JobHuntly. All rights reserved.</p>
+          <p>2021 © Ажил-GO. Бүх эрх хуулиар хамгаалагдсан.</p>
           <div className="flex gap-4">
             <a href="#" className="hover:text-white transition-colors">
-              Privacy Policy
+              Нууцлалын бодлого
             </a>
           </div>
         </div>
