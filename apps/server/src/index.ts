@@ -1,7 +1,7 @@
 import "dotenv/config";
 import Fastify from "fastify";
 import fastifyCors from "@fastify/cors";
-
+import prisma from "./plugins/prisma";
 import { auth } from "@ajil-go/auth";
 
 const baseCorsConfig = {
@@ -17,6 +17,7 @@ const fastify = Fastify({
 });
 
 fastify.register(fastifyCors, baseCorsConfig);
+fastify.register(prisma);
 
 fastify.route({
 	method: ["GET", "POST"],
