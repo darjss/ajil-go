@@ -16,7 +16,7 @@ function Header() {
             <div className="flex flex-col leading-tight">
               <span className="text-foreground">Ажил-GO</span>
               <span className="hidden sm:block text-xs font-normal text-muted-foreground">
-                Стартап ажлын платформ
+                 Ажлын платформ
               </span>
             </div>
           </Link>
