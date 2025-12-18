@@ -1,5 +1,6 @@
-import { authClient } from "@/lib/auth-client";
-import { useForm } from "@tanstack/react-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 import { authClient } from "@/lib/auth-client";

@@ -196,8 +196,8 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
 									Үндсэн үүрэг
 								</h2>
 								<ul className="space-y-3">
-									{job.responsibilities.map((item, i) => (
-										<li key={i} className="flex gap-3 text-muted-foreground">
+									{job.responsibilities.map((item) => (
+										<li key={item} className="flex gap-3 text-muted-foreground">
 											<span className="mt-1 text-primary">✓</span>
 											<span>{item}</span>
 										</li>
@@ -211,8 +211,8 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
 									Таны тухай
 								</h2>
 								<ul className="space-y-3">
-									{job.whoYouAre.map((item, i) => (
-										<li key={i} className="flex gap-3 text-muted-foreground">
+									{job.whoYouAre.map((item) => (
+										<li key={item} className="flex gap-3 text-muted-foreground">
 											<span className="mt-1 text-primary">✓</span>
 											<span>{item}</span>
 										</li>
@@ -226,8 +226,8 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
 									Давуу талууд
 								</h2>
 								<ul className="space-y-3">
-									{job.niceToHaves.map((item, i) => (
-										<li key={i} className="flex gap-3 text-muted-foreground">
+									{job.niceToHaves.map((item) => (
+										<li key={item} className="flex gap-3 text-muted-foreground">
 											<span className="mt-1 text-primary">✓</span>
 											<span>{item}</span>
 										</li>
@@ -244,8 +244,8 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
 									Энэ ажлын байранд дараах боломжууд багтсан
 								</p>
 								<div className="grid gap-6 md:grid-cols-2">
-									{job.perksAndBenefits.map((perk, i) => (
-										<div key={i} className="flex gap-3">
+									{job.perksAndBenefits.map((perk) => (
+										<div key={perk.title} className="flex gap-3">
 											<span className="text-2xl">💼</span>
 											<div>
 												<h3 className="font-semibold text-foreground">
@@ -272,12 +272,12 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
 										<h3 className="font-semibold text-foreground">
 											{job.company}
 										</h3>
-										<a
-											href="#"
+										<Link
+											href="/browse-companies"
 											className="text-primary text-sm hover:underline"
 										>
 											{job.company}-ийн талаар дэлгэрэнгүй унших
-										</a>
+										</Link>
 									</div>
 								</div>
 								<p className="text-muted-foreground text-sm">
