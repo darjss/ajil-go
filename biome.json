@@ -37,6 +37,14 @@
 		"enabled": true,
 		"rules": {
 			"recommended": true,
+			"a11y": {
+				"useButtonType": "warn",
+				"useValidAnchor": "warn",
+				"noLabelWithoutControl": "warn"
+			},
+			"suspicious": {
+				"noArrayIndexKey": "warn"
+			},
 			"correctness": {
 				"useExhaustiveDependencies": "info"
 			},
