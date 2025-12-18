@@ -1,12 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import type React from "react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 import { AuthLayout } from "@/components/auth-layout";
+import Loader from "@/components/loader";
 import { Button } from "@/components/ui/button";
+import { authClient } from "@/lib/auth-client";
 
 export default function LoginPage() {
+	const router = useRouter();
+	const { isPending } = authClient.useSession();
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [formData, setFormData] = useState({
 		email: "",
 		password: "",
@@ -21,10 +27,39 @@ export default function LoginPage() {
 		}));
 	};
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		console.log("Login:", formData);
+		setIsSubmitting(true);
+
+		await authClient.signIn.email(
+			{
+				email: formData.email,
+				password: formData.password,
+			},
+			{
+				onSuccess: () => {
+					router.push("/dashboard");
+					toast.success("Амжилттай нэвтэрлээ");
+				},
+				onError: (error) => {
+					toast.error(error.error.message || error.error.statusText);
+				},
+			},
+		);
+
+		setIsSubmitting(false);
 	};
+
+	const handleGoogleSignIn = () => {
+		authClient.signIn.social({
+			provider: "google",
+			callbackURL: "/dashboard",
+		});
+	};
+
+	if (isPending) {
+		return <Loader />;
+	}
 
 	return (
 		<AuthLayout>
@@ -58,10 +93,16 @@ export default function LoginPage() {
 				<div className="mx-auto w-full max-w-md">
 					<div className="mb-8">
 						<div className="mb-6 flex gap-4">
-							<button className="border-primary border-b-2 px-4 py-2 font-medium text-primary text-sm">
+							<button
+								type="button"
+								className="border-primary border-b-2 px-4 py-2 font-medium text-primary text-sm"
+							>
 								Ажил хайгч
 							</button>
-							<button className="px-4 py-2 font-medium text-muted-foreground text-sm">
+							<button
+								type="button"
+								className="px-4 py-2 font-medium text-muted-foreground text-sm"
+							>
 								Компани
 							</button>
 						</div>
@@ -72,7 +113,11 @@ export default function LoginPage() {
 					</h1>
 
 					{/* Google Login */}
-					<Button className="mb-6 h-12 w-full border border-border bg-card text-foreground hover:bg-muted">
+					<Button
+						type="button"
+						onClick={handleGoogleSignIn}
+						className="mb-6 h-12 w-full border border-border bg-card text-foreground hover:bg-muted"
+					>
 						<span className="mr-2">🔍</span>
 						Google-ээр нэвтрэх
 					</Button>
@@ -146,9 +191,10 @@ export default function LoginPage() {
 
 						<Button
 							type="submit"
+							disabled={isSubmitting}
 							className="h-12 w-full bg-primary text-primary-foreground hover:bg-primary/90"
 						>
-							Нэвтрэх
+							{isSubmitting ? "Нэвтэрч байна..." : "Нэвтрэх"}
 						</Button>
 					</form>
 
