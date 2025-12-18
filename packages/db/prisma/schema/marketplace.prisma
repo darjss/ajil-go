@@ -1,4 +1,4 @@
-model Skill {
+3model Skill {
   id          String      @id @default(cuid())
   name        String      @unique
   description String?

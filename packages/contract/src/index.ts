@@ -38,7 +38,24 @@ export const PaymentStatusSchema = z.enum([
 export type PaymentStatus = z.infer<typeof PaymentStatusSchema>;
 
 // ============================================
-// AUTH SCHEMAS
+// COMMON SCHEMAS
+// ============================================
+
+// Common ID param schema
+export const IdParamsSchema = z.object({
+	id: z.string(),
+});
+export type IdParams = z.infer<typeof IdParamsSchema>;
+
+// Common pagination query schema
+export const PaginationQuerySchema = z.object({
+	page: z.coerce.number().int().positive().default(1),
+	limit: z.coerce.number().int().positive().max(100).default(20),
+});
+export type PaginationQuery = z.infer<typeof PaginationQuerySchema>;
+
+// ============================================
+// AUTH / USER SCHEMAS
 // ============================================
 
 export const UserSchema = z.object({
@@ -49,8 +66,6 @@ export const UserSchema = z.object({
 	image: z.string().nullable(),
 	createdAt: z.date(),
 	updatedAt: z.date(),
-
-	// Profile fields
 	bio: z.string().nullable(),
 	phone: z.string().nullable(),
 	address: z.string().nullable(),
@@ -103,8 +118,60 @@ export const VerificationSchema = z.object({
 });
 export type Verification = z.infer<typeof VerificationSchema>;
 
+// User API Schemas
+export const GetUsersQuerySchema = PaginationQuerySchema.extend({
+	city: z.string().optional(),
+	search: z.string().optional(),
+});
+export type GetUsersQuery = z.infer<typeof GetUsersQuerySchema>;
+
+export const UpdateUserBodySchema = z.object({
+	name: z.string().min(1).max(100).optional(),
+	bio: z.string().max(500).optional(),
+	phone: z.string().max(20).optional(),
+	address: z.string().max(200).optional(),
+	city: z.string().max(100).optional(),
+	latitude: z.number().min(-90).max(90).optional(),
+	longitude: z.number().min(-180).max(180).optional(),
+});
+export type UpdateUserBody = z.infer<typeof UpdateUserBodySchema>;
+
 // ============================================
-// MARKETPLACE SCHEMAS
+// CATEGORY SCHEMAS
+// ============================================
+
+export const CategorySchema = z.object({
+	id: z.string(),
+	name: z.string(),
+	description: z.string().nullable(),
+	iconUrl: z.string().nullable(),
+	createdAt: z.date(),
+});
+export type Category = z.infer<typeof CategorySchema>;
+
+// Category API Schemas
+export const GetCategoriesQuerySchema = PaginationQuerySchema.extend({
+	limit: z.coerce.number().int().positive().max(100).default(50),
+	search: z.string().optional(),
+});
+export type GetCategoriesQuery = z.infer<typeof GetCategoriesQuerySchema>;
+
+export const CreateCategoryBodySchema = z.object({
+	name: z.string().min(1).max(100),
+	description: z.string().max(500).optional(),
+	iconUrl: z.string().url().optional(),
+});
+export type CreateCategoryBody = z.infer<typeof CreateCategoryBodySchema>;
+
+export const UpdateCategoryBodySchema = z.object({
+	name: z.string().min(1).max(100).optional(),
+	description: z.string().max(500).optional(),
+	iconUrl: z.string().url().optional(),
+});
+export type UpdateCategoryBody = z.infer<typeof UpdateCategoryBodySchema>;
+
+// ============================================
+// SKILL SCHEMAS
 // ============================================
 
 export const SkillSchema = z.object({
@@ -131,14 +198,28 @@ export const UserSkillSchema = z.object({
 });
 export type UserSkill = z.infer<typeof UserSkillSchema>;
 
-export const CategorySchema = z.object({
-	id: z.string(),
-	name: z.string(),
-	description: z.string().nullable(),
-	iconUrl: z.string().nullable(),
-	createdAt: z.date(),
+// Skill API Schemas
+export const GetSkillsQuerySchema = PaginationQuerySchema.extend({
+	limit: z.coerce.number().int().positive().max(100).default(50),
+	search: z.string().optional(),
 });
-export type Category = z.infer<typeof CategorySchema>;
+export type GetSkillsQuery = z.infer<typeof GetSkillsQuerySchema>;
+
+export const CreateSkillBodySchema = z.object({
+	name: z.string().min(1).max(100),
+	description: z.string().max(500).optional(),
+});
+export type CreateSkillBody = z.infer<typeof CreateSkillBodySchema>;
+
+export const UpdateSkillBodySchema = z.object({
+	name: z.string().min(1).max(100).optional(),
+	description: z.string().max(500).optional(),
+});
+export type UpdateSkillBody = z.infer<typeof UpdateSkillBodySchema>;
+
+// ============================================
+// TASK SCHEMAS
+// ============================================
 
 export const TaskSchema = z.object({
 	id: z.string(),
@@ -182,6 +263,60 @@ export const TaskAttachmentSchema = z.object({
 });
 export type TaskAttachment = z.infer<typeof TaskAttachmentSchema>;
 
+// Task API Schemas
+export const GetTasksQuerySchema = PaginationQuerySchema.extend({
+	status: TaskStatusSchema.optional(),
+	categoryId: z.string().optional(),
+	posterId: z.string().optional(),
+	city: z.string().optional(),
+	isRemote: z.coerce.boolean().optional(),
+	minBudget: z.coerce.number().positive().optional(),
+	maxBudget: z.coerce.number().positive().optional(),
+	search: z.string().optional(),
+});
+export type GetTasksQuery = z.infer<typeof GetTasksQuerySchema>;
+
+export const CreateTaskBodySchema = z.object({
+	title: z.string().min(1).max(200),
+	description: z.string().min(1).max(5000),
+	budgetMin: z.number().positive(),
+	budgetMax: z.number().positive().optional(),
+	isRemote: z.boolean().default(true),
+	address: z.string().max(200).optional(),
+	city: z.string().max(100).optional(),
+	latitude: z.number().min(-90).max(90).optional(),
+	longitude: z.number().min(-180).max(180).optional(),
+	deadline: z.coerce.date().optional(),
+	estimatedHours: z.number().positive().optional(),
+	categoryId: z.string(),
+	posterId: z.string(),
+	skillIds: z.array(z.string()).optional(),
+});
+export type CreateTaskBody = z.infer<typeof CreateTaskBodySchema>;
+
+export const UpdateTaskBodySchema = z.object({
+	title: z.string().min(1).max(200).optional(),
+	description: z.string().min(1).max(5000).optional(),
+	budgetMin: z.number().positive().optional(),
+	budgetMax: z.number().positive().optional(),
+	finalPrice: z.number().positive().optional(),
+	isRemote: z.boolean().optional(),
+	address: z.string().max(200).optional(),
+	city: z.string().max(100).optional(),
+	latitude: z.number().min(-90).max(90).optional(),
+	longitude: z.number().min(-180).max(180).optional(),
+	deadline: z.coerce.date().optional(),
+	estimatedHours: z.number().positive().optional(),
+	status: TaskStatusSchema.optional(),
+	categoryId: z.string().optional(),
+	assignedBidId: z.string().optional(),
+});
+export type UpdateTaskBody = z.infer<typeof UpdateTaskBodySchema>;
+
+// ============================================
+// BID SCHEMAS
+// ============================================
+
 export const TaskBidSchema = z.object({
 	id: z.string(),
 	taskId: z.string(),
@@ -195,17 +330,76 @@ export const TaskBidSchema = z.object({
 });
 export type TaskBid = z.infer<typeof TaskBidSchema>;
 
+// Bid API Schemas
+export const GetBidsQuerySchema = PaginationQuerySchema.extend({
+	taskId: z.string().optional(),
+	bidderId: z.string().optional(),
+	status: BidStatusSchema.optional(),
+});
+export type GetBidsQuery = z.infer<typeof GetBidsQuerySchema>;
+
+export const CreateBidBodySchema = z.object({
+	taskId: z.string(),
+	bidderId: z.string(),
+	amount: z.number().positive(),
+	message: z.string().min(1).max(2000),
+	estimatedHours: z.number().positive().optional(),
+});
+export type CreateBidBody = z.infer<typeof CreateBidBodySchema>;
+
+export const UpdateBidBodySchema = z.object({
+	amount: z.number().positive().optional(),
+	message: z.string().min(1).max(2000).optional(),
+	estimatedHours: z.number().positive().optional(),
+	status: BidStatusSchema.optional(),
+});
+export type UpdateBidBody = z.infer<typeof UpdateBidBodySchema>;
+
+// ============================================
+// REVIEW SCHEMAS
+// ============================================
+
 export const ReviewSchema = z.object({
 	id: z.string(),
 	taskId: z.string(),
 	authorId: z.string(),
 	targetId: z.string(),
-	rating: z.number().int(), // 1-5
+	rating: z.number().int(),
 	comment: z.string().nullable(),
 	type: ReviewTypeSchema,
 	createdAt: z.date(),
 });
 export type Review = z.infer<typeof ReviewSchema>;
+
+// Review API Schemas
+export const GetReviewsQuerySchema = PaginationQuerySchema.extend({
+	taskId: z.string().optional(),
+	authorId: z.string().optional(),
+	targetId: z.string().optional(),
+	type: ReviewTypeSchema.optional(),
+	minRating: z.coerce.number().int().min(1).max(5).optional(),
+});
+export type GetReviewsQuery = z.infer<typeof GetReviewsQuerySchema>;
+
+export const CreateReviewBodySchema = z.object({
+	taskId: z.string(),
+	authorId: z.string(),
+	targetId: z.string(),
+	rating: z.number().int().min(1).max(5),
+	comment: z.string().max(1000).optional(),
+	type: ReviewTypeSchema,
+});
+export type CreateReviewBody = z.infer<typeof CreateReviewBodySchema>;
+
+export const UpdateReviewBodySchema = z.object({
+	rating: z.number().int().min(1).max(5).optional(),
+	comment: z.string().max(1000).optional(),
+});
+export type UpdateReviewBody = z.infer<typeof UpdateReviewBodySchema>;
+
+// ============================================
+// MESSAGE SCHEMAS
+// ============================================
 
 export const MessageSchema = z.object({
 	id: z.string(),
@@ -217,23 +411,76 @@ export const MessageSchema = z.object({
 });
 export type Message = z.infer<typeof MessageSchema>;
 
+// Message API Schemas
+export const GetMessagesQuerySchema = PaginationQuerySchema.extend({
+	limit: z.coerce.number().int().positive().max(100).default(50),
+	taskId: z.string().optional(),
+	senderId: z.string().optional(),
+	isRead: z.coerce.boolean().optional(),
+});
+export type GetMessagesQuery = z.infer<typeof GetMessagesQuerySchema>;
+
+export const CreateMessageBodySchema = z.object({
+	taskId: z.string(),
+	senderId: z.string(),
+	content: z.string().min(1).max(2000),
+});
+export type CreateMessageBody = z.infer<typeof CreateMessageBodySchema>;
+
+export const UpdateMessageBodySchema = z.object({
+	content: z.string().min(1).max(2000).optional(),
+	isRead: z.boolean().optional(),
+});
+export type UpdateMessageBody = z.infer<typeof UpdateMessageBodySchema>;
+
+export const MarkMessagesReadBodySchema = z.object({
+	messageIds: z.array(z.string()).min(1),
+});
+export type MarkMessagesReadBody = z.infer<typeof MarkMessagesReadBodySchema>;
+
+// ============================================
+// PAYMENT SCHEMAS
+// ============================================
+
 export const PaymentSchema = z.object({
 	id: z.string(),
 	taskId: z.string(),
 	amount: z.number(),
 	status: PaymentStatusSchema.default("PENDING"),
-	payerId: z.string(), // task poster
-	payeeId: z.string(), // worker
+	payerId: z.string(),
+	payeeId: z.string(),
 	createdAt: z.date(),
 	completedAt: z.date().nullable(),
 });
 export type Payment = z.infer<typeof PaymentSchema>;
 
+// Payment API Schemas
+export const GetPaymentsQuerySchema = PaginationQuerySchema.extend({
+	taskId: z.string().optional(),
+	payerId: z.string().optional(),
+	payeeId: z.string().optional(),
+	status: PaymentStatusSchema.optional(),
+});
+export type GetPaymentsQuery = z.infer<typeof GetPaymentsQuerySchema>;
+
+export const CreatePaymentBodySchema = z.object({
+	taskId: z.string(),
+	amount: z.number().positive(),
+	payerId: z.string(),
+	payeeId: z.string(),
+});
+export type CreatePaymentBody = z.infer<typeof CreatePaymentBodySchema>;
+
+export const UpdatePaymentBodySchema = z.object({
+	status: PaymentStatusSchema.optional(),
+	completedAt: z.coerce.date().optional(),
+});
+export type UpdatePaymentBody = z.infer<typeof UpdatePaymentBodySchema>;
+
 // ============================================
 // RELATION SCHEMAS (for complete data fetching)
 // ============================================
 
-// User with relations
 export const UserWithRelationsSchema = UserSchema.extend({
 	sessions: z.array(SessionSchema).optional(),
 	accounts: z.array(AccountSchema).optional(),
@@ -246,7 +493,6 @@ export const UserWithRelationsSchema = UserSchema.extend({
 });
 export type UserWithRelations = z.infer<typeof UserWithRelationsSchema>;
 
-// Task with relations
 export const TaskWithRelationsSchema = TaskSchema.extend({
 	poster: UserSchema.optional(),
 	category: CategorySchema.optional(),
@@ -260,7 +506,6 @@ export const TaskWithRelationsSchema = TaskSchema.extend({
 });
 export type TaskWithRelations = z.infer<typeof TaskWithRelationsSchema>;
 
-// TaskBid with relations
 export const TaskBidWithRelationsSchema = TaskBidSchema.extend({
 	task: TaskSchema.optional(),
 	bidder: UserSchema.optional(),
@@ -268,7 +513,6 @@ export const TaskBidWithRelationsSchema = TaskBidSchema.extend({
 });
 export type TaskBidWithRelations = z.infer<typeof TaskBidWithRelationsSchema>;
 
-// Review with relations
 export const ReviewWithRelationsSchema = ReviewSchema.extend({
 	task: TaskSchema.optional(),
 	author: UserSchema.optional(),
@@ -276,14 +520,12 @@ export const ReviewWithRelationsSchema = ReviewSchema.extend({
 });
 export type ReviewWithRelations = z.infer<typeof ReviewWithRelationsSchema>;
 
-// Message with relations
 export const MessageWithRelationsSchema = MessageSchema.extend({
 	task: TaskSchema.optional(),
 	sender: UserSchema.optional(),
 });
 export type MessageWithRelations = z.infer<typeof MessageWithRelationsSchema>;
 
-// UserSkill with relations
 export const UserSkillWithRelationsSchema = UserSkillSchema.extend({
 	user: UserSchema.optional(),
 	skill: SkillSchema.optional(),
@@ -293,7 +535,6 @@ export type UserSkillWithRelations = z.infer<
 	typeof UserSkillWithRelationsSchema
 >;
 
-// TaskSkill with relations
 export const TaskSkillWithRelationsSchema = TaskSkillSchema.extend({
 	task: TaskSchema.optional(),
 	skill: SkillSchema.optional(),

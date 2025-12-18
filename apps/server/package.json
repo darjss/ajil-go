@@ -11,12 +11,15 @@
 	},
 	"dependencies": {
 		"@ajil-go/auth": "workspace:*",
+		"@ajil-go/contract": "workspace:*",
 		"@ajil-go/db": "workspace:*",
+		"@fastify/autoload": "^6.3.1",
 		"@fastify/cors": "^11.0.1",
 		"better-auth": "catalog:",
 		"dotenv": "catalog:",
 		"fastify": "^5.3.3",
 		"fastify-plugin": "^5.1.0",
+		"fastify-type-provider-zod": "^6.1.0",
 		"zod": "^4.1.11"
 	},
 	"devDependencies": {

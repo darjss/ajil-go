@@ -1,3 +1,0 @@
-const userRouter=(fastify)=>{
-  fastify
-}
