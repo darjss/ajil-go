@@ -1,11 +1,12 @@
 import "dotenv/config";
-import Fastify from "fastify";
 import fastifyCors from "@fastify/cors";
-
+import Fastify from "fastify";
+import {
+	serializerCompiler,
+	validatorCompiler,
+	type ZodTypeProvider,
+} from "fastify-type-provider-zod";
 import authPlugin from "./plugins/auth";
-import { serializerCompiler,
-validatorCompiler,
-type ZodTypeProvider } from "fastify-type-provider-zod";
 import prisma from "./plugins/prisma";
 import routes from "./routes";
 

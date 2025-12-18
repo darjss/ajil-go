@@ -1,6 +1,4 @@
 "use client";
-import { ModeToggle } from "./mode-toggle";
-import UserMenu from "./user-menu";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
