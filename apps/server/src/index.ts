@@ -1,8 +1,8 @@
 import "dotenv/config";
-import Fastify from "fastify";
-import fastifyCors from "@fastify/cors";
 
 import { auth } from "@ajil-go/auth";
+import fastifyCors from "@fastify/cors";
+import Fastify from "fastify";
 
 const baseCorsConfig = {
 	origin: process.env.CORS_ORIGIN || "",

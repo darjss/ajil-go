@@ -11,9 +11,9 @@ export function InfoCard({
 	aside?: React.ReactNode;
 }) {
 	return (
-		<div className="bg-white border border-border rounded-lg shadow-sm p-5 space-y-3">
+		<div className="space-y-3 rounded-lg border border-border bg-white p-5 shadow-sm">
 			<div className="flex items-start justify-between gap-3">
-				<h3 className="text-lg font-semibold text-foreground">{title}</h3>
+				<h3 className="font-semibold text-foreground text-lg">{title}</h3>
 				{aside}
 			</div>
 			{children}
@@ -23,16 +23,24 @@ export function InfoCard({
 
 export function DetailCard() {
 	return (
-		<div className="bg-white border border-border rounded-lg shadow-sm p-5 space-y-4">
-			<h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">Нэмэлт мэдээлэл</h3>
+		<div className="space-y-4 rounded-lg border border-border bg-white p-5 shadow-sm">
+			<h3 className="font-semibold text-foreground text-sm uppercase tracking-wide">
+				Нэмэлт мэдээлэл
+			</h3>
 			<div className="space-y-3 text-sm">
 				{socialLinks.map((link) => (
-					<div key={link.label} className="flex items-start justify-between gap-3 border-b border-border/60 pb-3 last:border-none">
+					<div
+						key={link.label}
+						className="flex items-start justify-between gap-3 border-border/60 border-b pb-3 last:border-none"
+					>
 						<div>
 							<p className="font-semibold text-foreground">{link.label}</p>
 							<p className="text-muted-foreground">{link.value}</p>
 						</div>
-						<Link href={link.href} className="text-primary text-xs hover:underline">
+						<Link
+							href={link.href}
+							className="text-primary text-xs hover:underline"
+						>
 							Засах
 						</Link>
 					</div>
@@ -44,16 +52,24 @@ export function DetailCard() {
 
 export function SocialLinksCard() {
 	return (
-		<div className="bg-white border border-border rounded-lg shadow-sm p-5 space-y-4">
-			<h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">Социал холбоос</h3>
+		<div className="space-y-4 rounded-lg border border-border bg-white p-5 shadow-sm">
+			<h3 className="font-semibold text-foreground text-sm uppercase tracking-wide">
+				Социал холбоос
+			</h3>
 			<div className="space-y-3 text-sm">
 				{socialProfiles.map((link) => (
-					<div key={link.label} className="flex items-start justify-between gap-3 border-b border-border/60 pb-3 last:border-none">
+					<div
+						key={link.label}
+						className="flex items-start justify-between gap-3 border-border/60 border-b pb-3 last:border-none"
+					>
 						<div>
 							<p className="font-semibold text-foreground">{link.label}</p>
 							<p className="text-muted-foreground">{link.value}</p>
 						</div>
-						<Link href={link.href} className="text-primary text-xs hover:underline">
+						<Link
+							href={link.href}
+							className="text-primary text-xs hover:underline"
+						>
 							Очих
 						</Link>
 					</div>

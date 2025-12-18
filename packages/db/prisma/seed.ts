@@ -1,7 +1,7 @@
 import { PrismaPg } from "@prisma/adapter-pg";
+import dotenv from "dotenv";
 import pg from "pg";
 import { PrismaClient } from "../prisma/generated/client.js";
-import dotenv from "dotenv";
 
 dotenv.config({
 	path: "../../apps/server/.env",
@@ -1487,7 +1487,7 @@ async function main() {
 	console.log("Summary:");
 	console.log(`  - ${categories.length} categories`);
 	console.log(`  - ${skills.length} predefined skills`);
-	console.log(`  - 1 custom skill`);
+	console.log("  - 1 custom skill");
 	console.log(`  - ${users.length} demo users`);
 	console.log(`  - ${userSkills.length} user-skill assignments`);
 	console.log(`  - ${tasks.length} demo tasks`);

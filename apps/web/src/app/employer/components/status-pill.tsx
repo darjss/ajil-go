@@ -9,5 +9,11 @@ const styles: Record<HiringStage, string> = {
 };
 
 export function StatusPill({ stage }: { stage: HiringStage }) {
-	return <span className={`px-3 py-1 text-xs rounded-full font-semibold ${styles[stage]}`}>{stage}</span>;
+	return (
+		<span
+			className={`rounded-full px-3 py-1 font-semibold text-xs ${styles[stage]}`}
+		>
+			{stage}
+		</span>
+	);
 }

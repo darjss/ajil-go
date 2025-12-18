@@ -9,22 +9,28 @@ interface NotificationItem {
 
 export function NotificationList({ items }: { items: NotificationItem[] }) {
 	return (
-		<div className="bg-white border border-border rounded-lg shadow-sm">
-			<div className="px-6 py-4 border-b border-border flex items-center justify-between">
-				<h3 className="text-lg font-semibold text-foreground">Мэдэгдэл</h3>
-				<button className="text-sm text-primary hover:underline">Бүгдийг уншсанд тооцох</button>
+		<div className="rounded-lg border border-border bg-white shadow-sm">
+			<div className="flex items-center justify-between border-border border-b px-6 py-4">
+				<h3 className="font-semibold text-foreground text-lg">Мэдэгдэл</h3>
+				<button className="text-primary text-sm hover:underline">
+					Бүгдийг уншсанд тооцох
+				</button>
 			</div>
 			<div className="divide-y divide-border">
 				{items.map((item, idx) => (
-					<div key={idx} className="px-6 py-4 flex items-start gap-3">
-						<div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-lg">{item.avatar}</div>
-						<div className="flex-1 min-w-0">
-							<div className="flex items-center gap-2 flex-wrap">
+					<div key={idx} className="flex items-start gap-3 px-6 py-4">
+						<div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-lg">
+							{item.avatar}
+						</div>
+						<div className="min-w-0 flex-1">
+							<div className="flex flex-wrap items-center gap-2">
 								<p className="font-semibold text-foreground">{item.title}</p>
-								<span className="text-[11px] px-2 py-0.5 rounded-full bg-primary/10 text-primary">{item.tag}</span>
+								<span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] text-primary">
+									{item.tag}
+								</span>
 							</div>
-							<p className="text-sm text-muted-foreground">{item.body}</p>
-							<p className="text-xs text-muted-foreground mt-1">{item.time}</p>
+							<p className="text-muted-foreground text-sm">{item.body}</p>
+							<p className="mt-1 text-muted-foreground text-xs">{item.time}</p>
 						</div>
 					</div>
 				))}
