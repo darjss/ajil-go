@@ -543,3 +543,111 @@ export const TaskSkillWithRelationsSchema = TaskSkillSchema.extend({
 export type TaskSkillWithRelations = z.infer<
 	typeof TaskSkillWithRelationsSchema
 >;
+
+// ============================================
+// API RESPONSE SCHEMAS (with _count and relations)
+// ============================================
+
+export const PaginatedResponseSchema = <T extends z.ZodTypeAny>(schema: T) =>
+	z.object({
+		data: z.array(schema),
+		meta: z.object({
+			total: z.number(),
+			page: z.number(),
+			limit: z.number(),
+			totalPages: z.number(),
+		}),
+	});
+
+export interface PaginatedResponse<T> {
+	data: T[];
+	meta: {
+		total: number;
+		page: number;
+		limit: number;
+		totalPages: number;
+	};
+}
+
+// Task API Response (includes poster, category, _count)
+export const TaskApiResponseSchema = TaskSchema.extend({
+	poster: UserSchema.optional(),
+	category: CategorySchema.optional(),
+	_count: z
+		.object({
+			bids: z.number(),
+			messages: z.number(),
+		})
+		.optional(),
+	skills: z
+		.array(
+			z.object({
+				skill: SkillSchema.nullable(),
+				customSkill: CustomSkillSchema.nullable(),
+			}),
+		)
+		.optional(),
+});
+export type TaskApiResponse = z.infer<typeof TaskApiResponseSchema>;
+
+// User API Response (includes skills, _count)
+export const UserApiResponseSchema = UserSchema.extend({
+	skills: z
+		.array(
+			z.object({
+				skill: SkillSchema.nullable(),
+				customSkill: CustomSkillSchema.nullable(),
+			}),
+		)
+		.optional(),
+	_count: z
+		.object({
+			postedTasks: z.number(),
+			bids: z.number(),
+		})
+		.optional(),
+});
+export type UserApiResponse = z.infer<typeof UserApiResponseSchema>;
+
+// Category API Response (includes _count)
+export const CategoryApiResponseSchema = CategorySchema.extend({
+	_count: z
+		.object({
+			tasks: z.number(),
+		})
+		.optional(),
+});
+export type CategoryApiResponse = z.infer<typeof CategoryApiResponseSchema>;
+
+// Skill API Response (includes _count)
+export const SkillApiResponseSchema = SkillSchema.extend({
+	_count: z
+		.object({
+			users: z.number(),
+			tasks: z.number(),
+		})
+		.optional(),
+});
+export type SkillApiResponse = z.infer<typeof SkillApiResponseSchema>;
+
+// Bid API Response (includes task, bidder)
+export const BidApiResponseSchema = TaskBidSchema.extend({
+	task: TaskSchema.optional(),
+	bidder: UserSchema.optional(),
+});
+export type BidApiResponse = z.infer<typeof BidApiResponseSchema>;
+
+// Message API Response (includes task, sender)
+export const MessageApiResponseSchema = MessageSchema.extend({
+	task: TaskSchema.optional(),
+	sender: UserSchema.optional(),
+});
+export type MessageApiResponse = z.infer<typeof MessageApiResponseSchema>;
+
+// Review API Response (includes task, author, target)
+export const ReviewApiResponseSchema = ReviewSchema.extend({
+	task: TaskSchema.optional(),
+	author: UserSchema.optional(),
+	target: UserSchema.optional(),
+});
+export type ReviewApiResponse = z.infer<typeof ReviewApiResponseSchema>;
