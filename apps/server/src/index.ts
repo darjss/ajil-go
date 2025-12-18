@@ -1,14 +1,8 @@
 import "dotenv/config";
-import fastifyCors from "@fastify/cors";
 import Fastify from "fastify";
-import {
-	serializerCompiler,
-	validatorCompiler,
-	type ZodTypeProvider,
-} from "fastify-type-provider-zod";
-import authPlugin from "./plugins/auth.js";
-import prisma from "./plugins/prisma.js";
-import routes from "./routes/index.js";
+import fastifyCors from "@fastify/cors";
+
+import { auth } from "@ajil-go/auth";
 
 const baseCorsConfig = {
 	origin: process.env.CORS_ORIGIN || "*",

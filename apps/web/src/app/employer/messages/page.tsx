@@ -6,17 +6,17 @@ import { MessagesPanel } from "../components/messages-panel";
 export default function EmployerMessagesPage() {
 	return (
 		<div className="min-h-screen bg-slate-50">
-			<header className="border-b border-border bg-white">
-				<div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-					<h1 className="text-2xl font-bold text-foreground">Messages</h1>
+			<header className="border-border border-b bg-white">
+				<div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+					<h1 className="font-bold text-2xl text-foreground">Messages</h1>
 					<Button variant="outline" size="sm">
 						Нүүр рүү буцах
 					</Button>
 				</div>
 			</header>
 
-			<div className="max-w-6xl mx-auto px-6 py-8 space-y-4">
-				<p className="text-sm text-muted-foreground">Candidate conversations</p>
+			<div className="mx-auto max-w-6xl space-y-4 px-6 py-8">
+				<p className="text-muted-foreground text-sm">Candidate conversations</p>
 				<MessagesPanel />
 			</div>
 		</div>

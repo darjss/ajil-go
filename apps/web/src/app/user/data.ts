@@ -137,7 +137,7 @@ export const notifications = [
 	},
 	{
 		title: "Udacity таны статусыг шинэчиллээ",
-		body: "Jana Alicia таны өргөдлийн статусыг \"Шалгарсан\" болголоо.",
+		body: 'Jana Alicia таны өргөдлийн статусыг "Шалгарсан" болголоо.',
 		status: "Шалгарсан",
 		time: "3 өдрийн өмнө",
 		avatar: "👩‍💼",
@@ -188,7 +188,11 @@ export const messagesByThread: Record<
 	{ from: "me" | "them"; text: string; time: string }[]
 > = {
 	jan: [
-		{ from: "them", text: "Сайн уу, бид таны ажлыг үнэллээ.", time: "12 минын өмнө" },
+		{
+			from: "them",
+			text: "Сайн уу, бид таны ажлыг үнэллээ.",
+			time: "12 минын өмнө",
+		},
 		{
 			from: "them",
 			text: "Хурдан ярилцлага хийх саналтай байна. Завтай цагуудаа хуваалцаарай.",
@@ -196,8 +200,16 @@ export const messagesByThread: Record<
 		},
 		{ from: "me", text: "Сайн уу Jan, маргааш 12:00 боломжтой.", time: "Одоо" },
 	],
-	joe: [{ from: "them", text: "Ярилцлагын баталгаажуулалт явууллаа.", time: "3:40 PM" }],
-	ally: [{ from: "them", text: "Санал тавих талаар ярилцъя.", time: "3:40 PM" }],
+	joe: [
+		{
+			from: "them",
+			text: "Ярилцлагын баталгаажуулалт явууллаа.",
+			time: "3:40 PM",
+		},
+	],
+	ally: [
+		{ from: "them", text: "Санал тавих талаар ярилцъя.", time: "3:40 PM" },
+	],
 };
 
 export const profileHero = {
@@ -212,15 +224,31 @@ export const profileHero = {
 };
 
 export const socialLinks = [
-	{ label: "Имэйл", value: "jakegyll@email.com", href: "mailto:jakegyll@email.com" },
+	{
+		label: "Имэйл",
+		value: "jakegyll@email.com",
+		href: "mailto:jakegyll@email.com",
+	},
 	{ label: "Утас", value: "+44 1245 572 135", href: "tel:+441245572135" },
 	{ label: "Хэл", value: "Англи, Франц", href: "#" },
 ];
 
 export const socialProfiles = [
-	{ label: "Instagram", value: "instagram.com/jakegyll", href: "https://instagram.com/jakegyll" },
-	{ label: "Twitter", value: "twitter.com/jakegyll", href: "https://twitter.com/jakegyll" },
-	{ label: "Вебсайт", value: "www.jakegyll.com", href: "https://www.jakegyll.com" },
+	{
+		label: "Instagram",
+		value: "instagram.com/jakegyll",
+		href: "https://instagram.com/jakegyll",
+	},
+	{
+		label: "Twitter",
+		value: "twitter.com/jakegyll",
+		href: "https://twitter.com/jakegyll",
+	},
+	{
+		label: "Вебсайт",
+		value: "www.jakegyll.com",
+		href: "https://www.jakegyll.com",
+	},
 ];
 
 export const experiences = [
@@ -262,7 +290,13 @@ export const educations = [
 	},
 ];
 
-export const skills = ["Communication", "Analytics", "Facebook Ads", "Content Planning", "Community Manager"];
+export const skills = [
+	"Communication",
+	"Analytics",
+	"Facebook Ads",
+	"Content Planning",
+	"Community Manager",
+];
 
 export const portfolios = [
 	{ title: "Clinicly - clinic & health care website", href: "#" },
@@ -320,7 +354,7 @@ export const helpArticles = [
 	{
 		title: "Өргөдлийн түүхээ хэрхэн харах вэ?",
 		summary:
-			"Өргөдлийн түүхийг харахын тулд акаунтаараа нэвтрээд \"Миний өргөдлүүд\" хуудсанд очно.",
+			'Өргөдлийн түүхийг харахын тулд акаунтаараа нэвтрээд "Миний өргөдлүүд" хуудсанд очно.',
 		helpfulYes: 8,
 		helpfulNo: 0,
 	},
