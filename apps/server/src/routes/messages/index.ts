@@ -1,16 +1,16 @@
-import type { FastifyInstance } from "fastify";
 import {
-	GetMessagesQuerySchema,
-	IdParamsSchema,
-	CreateMessageBodySchema,
-	UpdateMessageBodySchema,
-	MarkMessagesReadBodySchema,
-	type GetMessagesQuery,
-	type IdParams,
 	type CreateMessageBody,
-	type UpdateMessageBody,
+	CreateMessageBodySchema,
+	type GetMessagesQuery,
+	GetMessagesQuerySchema,
+	type IdParams,
+	IdParamsSchema,
 	type MarkMessagesReadBody,
+	MarkMessagesReadBodySchema,
+	type UpdateMessageBody,
+	UpdateMessageBodySchema,
 } from "@ajil-go/contract";
+import type { FastifyInstance } from "fastify";
 import * as handlers from "./handlers.js";
 
 export default async function messagesRoutes(fastify: FastifyInstance) {

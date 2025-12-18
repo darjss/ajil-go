@@ -1,14 +1,14 @@
-import type { FastifyInstance } from "fastify";
 import {
-	GetBidsQuerySchema,
-	IdParamsSchema,
-	CreateBidBodySchema,
-	UpdateBidBodySchema,
-	type GetBidsQuery,
-	type IdParams,
 	type CreateBidBody,
+	CreateBidBodySchema,
+	type GetBidsQuery,
+	GetBidsQuerySchema,
+	type IdParams,
+	IdParamsSchema,
 	type UpdateBidBody,
+	UpdateBidBodySchema,
 } from "@ajil-go/contract";
+import type { FastifyInstance } from "fastify";
 import * as handlers from "./handlers.js";
 
 export default async function bidsRoutes(fastify: FastifyInstance) {

@@ -1,10 +1,10 @@
-import type { FastifyInstance } from "fastify";
 import type {
+	CreatePaymentBody,
 	GetPaymentsQuery,
 	IdParams,
-	CreatePaymentBody,
 	UpdatePaymentBody,
 } from "@ajil-go/contract";
+import type { FastifyInstance } from "fastify";
 
 export async function getPayments(
 	fastify: FastifyInstance,

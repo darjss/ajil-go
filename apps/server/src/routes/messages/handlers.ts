@@ -1,11 +1,11 @@
-import type { FastifyInstance } from "fastify";
 import type {
+	CreateMessageBody,
 	GetMessagesQuery,
 	IdParams,
-	CreateMessageBody,
-	UpdateMessageBody,
 	MarkMessagesReadBody,
+	UpdateMessageBody,
 } from "@ajil-go/contract";
+import type { FastifyInstance } from "fastify";
 
 export async function getMessages(
 	fastify: FastifyInstance,

@@ -1,14 +1,14 @@
-import type { FastifyInstance } from "fastify";
 import {
-	GetSkillsQuerySchema,
-	IdParamsSchema,
-	CreateSkillBodySchema,
-	UpdateSkillBodySchema,
-	type GetSkillsQuery,
-	type IdParams,
 	type CreateSkillBody,
+	CreateSkillBodySchema,
+	type GetSkillsQuery,
+	GetSkillsQuerySchema,
+	type IdParams,
+	IdParamsSchema,
 	type UpdateSkillBody,
+	UpdateSkillBodySchema,
 } from "@ajil-go/contract";
+import type { FastifyInstance } from "fastify";
 import * as handlers from "./handlers.js";
 
 export default async function skillsRoutes(fastify: FastifyInstance) {

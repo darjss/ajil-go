@@ -1,5 +1,5 @@
-import type { FastifyInstance } from "fastify";
 import type prisma from "@ajil-go/db";
+import type { FastifyInstance } from "fastify";
 
 // Extend Fastify instance with Prisma
 declare module "fastify" {

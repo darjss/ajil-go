@@ -1,5 +1,5 @@
-import fp from "fastify-plugin";
 import prisma from "@ajil-go/db";
+import fp from "fastify-plugin";
 
 export default fp(
 	async (fastify) => {

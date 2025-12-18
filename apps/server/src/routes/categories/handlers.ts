@@ -1,10 +1,10 @@
-import type { FastifyInstance } from "fastify";
 import type {
+	CreateCategoryBody,
 	GetCategoriesQuery,
 	IdParams,
-	CreateCategoryBody,
 	UpdateCategoryBody,
 } from "@ajil-go/contract";
+import type { FastifyInstance } from "fastify";
 
 export async function getCategories(
 	fastify: FastifyInstance,

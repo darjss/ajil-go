@@ -1,5 +1,5 @@
-import type { FastifyInstance } from "fastify";
 import { auth } from "@ajil-go/auth";
+import type { FastifyInstance } from "fastify";
 
 export default async function authRoutes(fastify: FastifyInstance) {
 	fastify.route({
@@ -23,7 +23,9 @@ export default async function authRoutes(fastify: FastifyInstance) {
 				const response = await auth.handler(req);
 
 				reply.status(response.status);
-				response.headers.forEach((value, key) => reply.header(key, value));
+				for (const [key, value] of response.headers.entries()) {
+					reply.header(key, value);
+				}
 				reply.send(response.body ? await response.text() : null);
 			} catch (error) {
 				fastify.log.error({ err: error }, "Authentication Error:");

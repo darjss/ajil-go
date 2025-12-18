@@ -1,14 +1,14 @@
-import type { FastifyInstance } from "fastify";
 import {
-	GetPaymentsQuerySchema,
-	IdParamsSchema,
-	CreatePaymentBodySchema,
-	UpdatePaymentBodySchema,
-	type GetPaymentsQuery,
-	type IdParams,
 	type CreatePaymentBody,
+	CreatePaymentBodySchema,
+	type GetPaymentsQuery,
+	GetPaymentsQuerySchema,
+	type IdParams,
+	IdParamsSchema,
 	type UpdatePaymentBody,
+	UpdatePaymentBodySchema,
 } from "@ajil-go/contract";
+import type { FastifyInstance } from "fastify";
 import * as handlers from "./handlers.js";
 
 export default async function paymentsRoutes(fastify: FastifyInstance) {

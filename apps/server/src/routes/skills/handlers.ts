@@ -1,10 +1,10 @@
-import type { FastifyInstance } from "fastify";
 import type {
+	CreateSkillBody,
 	GetSkillsQuery,
 	IdParams,
-	CreateSkillBody,
 	UpdateSkillBody,
 } from "@ajil-go/contract";
+import type { FastifyInstance } from "fastify";
 
 export async function getSkills(
 	fastify: FastifyInstance,

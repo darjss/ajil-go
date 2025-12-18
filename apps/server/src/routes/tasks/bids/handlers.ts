@@ -1,10 +1,10 @@
-import type { FastifyInstance } from "fastify";
 import type {
+	CreateBidBody,
 	GetBidsQuery,
 	IdParams,
-	CreateBidBody,
 	UpdateBidBody,
 } from "@ajil-go/contract";
+import type { FastifyInstance } from "fastify";
 
 export async function getBids(fastify: FastifyInstance, query: GetBidsQuery) {
 	const { page, limit, taskId, bidderId, status } = query;

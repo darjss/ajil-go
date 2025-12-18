@@ -1,14 +1,14 @@
-import type { FastifyInstance } from "fastify";
 import {
-	GetReviewsQuerySchema,
-	IdParamsSchema,
-	CreateReviewBodySchema,
-	UpdateReviewBodySchema,
-	type GetReviewsQuery,
-	type IdParams,
 	type CreateReviewBody,
+	CreateReviewBodySchema,
+	type GetReviewsQuery,
+	GetReviewsQuerySchema,
+	type IdParams,
+	IdParamsSchema,
 	type UpdateReviewBody,
+	UpdateReviewBodySchema,
 } from "@ajil-go/contract";
+import type { FastifyInstance } from "fastify";
 import * as handlers from "./handlers.js";
 
 export default async function reviewsRoutes(fastify: FastifyInstance) {
@@ -44,15 +44,37 @@ export default async function reviewsRoutes(fastify: FastifyInstance) {
 		},
 	);
 
-	// POST /api/reviews - Create new review
+	// POST /api/reviews - Create new review (requires auth)
 	fastify.post<{ Body: CreateReviewBody }>(
 		"/",
 		{
 			schema: {
 				body: CreateReviewBodySchema,
 			},
+			preHandler: fastify.authenticate,
 		},
 		async (request, reply) => {
+			if (!request.user) {
+				return reply.status(401).send({
+					error: "Unauthorized",
+					code: "UNAUTHORIZED",
+				});
+			}
+
+			// Validate review creation rules
+			const validation = await handlers.validateReviewCreation(
+				fastify,
+				request.body,
+				request.user.id,
+			);
+
+			if (!validation.valid) {
+				return reply.status(403).send({
+					error: validation.error,
+					code: validation.code,
+				});
+			}
+
 			try {
 				const review = await handlers.createReview(fastify, request.body);
 				return reply.status(201).send(review);
@@ -73,7 +95,7 @@ export default async function reviewsRoutes(fastify: FastifyInstance) {
 		},
 	);
 
-	// PATCH /api/reviews/:id - Update review
+	// PATCH /api/reviews/:id - Update review (requires auth, must be author)
 	fastify.patch<{ Params: IdParams; Body: UpdateReviewBody }>(
 		"/:id",
 		{
@@ -81,8 +103,31 @@ export default async function reviewsRoutes(fastify: FastifyInstance) {
 				params: IdParamsSchema,
 				body: UpdateReviewBodySchema,
 			},
+			preHandler: fastify.authenticate,
 		},
 		async (request, reply) => {
+			if (!request.user) {
+				return reply.status(401).send({
+					error: "Unauthorized",
+					code: "UNAUTHORIZED",
+				});
+			}
+
+			// Check if review exists and user is author
+			const review = await handlers.getReviewForAuth(fastify, request.params);
+			if (!review) {
+				return reply
+					.status(404)
+					.send({ error: "Review not found", code: "REVIEW_NOT_FOUND" });
+			}
+
+			if (review.authorId !== request.user.id) {
+				return reply.status(403).send({
+					error: "You can only update your own reviews",
+					code: "FORBIDDEN",
+				});
+			}
+
 			try {
 				return await handlers.updateReview(
 					fastify,
@@ -97,15 +142,38 @@ export default async function reviewsRoutes(fastify: FastifyInstance) {
 		},
 	);
 
-	// DELETE /api/reviews/:id - Delete review
+	// DELETE /api/reviews/:id - Delete review (requires auth, must be author)
 	fastify.delete<{ Params: IdParams }>(
 		"/:id",
 		{
 			schema: {
 				params: IdParamsSchema,
 			},
+			preHandler: fastify.authenticate,
 		},
 		async (request, reply) => {
+			if (!request.user) {
+				return reply.status(401).send({
+					error: "Unauthorized",
+					code: "UNAUTHORIZED",
+				});
+			}
+
+			// Check if review exists and user is author
+			const review = await handlers.getReviewForAuth(fastify, request.params);
+			if (!review) {
+				return reply
+					.status(404)
+					.send({ error: "Review not found", code: "REVIEW_NOT_FOUND" });
+			}
+
+			if (review.authorId !== request.user.id) {
+				return reply.status(403).send({
+					error: "You can only delete your own reviews",
+					code: "FORBIDDEN",
+				});
+			}
+
 			try {
 				await handlers.deleteReview(fastify, request.params);
 				return reply.status(204).send();

@@ -1,9 +1,9 @@
-import type { FastifyInstance } from "fastify";
 import type {
 	GetUsersQuery,
 	IdParams,
 	UpdateUserBody,
 } from "@ajil-go/contract";
+import type { FastifyInstance } from "fastify";
 
 export async function getUsers(fastify: FastifyInstance, query: GetUsersQuery) {
 	const { page, limit, city, search } = query;

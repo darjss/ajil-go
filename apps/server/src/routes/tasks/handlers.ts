@@ -1,10 +1,10 @@
-import type { FastifyInstance } from "fastify";
 import type {
+	CreateTaskBody,
 	GetTasksQuery,
 	IdParams,
-	CreateTaskBody,
 	UpdateTaskBody,
 } from "@ajil-go/contract";
+import type { FastifyInstance } from "fastify";
 
 export async function getTasks(fastify: FastifyInstance, query: GetTasksQuery) {
 	const {

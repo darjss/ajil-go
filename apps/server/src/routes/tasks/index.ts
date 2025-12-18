@@ -1,14 +1,14 @@
-import type { FastifyInstance } from "fastify";
 import {
-	GetTasksQuerySchema,
-	IdParamsSchema,
-	CreateTaskBodySchema,
-	UpdateTaskBodySchema,
-	type GetTasksQuery,
-	type IdParams,
 	type CreateTaskBody,
+	CreateTaskBodySchema,
+	type GetTasksQuery,
+	GetTasksQuerySchema,
+	type IdParams,
+	IdParamsSchema,
 	type UpdateTaskBody,
+	UpdateTaskBodySchema,
 } from "@ajil-go/contract";
+import type { FastifyInstance } from "fastify";
 import * as handlers from "./handlers.js";
 
 export default async function tasksRoutes(fastify: FastifyInstance) {

@@ -1,14 +1,14 @@
-import type { FastifyInstance } from "fastify";
 import {
-	GetCategoriesQuerySchema,
-	IdParamsSchema,
-	CreateCategoryBodySchema,
-	UpdateCategoryBodySchema,
-	type GetCategoriesQuery,
-	type IdParams,
 	type CreateCategoryBody,
+	CreateCategoryBodySchema,
+	type GetCategoriesQuery,
+	GetCategoriesQuerySchema,
+	type IdParams,
+	IdParamsSchema,
 	type UpdateCategoryBody,
+	UpdateCategoryBodySchema,
 } from "@ajil-go/contract";
+import type { FastifyInstance } from "fastify";
 import * as handlers from "./handlers.js";
 
 export default async function categoriesRoutes(fastify: FastifyInstance) {

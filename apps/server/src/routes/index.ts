@@ -1,14 +1,14 @@
 import type { FastifyInstance } from "fastify";
-import healthRoutes from "./health/index.js";
 import authRoutes from "./auth/index.js";
-import usersRoutes from "./users/index.js";
-import tasksRoutes from "./tasks/index.js";
-import bidsRoutes from "./tasks/bids/index.js";
 import categoriesRoutes from "./categories/index.js";
-import skillsRoutes from "./skills/index.js";
-import reviewsRoutes from "./reviews/index.js";
+import healthRoutes from "./health/index.js";
 import messagesRoutes from "./messages/index.js";
 import paymentsRoutes from "./payments/index.js";
+import reviewsRoutes from "./reviews/index.js";
+import skillsRoutes from "./skills/index.js";
+import bidsRoutes from "./tasks/bids/index.js";
+import tasksRoutes from "./tasks/index.js";
+import usersRoutes from "./users/index.js";
 
 /**
  * Registers all routes under /api prefix

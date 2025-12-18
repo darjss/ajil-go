@@ -1,11 +1,12 @@
 import "dotenv/config";
-import Fastify from "fastify";
 import fastifyCors from "@fastify/cors";
+import Fastify from "fastify";
 import {
 	serializerCompiler,
 	validatorCompiler,
 	type ZodTypeProvider,
 } from "fastify-type-provider-zod";
+import authPlugin from "./plugins/auth.js";
 import prisma from "./plugins/prisma.js";
 import routes from "./routes/index.js";
 
@@ -29,6 +30,7 @@ fastify.setSerializerCompiler(serializerCompiler);
 // Register plugins
 fastify.register(fastifyCors, baseCorsConfig);
 fastify.register(prisma);
+fastify.register(authPlugin);
 
 // Register all routes under /api prefix
 fastify.register(routes, { prefix: "/api" });
