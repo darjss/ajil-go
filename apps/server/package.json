@@ -10,19 +10,23 @@
 		"start": "node dist/index.js"
 	},
 	"dependencies": {
-		"fastify": "^5.3.3",
+		"@ajil-go/auth": "workspace:*",
+		"@ajil-go/contract": "workspace:*",
+		"@ajil-go/db": "workspace:*",
+		"@fastify/autoload": "^6.3.1",
 		"@fastify/cors": "^11.0.1",
 		"better-auth": "catalog:",
 		"dotenv": "catalog:",
-		"zod": "^4.1.11",
-		"@ajil-go/auth": "workspace:*",
-		"@ajil-go/db": "workspace:*"
+		"fastify": "^5.3.3",
+		"fastify-plugin": "^5.1.0",
+		"fastify-type-provider-zod": "^6.1.0",
+		"zod": "^4.1.11"
 	},
 	"devDependencies": {
-		"typescript": "^5.8.2",
-		"tsx": "^4.19.2",
+		"@ajil-go/config": "workspace:*",
 		"@types/node": "^22.13.11",
 		"tsdown": "^0.16.5",
-		"@ajil-go/config": "workspace:*"
+		"tsx": "^4.19.2",
+		"typescript": "^5.8.2"
 	}
 }

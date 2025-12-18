@@ -7,6 +7,15 @@ dotenv.config({
 	path: "../../apps/server/.env",
 });
 
+// Helper to safely get from map (avoids non-null assertions)
+function getOrThrow<K, V>(map: Map<K, V>, key: K): V {
+	const value = map.get(key);
+	if (value === undefined) {
+		throw new Error(`Missing required key: ${String(key)}`);
+	}
+	return value;
+}
+
 const pool = new pg.Pool({
 	connectionString: process.env.DATABASE_URL,
 });
@@ -493,47 +502,53 @@ async function main() {
 			where: {
 				userId_skillId: {
 					userId: "demo-user-alice",
-					skillId: skillMap.get("Handyman")!,
-				},
-			},
-			update: {},
-			create: { userId: "demo-user-alice", skillId: skillMap.get("Handyman")! },
-		}),
-		prisma.userSkill.upsert({
-			where: {
-				userId_skillId: {
-					userId: "demo-user-alice",
-					skillId: skillMap.get("Computer Setup")!,
+					skillId: getOrThrow(skillMap, "Handyman"),
 				},
 			},
 			update: {},
 			create: {
 				userId: "demo-user-alice",
-				skillId: skillMap.get("Computer Setup")!,
+				skillId: getOrThrow(skillMap, "Handyman"),
 			},
 		}),
 		prisma.userSkill.upsert({
 			where: {
 				userId_skillId: {
 					userId: "demo-user-alice",
-					skillId: skillMap.get("Network Setup")!,
+					skillId: getOrThrow(skillMap, "Computer Setup"),
 				},
 			},
 			update: {},
 			create: {
 				userId: "demo-user-alice",
-				skillId: skillMap.get("Network Setup")!,
+				skillId: getOrThrow(skillMap, "Computer Setup"),
 			},
 		}),
 		prisma.userSkill.upsert({
 			where: {
 				userId_skillId: {
 					userId: "demo-user-alice",
-					skillId: skillMap.get("Painting")!,
+					skillId: getOrThrow(skillMap, "Network Setup"),
 				},
 			},
 			update: {},
-			create: { userId: "demo-user-alice", skillId: skillMap.get("Painting")! },
+			create: {
+				userId: "demo-user-alice",
+				skillId: getOrThrow(skillMap, "Network Setup"),
+			},
+		}),
+		prisma.userSkill.upsert({
+			where: {
+				userId_skillId: {
+					userId: "demo-user-alice",
+					skillId: getOrThrow(skillMap, "Painting"),
+				},
+			},
+			update: {},
+			create: {
+				userId: "demo-user-alice",
+				skillId: getOrThrow(skillMap, "Painting"),
+			},
 		}),
 
 		// Bob: Moving, Fitness
@@ -541,50 +556,53 @@ async function main() {
 			where: {
 				userId_skillId: {
 					userId: "demo-user-bob",
-					skillId: skillMap.get("Heavy Lifting")!,
+					skillId: getOrThrow(skillMap, "Heavy Lifting"),
 				},
 			},
 			update: {},
 			create: {
 				userId: "demo-user-bob",
-				skillId: skillMap.get("Heavy Lifting")!,
+				skillId: getOrThrow(skillMap, "Heavy Lifting"),
 			},
 		}),
 		prisma.userSkill.upsert({
 			where: {
 				userId_skillId: {
 					userId: "demo-user-bob",
-					skillId: skillMap.get("Furniture Assembly")!,
+					skillId: getOrThrow(skillMap, "Furniture Assembly"),
 				},
 			},
 			update: {},
 			create: {
 				userId: "demo-user-bob",
-				skillId: skillMap.get("Furniture Assembly")!,
+				skillId: getOrThrow(skillMap, "Furniture Assembly"),
 			},
 		}),
 		prisma.userSkill.upsert({
 			where: {
 				userId_skillId: {
 					userId: "demo-user-bob",
-					skillId: skillMap.get("Personal Training")!,
+					skillId: getOrThrow(skillMap, "Personal Training"),
 				},
 			},
 			update: {},
 			create: {
 				userId: "demo-user-bob",
-				skillId: skillMap.get("Personal Training")!,
+				skillId: getOrThrow(skillMap, "Personal Training"),
 			},
 		}),
 		prisma.userSkill.upsert({
 			where: {
 				userId_skillId: {
 					userId: "demo-user-bob",
-					skillId: skillMap.get("Driving")!,
+					skillId: getOrThrow(skillMap, "Driving"),
 				},
 			},
 			update: {},
-			create: { userId: "demo-user-bob", skillId: skillMap.get("Driving")! },
+			create: {
+				userId: "demo-user-bob",
+				skillId: getOrThrow(skillMap, "Driving"),
+			},
 		}),
 
 		// Carol: Creative
@@ -592,39 +610,39 @@ async function main() {
 			where: {
 				userId_skillId: {
 					userId: "demo-user-carol",
-					skillId: skillMap.get("Photography")!,
+					skillId: getOrThrow(skillMap, "Photography"),
 				},
 			},
 			update: {},
 			create: {
 				userId: "demo-user-carol",
-				skillId: skillMap.get("Photography")!,
+				skillId: getOrThrow(skillMap, "Photography"),
 			},
 		}),
 		prisma.userSkill.upsert({
 			where: {
 				userId_skillId: {
 					userId: "demo-user-carol",
-					skillId: skillMap.get("Graphic Design")!,
+					skillId: getOrThrow(skillMap, "Graphic Design"),
 				},
 			},
 			update: {},
 			create: {
 				userId: "demo-user-carol",
-				skillId: skillMap.get("Graphic Design")!,
+				skillId: getOrThrow(skillMap, "Graphic Design"),
 			},
 		}),
 		prisma.userSkill.upsert({
 			where: {
 				userId_skillId: {
 					userId: "demo-user-carol",
-					skillId: skillMap.get("Video Editing")!,
+					skillId: getOrThrow(skillMap, "Video Editing"),
 				},
 			},
 			update: {},
 			create: {
 				userId: "demo-user-carol",
-				skillId: skillMap.get("Video Editing")!,
+				skillId: getOrThrow(skillMap, "Video Editing"),
 			},
 		}),
 		prisma.userSkill.upsert({
@@ -643,39 +661,39 @@ async function main() {
 			where: {
 				userId_skillId: {
 					userId: "demo-user-david",
-					skillId: skillMap.get("Math Tutoring")!,
+					skillId: getOrThrow(skillMap, "Math Tutoring"),
 				},
 			},
 			update: {},
 			create: {
 				userId: "demo-user-david",
-				skillId: skillMap.get("Math Tutoring")!,
+				skillId: getOrThrow(skillMap, "Math Tutoring"),
 			},
 		}),
 		prisma.userSkill.upsert({
 			where: {
 				userId_skillId: {
 					userId: "demo-user-david",
-					skillId: skillMap.get("Music Lessons")!,
+					skillId: getOrThrow(skillMap, "Music Lessons"),
 				},
 			},
 			update: {},
 			create: {
 				userId: "demo-user-david",
-				skillId: skillMap.get("Music Lessons")!,
+				skillId: getOrThrow(skillMap, "Music Lessons"),
 			},
 		}),
 		prisma.userSkill.upsert({
 			where: {
 				userId_skillId: {
 					userId: "demo-user-david",
-					skillId: skillMap.get("Test Prep")!,
+					skillId: getOrThrow(skillMap, "Test Prep"),
 				},
 			},
 			update: {},
 			create: {
 				userId: "demo-user-david",
-				skillId: skillMap.get("Test Prep")!,
+				skillId: getOrThrow(skillMap, "Test Prep"),
 			},
 		}),
 
@@ -684,39 +702,39 @@ async function main() {
 			where: {
 				userId_skillId: {
 					userId: "demo-user-emma",
-					skillId: skillMap.get("Dog Walking")!,
+					skillId: getOrThrow(skillMap, "Dog Walking"),
 				},
 			},
 			update: {},
 			create: {
 				userId: "demo-user-emma",
-				skillId: skillMap.get("Dog Walking")!,
+				skillId: getOrThrow(skillMap, "Dog Walking"),
 			},
 		}),
 		prisma.userSkill.upsert({
 			where: {
 				userId_skillId: {
 					userId: "demo-user-emma",
-					skillId: skillMap.get("Pet Sitting")!,
+					skillId: getOrThrow(skillMap, "Pet Sitting"),
 				},
 			},
 			update: {},
 			create: {
 				userId: "demo-user-emma",
-				skillId: skillMap.get("Pet Sitting")!,
+				skillId: getOrThrow(skillMap, "Pet Sitting"),
 			},
 		}),
 		prisma.userSkill.upsert({
 			where: {
 				userId_skillId: {
 					userId: "demo-user-emma",
-					skillId: skillMap.get("Pet Grooming")!,
+					skillId: getOrThrow(skillMap, "Pet Grooming"),
 				},
 			},
 			update: {},
 			create: {
 				userId: "demo-user-emma",
-				skillId: skillMap.get("Pet Grooming")!,
+				skillId: getOrThrow(skillMap, "Pet Grooming"),
 			},
 		}),
 	]);
@@ -750,7 +768,7 @@ async function main() {
 				estimatedHours: 4,
 				status: "OPEN",
 				posterId: "demo-user-carol",
-				categoryId: categoryMap.get("Moving & Delivery")!,
+				categoryId: getOrThrow(categoryMap, "Moving & Delivery"),
 			},
 		}),
 
@@ -774,7 +792,7 @@ async function main() {
 				estimatedHours: 3,
 				status: "OPEN",
 				posterId: "demo-user-alice",
-				categoryId: categoryMap.get("Events & Photography")!,
+				categoryId: getOrThrow(categoryMap, "Events & Photography"),
 			},
 		}),
 
@@ -798,7 +816,7 @@ async function main() {
 				estimatedHours: 14,
 				status: "ASSIGNED",
 				posterId: "demo-user-bob",
-				categoryId: categoryMap.get("Pet Care")!,
+				categoryId: getOrThrow(categoryMap, "Pet Care"),
 			},
 		}),
 
@@ -821,7 +839,7 @@ async function main() {
 				estimatedHours: 5,
 				status: "IN_PROGRESS",
 				posterId: "demo-user-carol",
-				categoryId: categoryMap.get("Tutoring & Lessons")!,
+				categoryId: getOrThrow(categoryMap, "Tutoring & Lessons"),
 			},
 		}),
 
@@ -846,7 +864,7 @@ async function main() {
 				estimatedHours: 2,
 				status: "COMPLETED",
 				posterId: "demo-user-emma",
-				categoryId: categoryMap.get("Tech Support")!,
+				categoryId: getOrThrow(categoryMap, "Tech Support"),
 			},
 		}),
 
@@ -871,7 +889,7 @@ async function main() {
 				estimatedHours: 4,
 				status: "REVIEWED",
 				posterId: "demo-user-david",
-				categoryId: categoryMap.get("Home Services")!,
+				categoryId: getOrThrow(categoryMap, "Home Services"),
 			},
 		}),
 
@@ -894,7 +912,7 @@ async function main() {
 				estimatedHours: 8,
 				status: "OPEN",
 				posterId: "demo-user-bob",
-				categoryId: categoryMap.get("Creative & Design")!,
+				categoryId: getOrThrow(categoryMap, "Creative & Design"),
 			},
 		}),
 
@@ -918,7 +936,7 @@ async function main() {
 				estimatedHours: 4,
 				status: "OPEN",
 				posterId: "demo-user-emma",
-				categoryId: categoryMap.get("Health & Wellness")!,
+				categoryId: getOrThrow(categoryMap, "Health & Wellness"),
 			},
 		}),
 	]);
@@ -934,26 +952,26 @@ async function main() {
 			where: {
 				taskId_skillId: {
 					taskId: "demo-task-1",
-					skillId: skillMap.get("Furniture Assembly")!,
+					skillId: getOrThrow(skillMap, "Furniture Assembly"),
 				},
 			},
 			update: {},
 			create: {
 				taskId: "demo-task-1",
-				skillId: skillMap.get("Furniture Assembly")!,
+				skillId: getOrThrow(skillMap, "Furniture Assembly"),
 			},
 		}),
 		prisma.taskSkill.upsert({
 			where: {
 				taskId_skillId: {
 					taskId: "demo-task-1",
-					skillId: skillMap.get("Heavy Lifting")!,
+					skillId: getOrThrow(skillMap, "Heavy Lifting"),
 				},
 			},
 			update: {},
 			create: {
 				taskId: "demo-task-1",
-				skillId: skillMap.get("Heavy Lifting")!,
+				skillId: getOrThrow(skillMap, "Heavy Lifting"),
 			},
 		}),
 
@@ -962,11 +980,14 @@ async function main() {
 			where: {
 				taskId_skillId: {
 					taskId: "demo-task-2",
-					skillId: skillMap.get("Photography")!,
+					skillId: getOrThrow(skillMap, "Photography"),
 				},
 			},
 			update: {},
-			create: { taskId: "demo-task-2", skillId: skillMap.get("Photography")! },
+			create: {
+				taskId: "demo-task-2",
+				skillId: getOrThrow(skillMap, "Photography"),
+			},
 		}),
 
 		// Task 3: Dog walking
@@ -974,11 +995,14 @@ async function main() {
 			where: {
 				taskId_skillId: {
 					taskId: "demo-task-3",
-					skillId: skillMap.get("Dog Walking")!,
+					skillId: getOrThrow(skillMap, "Dog Walking"),
 				},
 			},
 			update: {},
-			create: { taskId: "demo-task-3", skillId: skillMap.get("Dog Walking")! },
+			create: {
+				taskId: "demo-task-3",
+				skillId: getOrThrow(skillMap, "Dog Walking"),
+			},
 		}),
 
 		// Task 4: Math tutoring
@@ -986,24 +1010,27 @@ async function main() {
 			where: {
 				taskId_skillId: {
 					taskId: "demo-task-4",
-					skillId: skillMap.get("Math Tutoring")!,
+					skillId: getOrThrow(skillMap, "Math Tutoring"),
 				},
 			},
 			update: {},
 			create: {
 				taskId: "demo-task-4",
-				skillId: skillMap.get("Math Tutoring")!,
+				skillId: getOrThrow(skillMap, "Math Tutoring"),
 			},
 		}),
 		prisma.taskSkill.upsert({
 			where: {
 				taskId_skillId: {
 					taskId: "demo-task-4",
-					skillId: skillMap.get("Test Prep")!,
+					skillId: getOrThrow(skillMap, "Test Prep"),
 				},
 			},
 			update: {},
-			create: { taskId: "demo-task-4", skillId: skillMap.get("Test Prep")! },
+			create: {
+				taskId: "demo-task-4",
+				skillId: getOrThrow(skillMap, "Test Prep"),
+			},
 		}),
 
 		// Task 5: Computer setup
@@ -1011,26 +1038,26 @@ async function main() {
 			where: {
 				taskId_skillId: {
 					taskId: "demo-task-5",
-					skillId: skillMap.get("Computer Setup")!,
+					skillId: getOrThrow(skillMap, "Computer Setup"),
 				},
 			},
 			update: {},
 			create: {
 				taskId: "demo-task-5",
-				skillId: skillMap.get("Computer Setup")!,
+				skillId: getOrThrow(skillMap, "Computer Setup"),
 			},
 		}),
 		prisma.taskSkill.upsert({
 			where: {
 				taskId_skillId: {
 					taskId: "demo-task-5",
-					skillId: skillMap.get("Network Setup")!,
+					skillId: getOrThrow(skillMap, "Network Setup"),
 				},
 			},
 			update: {},
 			create: {
 				taskId: "demo-task-5",
-				skillId: skillMap.get("Network Setup")!,
+				skillId: getOrThrow(skillMap, "Network Setup"),
 			},
 		}),
 
@@ -1039,11 +1066,14 @@ async function main() {
 			where: {
 				taskId_skillId: {
 					taskId: "demo-task-6",
-					skillId: skillMap.get("Cleaning")!,
+					skillId: getOrThrow(skillMap, "Cleaning"),
 				},
 			},
 			update: {},
-			create: { taskId: "demo-task-6", skillId: skillMap.get("Cleaning")! },
+			create: {
+				taskId: "demo-task-6",
+				skillId: getOrThrow(skillMap, "Cleaning"),
+			},
 		}),
 
 		// Task 7: Graphic design
@@ -1051,13 +1081,13 @@ async function main() {
 			where: {
 				taskId_skillId: {
 					taskId: "demo-task-7",
-					skillId: skillMap.get("Graphic Design")!,
+					skillId: getOrThrow(skillMap, "Graphic Design"),
 				},
 			},
 			update: {},
 			create: {
 				taskId: "demo-task-7",
-				skillId: skillMap.get("Graphic Design")!,
+				skillId: getOrThrow(skillMap, "Graphic Design"),
 			},
 		}),
 
@@ -1066,13 +1096,13 @@ async function main() {
 			where: {
 				taskId_skillId: {
 					taskId: "demo-task-8",
-					skillId: skillMap.get("Personal Training")!,
+					skillId: getOrThrow(skillMap, "Personal Training"),
 				},
 			},
 			update: {},
 			create: {
 				taskId: "demo-task-8",
-				skillId: skillMap.get("Personal Training")!,
+				skillId: getOrThrow(skillMap, "Personal Training"),
 			},
 		}),
 	]);

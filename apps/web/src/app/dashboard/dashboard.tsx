@@ -6,5 +6,5 @@ export default function Dashboard({
 }: {
 	session: typeof authClient.$Infer.Session;
 }) {
-	return <></>;
+	return <div>Welcome, {session.user.name}</div>;
 }
