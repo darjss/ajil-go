@@ -26,11 +26,9 @@ export default function RootLayout({
 	return (
 		<html lang="mn" suppressHydrationWarning>
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-b from-slate-50 via-white to-slate-50 text-foreground`}
+				className={`${geistSans.variable} ${geistMono.variable} bg-gradient-to-b from-slate-50 via-white to-slate-50 text-foreground antialiased`}
 			>
-				<Providers>
-					{children}
-				</Providers>
+				<Providers>{children}</Providers>
 			</body>
 		</html>
 	);
