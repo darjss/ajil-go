@@ -3,7 +3,7 @@
 import { ArrowRight, Briefcase, ClipboardList, Loader2 } from "lucide-react";
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -20,12 +20,7 @@ export default function DashboardPage() {
 	const { data: session, isPending } = authClient.useSession();
 	const [isNavigating, setIsNavigating] = useState(false);
 
-	useEffect(() => {
-		if (!isPending && !session) {
-			router.push("/login");
-		}
-	}, [session, isPending, router]);
-
+	// Server-side layout handles auth redirect, this is just for loading state
 	if (isPending || !session) {
 		return (
 			<div className="flex min-h-screen items-center justify-center bg-muted">

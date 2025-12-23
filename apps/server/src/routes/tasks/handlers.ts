@@ -117,12 +117,14 @@ export async function getTaskById(fastify: FastifyInstance, params: IdParams) {
 export async function createTask(
 	fastify: FastifyInstance,
 	body: CreateTaskBody,
+	userId: string,
 ) {
-	const { skillIds, ...taskData } = body;
+	const { skillIds, posterId: _ignoredPosterId, ...taskData } = body;
 
 	const task = await fastify.prisma.task.create({
 		data: {
 			...taskData,
+			posterId: userId,
 			...(skillIds?.length && {
 				skills: {
 					create: skillIds.map((skillId) => ({ skillId })),

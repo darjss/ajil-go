@@ -1,11 +1,20 @@
+import { redirect } from "next/navigation";
 import type React from "react";
+
+import { serverApi } from "@/lib/api.server";
 import { MobileHeader, WorkerSidebar } from "./components/sidebar";
 
-export default function WorkerLayout({
+export default async function WorkerLayout({
 	children,
 }: {
 	children: React.ReactNode;
 }) {
+	const user = await serverApi.getMe();
+
+	if (!user) {
+		redirect("/login");
+	}
+
 	return (
 		<div className="flex min-h-screen bg-background dark:bg-background">
 			<WorkerSidebar />

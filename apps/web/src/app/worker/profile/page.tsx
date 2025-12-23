@@ -12,7 +12,6 @@ import {
 	User,
 	X,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -36,7 +35,6 @@ import { authClient } from "@/lib/auth-client";
 import { userKeys, userQueries } from "@/lib/queries";
 
 export default function WorkerProfilePage() {
-	const router = useRouter();
 	const queryClient = useQueryClient();
 	const { data: session, isPending: isSessionLoading } =
 		authClient.useSession();
@@ -50,12 +48,7 @@ export default function WorkerProfilePage() {
 		city: "",
 	});
 
-	useEffect(() => {
-		if (!isSessionLoading && !session?.user) {
-			router.push("/login");
-		}
-	}, [session, isSessionLoading, router]);
-
+	// Auth is handled by server-side layout
 	const userId = session?.user?.id;
 
 	const { data: userData, isLoading: isUserLoading } = useQuery({

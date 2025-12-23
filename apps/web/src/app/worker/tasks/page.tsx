@@ -16,8 +16,6 @@ import {
 } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -78,17 +76,11 @@ function TaskCardSkeleton() {
 }
 
 export default function WorkerTasksPage() {
-	const router = useRouter();
 	const queryClient = useQueryClient();
 	const { data: session, isPending: isSessionLoading } =
 		authClient.useSession();
 
-	useEffect(() => {
-		if (!isSessionLoading && !session?.user) {
-			router.push("/login");
-		}
-	}, [session, isSessionLoading, router]);
-
+	// Auth is handled by server-side layout
 	const userId = session?.user?.id;
 
 	const { data: bidsData, isLoading: isBidsLoading } = useQuery({

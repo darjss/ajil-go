@@ -1,4 +1,6 @@
 import { AlertTriangle, FileQuestion, Loader2 } from "lucide-react";
+import type { Route } from "next";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -9,7 +11,8 @@ interface EmptyStateProps {
 	description?: string;
 	action?: {
 		label: string;
-		onClick: () => void;
+		onClick?: () => void;
+		href?: Route;
 	};
 	className?: string;
 }
@@ -44,8 +47,13 @@ export function EmptyState({
 					onClick={action.onClick}
 					className="mt-6 rounded-none font-mono text-xs uppercase tracking-wider"
 					variant="outline"
+					asChild={!!action.href}
 				>
-					{action.label}
+					{action.href ? (
+						<Link href={action.href}>{action.label}</Link>
+					) : (
+						action.label
+					)}
 				</Button>
 			)}
 		</div>

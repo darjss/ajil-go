@@ -71,9 +71,15 @@ export async function getMessageById(
 export async function createMessage(
 	fastify: FastifyInstance,
 	body: CreateMessageBody,
+	userId: string,
 ) {
+	const { senderId: _ignoredSenderId, ...messageData } = body;
+	
 	const message = await fastify.prisma.message.create({
-		data: body,
+		data: {
+			...messageData,
+			senderId: userId,
+		},
 		include: {
 			sender: {
 				select: { id: true, name: true, image: true },

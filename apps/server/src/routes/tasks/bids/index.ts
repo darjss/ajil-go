@@ -51,10 +51,11 @@ export default async function bidsRoutes(fastify: FastifyInstance) {
 			schema: {
 				body: CreateBidBodySchema,
 			},
+			preHandler: fastify.authenticate,
 		},
 		async (request, reply) => {
 			try {
-				const bid = await handlers.createBid(fastify, request.body);
+				const bid = await handlers.createBid(fastify, request.body, request.user!.id);
 				return reply.status(201).send(bid);
 			} catch (error: unknown) {
 				// Handle unique constraint (one bid per user per task)
@@ -82,15 +83,29 @@ export default async function bidsRoutes(fastify: FastifyInstance) {
 				params: IdParamsSchema,
 				body: UpdateBidBodySchema,
 			},
+			preHandler: fastify.authenticate,
 		},
 		async (request, reply) => {
-			try {
-				return await handlers.updateBid(fastify, request.params, request.body);
-			} catch {
+			// Check ownership
+			const existingBid = await fastify.prisma.taskBid.findUnique({
+				where: { id: request.params.id },
+				select: { bidderId: true },
+			});
+
+			if (!existingBid) {
 				return reply
 					.status(404)
 					.send({ error: "Bid not found", code: "BID_NOT_FOUND" });
 			}
+
+			if (existingBid.bidderId !== request.user!.id) {
+				return reply
+					.status(403)
+					.send({ error: "Forbidden", code: "FORBIDDEN" });
+			}
+
+			const bid = await handlers.updateBid(fastify, request.params, request.body);
+			return bid;
 		},
 	);
 
@@ -101,16 +116,29 @@ export default async function bidsRoutes(fastify: FastifyInstance) {
 			schema: {
 				params: IdParamsSchema,
 			},
+			preHandler: fastify.authenticate,
 		},
 		async (request, reply) => {
-			try {
-				await handlers.deleteBid(fastify, request.params);
-				return reply.status(204).send();
-			} catch {
+			// Check ownership
+			const existingBid = await fastify.prisma.taskBid.findUnique({
+				where: { id: request.params.id },
+				select: { bidderId: true },
+			});
+
+			if (!existingBid) {
 				return reply
 					.status(404)
 					.send({ error: "Bid not found", code: "BID_NOT_FOUND" });
 			}
+
+			if (existingBid.bidderId !== request.user!.id) {
+				return reply
+					.status(403)
+					.send({ error: "Forbidden", code: "FORBIDDEN" });
+			}
+
+			await handlers.deleteBid(fastify, request.params);
+			return reply.status(204).send();
 		},
 	);
 }

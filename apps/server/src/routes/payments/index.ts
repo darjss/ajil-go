@@ -51,10 +51,11 @@ export default async function paymentsRoutes(fastify: FastifyInstance) {
 			schema: {
 				body: CreatePaymentBodySchema,
 			},
+			preHandler: fastify.authenticate,
 		},
 		async (request, reply) => {
 			try {
-				const payment = await handlers.createPayment(fastify, request.body);
+				const payment = await handlers.createPayment(fastify, request.body, request.user!.id);
 				return reply.status(201).send(payment);
 			} catch (error: unknown) {
 				if (
@@ -81,19 +82,33 @@ export default async function paymentsRoutes(fastify: FastifyInstance) {
 				params: IdParamsSchema,
 				body: UpdatePaymentBodySchema,
 			},
+			preHandler: fastify.authenticate,
 		},
 		async (request, reply) => {
-			try {
-				return await handlers.updatePayment(
-					fastify,
-					request.params,
-					request.body,
-				);
-			} catch {
+			// Check ownership
+			const existingPayment = await fastify.prisma.payment.findUnique({
+				where: { id: request.params.id },
+				select: { payerId: true },
+			});
+
+			if (!existingPayment) {
 				return reply
 					.status(404)
 					.send({ error: "Payment not found", code: "PAYMENT_NOT_FOUND" });
 			}
+
+			if (existingPayment.payerId !== request.user!.id) {
+				return reply
+					.status(403)
+					.send({ error: "Forbidden", code: "FORBIDDEN" });
+			}
+
+			const payment = await handlers.updatePayment(
+				fastify,
+				request.params,
+				request.body,
+			);
+			return payment;
 		},
 	);
 
@@ -104,16 +119,29 @@ export default async function paymentsRoutes(fastify: FastifyInstance) {
 			schema: {
 				params: IdParamsSchema,
 			},
+			preHandler: fastify.authenticate,
 		},
 		async (request, reply) => {
-			try {
-				await handlers.deletePayment(fastify, request.params);
-				return reply.status(204).send();
-			} catch {
+			// Check ownership
+			const existingPayment = await fastify.prisma.payment.findUnique({
+				where: { id: request.params.id },
+				select: { payerId: true },
+			});
+
+			if (!existingPayment) {
 				return reply
 					.status(404)
 					.send({ error: "Payment not found", code: "PAYMENT_NOT_FOUND" });
 			}
+
+			if (existingPayment.payerId !== request.user!.id) {
+				return reply
+					.status(403)
+					.send({ error: "Forbidden", code: "FORBIDDEN" });
+			}
+
+			await handlers.deletePayment(fastify, request.params);
+			return reply.status(204).send();
 		},
 	);
 }
