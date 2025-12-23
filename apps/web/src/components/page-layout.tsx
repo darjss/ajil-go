@@ -86,8 +86,8 @@ export function PageSkeleton() {
 				<Skeleton className="h-5 w-96 rounded-none" />
 			</div>
 			<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-				{Array.from({ length: 4 }).map((_, i) => (
-					<Card key={`skeleton-${i}`} className="rounded-none border-border">
+				{["card1", "card2", "card3", "card4"].map((key) => (
+					<Card key={key} className="rounded-none border-border">
 						<CardContent className="p-6">
 							<div className="space-y-3">
 								<Skeleton className="h-4 w-24 rounded-none" />

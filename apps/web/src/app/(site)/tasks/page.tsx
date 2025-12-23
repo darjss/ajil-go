@@ -72,8 +72,8 @@ function FilterSidebarSkeleton() {
 			<div>
 				<Skeleton className="mb-4 h-5 w-20 rounded-none" />
 				<div className="space-y-3">
-					{Array.from({ length: 5 }).map((_, i) => (
-						<div key={`filter-skel-${i}`} className="flex items-center gap-3">
+					{["skel1", "skel2", "skel3", "skel4", "skel5"].map((key) => (
+						<div key={key} className="flex items-center gap-3">
 							<Skeleton className="h-4 w-4 rounded-none" />
 							<Skeleton className="h-4 w-24 rounded-none" />
 						</div>

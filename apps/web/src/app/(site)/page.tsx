@@ -108,16 +108,27 @@ export default function Home() {
 
 				<div className="absolute right-0 bottom-0 left-0 overflow-hidden border-border border-t bg-secondary/20 py-3 backdrop-blur-md">
 					<div className="flex animate-marquee whitespace-nowrap">
-						{Array(12)
-							.fill("• НАЙДВАРТАЙ • ХУРДАН • ХЯЛБАР")
-							.map((text, idx) => (
-								<span
-									key={`marquee-${idx}`}
-									className="mx-4 font-bold font-mono text-lg text-secondary-foreground/70 tracking-[0.2em]"
-								>
-									{text}
-								</span>
-							))}
+						{[
+							"item1",
+							"item2",
+							"item3",
+							"item4",
+							"item5",
+							"item6",
+							"item7",
+							"item8",
+							"item9",
+							"item10",
+							"item11",
+							"item12",
+						].map((key) => (
+							<span
+								key={key}
+								className="mx-4 font-bold font-mono text-lg text-secondary-foreground/70 tracking-[0.2em]"
+							>
+								• НАЙДВАРТАЙ • ХУРДАН • ХЯЛБАР
+							</span>
+						))}
 					</div>
 				</div>
 			</section>

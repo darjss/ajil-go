@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ReactQueryStreamedHydration } from "@tanstack/react-query-next-experimental";
-
+import { Chatbot } from "./chatbot";
 import { ThemeProvider } from "./theme-provider";
 import { Toaster } from "./ui/sonner";
 
@@ -53,6 +53,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 					disableTransitionOnChange
 				>
 					{children}
+					<Chatbot />
 					<Toaster richColors />
 				</ThemeProvider>
 			</ReactQueryStreamedHydration>
