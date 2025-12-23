@@ -5,7 +5,9 @@ import { serverApi } from "@/lib/api.server";
 
 export default async function DashboardLayout({
 	children,
-}: { children: ReactNode }) {
+}: {
+	children: ReactNode;
+}) {
 	const user = await serverApi.getMe();
 
 	if (!user) {

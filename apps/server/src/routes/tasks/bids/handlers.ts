@@ -84,9 +84,13 @@ export async function getBidById(fastify: FastifyInstance, params: IdParams) {
 	return bid;
 }
 
-export async function createBid(fastify: FastifyInstance, body: CreateBidBody, userId: string) {
+export async function createBid(
+	fastify: FastifyInstance,
+	body: CreateBidBody,
+	userId: string,
+) {
 	const { bidderId: _ignoredBidderId, ...bidData } = body;
-	
+
 	const bid = await fastify.prisma.taskBid.create({
 		data: {
 			...bidData,

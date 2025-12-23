@@ -55,7 +55,11 @@ export default async function paymentsRoutes(fastify: FastifyInstance) {
 		},
 		async (request, reply) => {
 			try {
-				const payment = await handlers.createPayment(fastify, request.body, request.user!.id);
+				const payment = await handlers.createPayment(
+					fastify,
+					request.body,
+					request.user?.id,
+				);
 				return reply.status(201).send(payment);
 			} catch (error: unknown) {
 				if (
@@ -97,7 +101,7 @@ export default async function paymentsRoutes(fastify: FastifyInstance) {
 					.send({ error: "Payment not found", code: "PAYMENT_NOT_FOUND" });
 			}
 
-			if (existingPayment.payerId !== request.user!.id) {
+			if (existingPayment.payerId !== request.user?.id) {
 				return reply
 					.status(403)
 					.send({ error: "Forbidden", code: "FORBIDDEN" });
@@ -134,7 +138,7 @@ export default async function paymentsRoutes(fastify: FastifyInstance) {
 					.send({ error: "Payment not found", code: "PAYMENT_NOT_FOUND" });
 			}
 
-			if (existingPayment.payerId !== request.user!.id) {
+			if (existingPayment.payerId !== request.user?.id) {
 				return reply
 					.status(403)
 					.send({ error: "Forbidden", code: "FORBIDDEN" });

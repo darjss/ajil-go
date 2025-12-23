@@ -74,7 +74,7 @@ export async function createMessage(
 	userId: string,
 ) {
 	const { senderId: _ignoredSenderId, ...messageData } = body;
-	
+
 	const message = await fastify.prisma.message.create({
 		data: {
 			...messageData,

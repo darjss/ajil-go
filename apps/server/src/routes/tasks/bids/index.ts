@@ -55,7 +55,11 @@ export default async function bidsRoutes(fastify: FastifyInstance) {
 		},
 		async (request, reply) => {
 			try {
-				const bid = await handlers.createBid(fastify, request.body, request.user!.id);
+				const bid = await handlers.createBid(
+					fastify,
+					request.body,
+					request.user?.id,
+				);
 				return reply.status(201).send(bid);
 			} catch (error: unknown) {
 				// Handle unique constraint (one bid per user per task)
@@ -98,13 +102,17 @@ export default async function bidsRoutes(fastify: FastifyInstance) {
 					.send({ error: "Bid not found", code: "BID_NOT_FOUND" });
 			}
 
-			if (existingBid.bidderId !== request.user!.id) {
+			if (existingBid.bidderId !== request.user?.id) {
 				return reply
 					.status(403)
 					.send({ error: "Forbidden", code: "FORBIDDEN" });
 			}
 
-			const bid = await handlers.updateBid(fastify, request.params, request.body);
+			const bid = await handlers.updateBid(
+				fastify,
+				request.params,
+				request.body,
+			);
 			return bid;
 		},
 	);
@@ -131,7 +139,7 @@ export default async function bidsRoutes(fastify: FastifyInstance) {
 					.send({ error: "Bid not found", code: "BID_NOT_FOUND" });
 			}
 
-			if (existingBid.bidderId !== request.user!.id) {
+			if (existingBid.bidderId !== request.user?.id) {
 				return reply
 					.status(403)
 					.send({ error: "Forbidden", code: "FORBIDDEN" });

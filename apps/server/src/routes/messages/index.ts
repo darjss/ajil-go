@@ -56,7 +56,14 @@ export default async function messagesRoutes(fastify: FastifyInstance) {
 			preHandler: fastify.authenticate,
 		},
 		async (request, reply) => {
-			const message = await handlers.createMessage(fastify, request.body, request.user!.id);
+			if (!request.user) {
+				return reply.status(401).send({ error: "Unauthorized" });
+			}
+			const message = await handlers.createMessage(
+				fastify,
+				request.body,
+				request.user.id,
+			);
 			return reply.status(201).send(message);
 		},
 	);
@@ -98,7 +105,7 @@ export default async function messagesRoutes(fastify: FastifyInstance) {
 					.send({ error: "Message not found", code: "MESSAGE_NOT_FOUND" });
 			}
 
-			if (existingMessage.senderId !== request.user!.id) {
+			if (!request.user || existingMessage.senderId !== request.user.id) {
 				return reply
 					.status(403)
 					.send({ error: "Forbidden", code: "FORBIDDEN" });
@@ -135,7 +142,7 @@ export default async function messagesRoutes(fastify: FastifyInstance) {
 					.send({ error: "Message not found", code: "MESSAGE_NOT_FOUND" });
 			}
 
-			if (existingMessage.senderId !== request.user!.id) {
+			if (!request.user || existingMessage.senderId !== request.user.id) {
 				return reply
 					.status(403)
 					.send({ error: "Forbidden", code: "FORBIDDEN" });

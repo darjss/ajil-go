@@ -1,10 +1,10 @@
-import { cookies } from "next/headers";
 import type {
 	GetTasksQuery,
 	PaginatedResponse,
 	TaskApiResponse,
 	UserApiResponse,
 } from "@ajil-go/contract";
+import { cookies } from "next/headers";
 
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001";
 
@@ -74,4 +74,3 @@ export const serverApi = {
 
 	getTask: (id: string) => serverFetch<TaskApiResponse>(`/tasks/${id}`),
 };
-

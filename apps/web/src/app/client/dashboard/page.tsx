@@ -64,7 +64,7 @@ function TaskRow({ task }: { task: TaskApiResponse }) {
 export default async function ClientDashboardPage() {
 	// SSR: Fetch user first, then tasks filtered by user ID
 	const user = await serverApi.getMe();
-	
+
 	if (!user) {
 		redirect("/login");
 	}
@@ -105,21 +105,21 @@ export default async function ClientDashboardPage() {
 						value={totalTasks}
 						icon={<ListTodo className="h-6 w-6" />}
 					/>
-				<StatCard
-					label="Нээлттэй даалгавар"
-					value={openTasks?.meta.total || 0}
-					icon={<TrendingUp className="h-6 w-6" />}
-				/>
-				<StatCard
-					label="Гүйцэтгэгдэж буй"
-					value={inProgressTasks?.meta.total || 0}
-					icon={<Clock className="h-6 w-6" />}
-				/>
-				<StatCard
-					label="Дууссан даалгавар"
-					value={completedTasks?.meta.total || 0}
-					icon={<CheckCircle2 className="h-6 w-6" />}
-				/>
+					<StatCard
+						label="Нээлттэй даалгавар"
+						value={openTasks?.meta.total || 0}
+						icon={<TrendingUp className="h-6 w-6" />}
+					/>
+					<StatCard
+						label="Гүйцэтгэгдэж буй"
+						value={inProgressTasks?.meta.total || 0}
+						icon={<Clock className="h-6 w-6" />}
+					/>
+					<StatCard
+						label="Дууссан даалгавар"
+						value={completedTasks?.meta.total || 0}
+						icon={<CheckCircle2 className="h-6 w-6" />}
+					/>
 				</div>
 
 				<div className="grid gap-6 lg:grid-cols-3">

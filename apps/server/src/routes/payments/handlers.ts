@@ -82,7 +82,7 @@ export async function createPayment(
 	userId: string,
 ) {
 	const { payerId: _ignoredPayerId, ...paymentData } = body;
-	
+
 	const payment = await fastify.prisma.payment.create({
 		data: {
 			...paymentData,

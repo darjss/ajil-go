@@ -54,7 +54,11 @@ export default async function tasksRoutes(fastify: FastifyInstance) {
 			preHandler: fastify.authenticate,
 		},
 		async (request, reply) => {
-			const task = await handlers.createTask(fastify, request.body, request.user!.id);
+			const task = await handlers.createTask(
+				fastify,
+				request.body,
+				request.user?.id,
+			);
 			return reply.status(201).send(task);
 		},
 	);
@@ -82,13 +86,17 @@ export default async function tasksRoutes(fastify: FastifyInstance) {
 					.send({ error: "Task not found", code: "TASK_NOT_FOUND" });
 			}
 
-			if (existingTask.posterId !== request.user!.id) {
+			if (existingTask.posterId !== request.user?.id) {
 				return reply
 					.status(403)
 					.send({ error: "Forbidden", code: "FORBIDDEN" });
 			}
 
-			const task = await handlers.updateTask(fastify, request.params, request.body);
+			const task = await handlers.updateTask(
+				fastify,
+				request.params,
+				request.body,
+			);
 			return task;
 		},
 	);
@@ -115,7 +123,7 @@ export default async function tasksRoutes(fastify: FastifyInstance) {
 					.send({ error: "Task not found", code: "TASK_NOT_FOUND" });
 			}
 
-			if (existingTask.posterId !== request.user!.id) {
+			if (existingTask.posterId !== request.user?.id) {
 				return reply
 					.status(403)
 					.send({ error: "Forbidden", code: "FORBIDDEN" });
