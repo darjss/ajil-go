@@ -1,15 +1,24 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import {
+	JetBrains_Mono,
+	Playfair_Display,
+	Source_Serif_4,
+} from "next/font/google";
 import "../index.css";
 import Providers from "@/components/providers";
 
-const geistSans = Geist({
-	variable: "--font-geist-sans",
+const playfair = Playfair_Display({
+	variable: "--font-display",
 	subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-	variable: "--font-geist-mono",
+const sourceSerif = Source_Serif_4({
+	variable: "--font-body",
+	subsets: ["latin"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+	variable: "--font-mono",
 	subsets: ["latin"],
 });
 
@@ -26,7 +35,7 @@ export default function RootLayout({
 	return (
 		<html lang="mn" suppressHydrationWarning>
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} bg-gradient-to-b from-slate-50 via-white to-slate-50 text-foreground antialiased`}
+				className={`${playfair.variable} ${sourceSerif.variable} ${jetbrainsMono.variable} bg-background font-body text-foreground antialiased`}
 			>
 				<Providers>{children}</Providers>
 			</body>

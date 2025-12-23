@@ -1,12 +1,20 @@
 "use client";
 
+import { Search } from "lucide-react";
 import Link from "next/link";
-import type React from "react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { AuthLayout } from "@/components/auth-layout";
+import { toast } from "sonner";
+import Loader from "@/components/loader";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { authClient } from "@/lib/auth-client";
 
 export default function SignUpPage() {
+	const router = useRouter();
+	const { isPending } = authClient.useSession();
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [formData, setFormData] = useState({
 		fullName: "",
 		email: "",
@@ -18,166 +26,174 @@ export default function SignUpPage() {
 		setFormData((prev) => ({ ...prev, [name]: value }));
 	};
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		console.log("Sign up:", formData);
+		setIsSubmitting(true);
+
+		await authClient.signUp.email(
+			{
+				email: formData.email,
+				password: formData.password,
+				name: formData.fullName,
+			},
+			{
+				onSuccess: () => {
+					router.push("/dashboard");
+					toast.success("Амжилттай бүртгүүллээ");
+				},
+				onError: (error) => {
+					toast.error(error.error.message || error.error.statusText);
+				},
+			},
+		);
+
+		setIsSubmitting(false);
 	};
 
+	const handleGoogleSignUp = () => {
+		authClient.signIn.social({
+			provider: "google",
+			callbackURL: "/dashboard",
+		});
+	};
+
+	if (isPending) {
+		return <Loader />;
+	}
+
 	return (
-		<AuthLayout>
-			<div className="grid items-center gap-12 md:grid-cols-2">
-				{/* Left side - Image and testimonial */}
-				<div className="hidden flex-col items-center md:flex">
-					<div className="mb-8">
-						<div className="mb-6 text-5xl">👨‍💼</div>
-					</div>
-					<div className="max-w-sm rounded-lg border border-border bg-card p-8 text-center">
-						<div className="mb-2 font-bold text-4xl text-primary">100K+</div>
-						<p className="mb-6 text-muted-foreground">
-							Эндээс ажилд орсон хүмүүс
-						</p>
-						<div className="border-border border-t pt-6">
-							<p className="mb-2 font-semibold text-foreground text-sm">
-								Adam Sandler
-							</p>
-							<p className="mb-4 text-muted-foreground text-xs">
-								Canva-ийн ахлах инженер
-							</p>
-							<blockquote className="text-foreground text-sm italic">
-								"Стартап сонирхдог, карьерийн дараагийн алхмаа хайж буй ажил
-								хайгчдад маш тохиромжтой платформ."
-							</blockquote>
-						</div>
-					</div>
+		<div className="grid min-h-screen w-full lg:grid-cols-2">
+			<div className="hidden flex-col justify-between border-r bg-muted/30 p-12 lg:flex">
+				<div className="font-bold font-display text-4xl uppercase tracking-tight">
+					Ajil-Go
 				</div>
-
-				{/* Right side - Sign up form */}
-				<div className="mx-auto w-full max-w-md">
-					<div className="mb-8">
-						<div className="mb-6 flex gap-4">
-							<button className="border-primary border-b-2 px-4 py-2 font-medium text-primary text-sm">
-								Ажил хайгч
-							</button>
-							<button className="px-4 py-2 font-medium text-muted-foreground text-sm">
-								Компани
-							</button>
-						</div>
-					</div>
-
-					<h1 className="mb-2 font-bold text-3xl text-foreground">
-						Илүү олон боломжуудыг нээ
+				<div className="max-w-xl">
+					<h1 className="font-bold font-display text-7xl text-primary uppercase leading-none tracking-tighter">
+						Шинэ
+						<br />
+						Эхлэл
 					</h1>
-					<p className="mb-8 text-muted-foreground">
-						Хамтдаа тохирох ажлыг олцгооё.
-					</p>
-
-					{/* Google Sign Up */}
-					<Button className="mb-6 h-12 w-full border border-border bg-card text-foreground hover:bg-muted">
-						<span className="mr-2">🔍</span>
-						Google-ээр бүртгүүлэх
-					</Button>
-
-					{/* Divider */}
-					<div className="relative mb-6">
-						<div className="absolute inset-0 flex items-center">
-							<div className="w-full border-border border-t" />
-						</div>
-						<div className="relative flex justify-center text-xs">
-							<span className="bg-background px-2 text-muted-foreground">
-								Эсвэл имэйлээр бүртгүүл
-							</span>
-						</div>
-					</div>
-
-					{/* Form */}
-					<form onSubmit={handleSubmit} className="space-y-4">
-						<div>
-							<label
-								htmlFor="fullName"
-								className="mb-2 block font-medium text-foreground text-sm"
-							>
-								Бүтэн нэр
-							</label>
-							<input
-								type="text"
-								id="fullName"
-								name="fullName"
-								placeholder="Нэрээ оруулна уу"
-								value={formData.fullName}
-								onChange={handleChange}
-								className="w-full rounded-lg border border-border bg-card px-4 py-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-							/>
-						</div>
-
-						<div>
-							<label
-								htmlFor="email"
-								className="mb-2 block font-medium text-foreground text-sm"
-							>
-								Имэйл хаяг
-							</label>
-							<input
-								type="email"
-								id="email"
-								name="email"
-								placeholder="Имэйл хаягаа оруулна уу"
-								value={formData.email}
-								onChange={handleChange}
-								className="w-full rounded-lg border border-border bg-card px-4 py-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-							/>
-						</div>
-
-						<div>
-							<label
-								htmlFor="password"
-								className="mb-2 block font-medium text-foreground text-sm"
-							>
-								Нууц үг
-							</label>
-							<input
-								type="password"
-								id="password"
-								name="password"
-								placeholder="Нууц үгээ оруулна уу"
-								value={formData.password}
-								onChange={handleChange}
-								className="w-full rounded-lg border border-border bg-card px-4 py-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-							/>
-						</div>
-
-						<Button
-							type="submit"
-							className="h-12 w-full bg-primary text-primary-foreground hover:bg-primary/90"
-						>
-							Бүртгүүлэх
-						</Button>
-					</form>
-
-					{/* Sign In Link */}
-					<p className="mt-6 text-center text-muted-foreground text-sm">
-						Бүртгэлтэй юу?{" "}
-						<Link
-							href="/login"
-							className="font-medium text-primary hover:underline"
-						>
-							Нэвтрэх
-						</Link>
-					</p>
-
-					{/* Terms */}
-					<p className="mt-6 text-center text-muted-foreground text-xs">
-						'Бүртгүүлэх' дээр дарснаар{" "}
-						<a href="#" className="text-primary hover:underline">
-							Үйлчилгээний нөхцөл
-						</a>{" "}
-						болон{" "}
-						<a href="#" className="text-primary hover:underline">
-							Нууцлалын бодлого
-						</a>
-						-той танилцаж, зөвшөөрсөнд тооцно.
-					</p>
+				</div>
+				<div className="font-mono text-muted-foreground text-xs">
+					© 2025 AJIL GO INC.
 				</div>
 			</div>
-		</AuthLayout>
+
+			<div className="flex flex-col justify-center px-8 py-12 lg:px-24">
+				<div className="mx-auto w-full max-w-sm space-y-8">
+					<div className="space-y-2">
+						<h2 className="font-bold font-display text-4xl tracking-tight">
+							Бүртгүүлэх
+						</h2>
+						<p className="font-body text-lg text-muted-foreground">
+							Шинэ боломжуудыг нээгээрэй.
+						</p>
+					</div>
+
+					<div className="space-y-6">
+						<Button
+							variant="outline"
+							onClick={handleGoogleSignUp}
+							className="h-12 w-full rounded-none border-2 border-border font-mono text-xs uppercase tracking-wider hover:bg-muted"
+						>
+							<Search className="mr-2 h-4 w-4" /> Google-ээр бүртгүүлэх
+						</Button>
+
+						<div className="relative">
+							<div className="absolute inset-0 flex items-center">
+								<span className="w-full border-border border-t" />
+							</div>
+							<div className="relative flex justify-center text-xs uppercase">
+								<span className="bg-background px-2 font-mono text-muted-foreground">
+									Эсвэл
+								</span>
+							</div>
+						</div>
+
+						<form onSubmit={handleSubmit} className="space-y-5">
+							<div className="space-y-2">
+								<Label
+									htmlFor="fullName"
+									className="font-mono text-muted-foreground text-xs uppercase tracking-wider"
+								>
+									Бүтэн нэр
+								</Label>
+								<Input
+									id="fullName"
+									name="fullName"
+									type="text"
+									placeholder="Нэрээ оруулна уу"
+									value={formData.fullName}
+									onChange={handleChange}
+									required
+									className="h-12 rounded-none border-2 border-input bg-transparent px-4 focus-visible:border-primary focus-visible:ring-0"
+								/>
+							</div>
+
+							<div className="space-y-2">
+								<Label
+									htmlFor="email"
+									className="font-mono text-muted-foreground text-xs uppercase tracking-wider"
+								>
+									Имэйл
+								</Label>
+								<Input
+									id="email"
+									name="email"
+									type="email"
+									placeholder="name@example.com"
+									value={formData.email}
+									onChange={handleChange}
+									required
+									className="h-12 rounded-none border-2 border-input bg-transparent px-4 focus-visible:border-primary focus-visible:ring-0"
+								/>
+							</div>
+							<div className="space-y-2">
+								<div className="flex items-center justify-between">
+									<Label
+										htmlFor="password"
+										className="font-mono text-muted-foreground text-xs uppercase tracking-wider"
+									>
+										Нууц үг
+									</Label>
+								</div>
+								<Input
+									id="password"
+									name="password"
+									type="password"
+									value={formData.password}
+									onChange={handleChange}
+									required
+									className="h-12 rounded-none border-2 border-input bg-transparent px-4 focus-visible:border-primary focus-visible:ring-0"
+								/>
+							</div>
+
+							<Button
+								type="submit"
+								disabled={isSubmitting}
+								className="h-14 w-full rounded-none bg-primary font-bold font-mono text-primary-foreground text-sm uppercase tracking-widest transition-all hover:bg-primary/90"
+							>
+								{isSubmitting ? "Бүртгүүлж байна..." : "Бүртгүүлэх"}
+							</Button>
+						</form>
+
+						<div className="pt-4 text-center font-body text-muted-foreground text-sm">
+							Бүртгэлтэй юу?{" "}
+							<Link
+								href="/login"
+								className="font-bold text-primary underline decoration-2 underline-offset-4 hover:text-primary/80"
+							>
+								Нэвтрэх
+							</Link>
+						</div>
+
+						<p className="text-center font-mono text-muted-foreground text-xs opacity-60">
+							Бүртгүүлэх товчийг дарж та манай үйлчилгээний нөхцөлийг зөвшөөрч
+							байна.
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
 	);
 }

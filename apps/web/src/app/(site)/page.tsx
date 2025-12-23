@@ -1,371 +1,441 @@
 "use client";
 
+import {
+	ArrowRight,
+	CheckCircle2,
+	Clock,
+	GraduationCap,
+	Hammer,
+	MoveRight,
+	Paintbrush,
+	ShoppingBag,
+	Sparkles,
+	Star,
+	Truck,
+	Wrench,
+	Zap,
+} from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
-const jobListings = [
-	{
-		id: 1,
-		title: "Сошиал медиа туслах",
-		company: "Nomad",
-		location: "Парис, Франц",
-		type: "Бүтэн цагийн",
-		icon: "N",
-		tags: ["Бүтэн цагийн", "Маркетинг", "Дизайн"],
-		applied: 5,
-		capacity: 10,
-		color: "bg-emerald-500",
-	},
-	{
-		id: 2,
-		title: "Брэнд дизайнер",
-		company: "Dropbox",
-		location: "Сан Франциско, АНУ",
-		type: "Бүтэн цагийн",
-		icon: "D",
-		tags: ["Бүтэн цагийн", "Маркетинг", "Дизайн"],
-		applied: 2,
-		capacity: 10,
-		color: "bg-blue-500",
-	},
-	{
-		id: 3,
-		title: "Интерактив хөгжүүлэгч",
-		company: "Terraform",
-		location: "Хамбург, Герман",
-		type: "Бүтэн цагийн",
-		icon: "T",
-		tags: ["Бүтэн цагийн", "Маркетинг", "Дизайн"],
-		applied: 8,
-		capacity: 12,
-		color: "bg-cyan-500",
-	},
-	{
-		id: 4,
-		title: "Имэйл маркетинг мэргэжилтэн",
-		company: "Revolut",
-		location: "Мадрид, Испани",
-		type: "Бүтэн цагийн",
-		icon: "R",
-		tags: ["Бүтэн цагийн", "Маркетинг", "Дизайн"],
-		applied: 0,
-		capacity: 10,
-		color: "bg-red-500",
-	},
-	{
-		id: 5,
-		title: "Ахлах инженер",
-		company: "Canva",
-		location: "Анкара, Турк",
-		type: "Бүтэн цагийн",
-		icon: "C",
-		tags: ["Бүтэн цагийн", "Маркетинг", "Дизайн"],
-		applied: 5,
-		capacity: 10,
-		color: "bg-orange-400",
-	},
-	{
-		id: 6,
-		title: "Бүтээгдэхүүний дизайнер",
-		company: "ClassPass",
-		location: "Берлин, Герман",
-		type: "Бүтэн цагийн",
-		icon: "P",
-		tags: ["Бүтэн цагийн", "Маркетинг", "Дизайн"],
-		applied: 5,
-		capacity: 10,
-		color: "bg-blue-600",
-	},
-];
+export default function Home() {
+	const [mounted, setMounted] = useState(false);
 
-const featuredJobs = [
-	{
-		id: 1,
-		title: "Имэйл маркетинг мэргэжилтэн",
-		company: "Revolut",
-		location: "Мадрид, Испани",
-		type: "Бүтэн цагийн",
-		icon: "R",
-		color: "bg-red-500",
-	},
-	{
-		id: 2,
-		title: "Брэнд дизайнер",
-		company: "Dropbox",
-		location: "Сан Франциско, АНУ",
-		type: "Бүтэн цагийн",
-		icon: "D",
-		color: "bg-blue-500",
-	},
-	{
-		id: 3,
-		title: "Шууд жагсаалт",
-		company: "Direct",
-		location: "Берлин, Герман",
-		type: "Бүтэн цагийн",
-		icon: "DL",
-		color: "bg-black",
-	},
-	{
-		id: 4,
-		title: "Бүтээгдэхүүний дизайнер",
-		company: "ClassPass",
-		location: "Манчестер, Их Британи",
-		type: "Бүтэн цагийн",
-		icon: "CP",
-		color: "bg-orange-600",
-	},
-	{
-		id: 5,
-		title: "Брэнд стратегич",
-		company: "Gobadly",
-		location: "Марсель, Франц",
-		type: "Бүтэн цагийн",
-		icon: "GB",
-		color: "bg-purple-600",
-	},
-	{
-		id: 6,
-		title: "Өгөгдлийн шинжээч",
-		company: "Twitter",
-		location: "Сан Диего, АНУ",
-		type: "Бүтэн цагийн",
-		icon: "TW",
-		color: "bg-blue-400",
-	},
-];
+	useEffect(() => {
+		setMounted(true);
+	}, []);
 
-const categories = [
-	{ name: "Дизайн", count: "235 нээлттэй ажлын байр" },
-	{ name: "Борлуулалт", count: "756 нээлттэй ажлын байр" },
-	{ name: "Маркетинг", count: "140 нээлттэй ажлын байр" },
-	{ name: "Санхүү", count: "555 нээлттэй ажлын байр" },
-	{ name: "Технологи", count: "436 нээлттэй ажлын байр" },
-	{ name: "Инженерчлэл", count: "640 нээлттэй ажлын байр" },
-	{ name: "Бизнес", count: "211 нээлттэй ажлын байр" },
-	{ name: "Хүний нөөц", count: "346 нээлттэй ажлын байр" },
-];
+	if (!mounted) return null;
 
-export default function HomePage() {
 	return (
-		<main className="min-h-screen">
-			{/* Hero Section */}
-			<section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-20 lg:px-8">
-				<div className="mb-16 grid items-center gap-12 md:grid-cols-2">
-					<div>
-						<h1 className="mb-4 font-bold text-4xl text-foreground md:text-5xl">
-							Илүү ихийг нээ
-							<br />
-							<span className="text-primary">5000+ ажлаас</span>
-							<br />
-							Сонголтоо хий
-						</h1>
-						<p className="mb-8 text-lg text-muted-foreground">
-							Шинэ карьерийн боломж хайж буй, стартапд дуртай ажил хайгчдад
-							зориулсан платформ.
-						</p>
-
-						{/* Search Bar */}
-						<div className="mb-6 flex gap-3">
-							<input
-								type="text"
-								placeholder="Ажлын нэр эсвэл түлхүүр үг"
-								className="flex-1 rounded-lg border border-border bg-card px-4 py-3 text-foreground placeholder-muted-foreground"
-							/>
-							<select className="rounded-lg border border-border bg-card px-4 py-3 text-foreground">
-								<option>Флоренц, Итали</option>
-							</select>
-							<Button className="bg-primary hover:bg-primary/90">
-								Ажил хайх
-							</Button>
+		<main className="min-h-screen overflow-x-hidden bg-background text-foreground selection:bg-primary/30">
+			<section className="relative flex min-h-[92vh] flex-col border-border border-b bg-[linear-gradient(to_bottom,transparent_0%,var(--primary)_100%)]/5 pt-20">
+				<div className="flex flex-1 flex-col justify-center px-4 md:px-8">
+					<div className="mx-auto grid w-full max-w-[1800px] grid-cols-1 items-end gap-12 pb-20 lg:grid-cols-12 lg:gap-8">
+						<div className="relative z-10 lg:col-span-8">
+							<Badge
+								variant="outline"
+								className="mb-6 rounded-none border-primary bg-primary/5 px-4 py-1 font-mono text-primary text-xs uppercase tracking-widest"
+							>
+								Монголын №1 Ажлын Маркетплейс
+							</Badge>
+							<h1 className="font-display font-medium text-[14vw] text-foreground uppercase leading-[0.8] tracking-tighter lg:text-[11rem]">
+								<span className="block animate-reveal [animation-delay:100ms]">
+									Ажлаа
+								</span>
+								<span className="ml-[10vw] block animate-reveal text-primary italic [animation-delay:300ms] lg:ml-24">
+									Амжуул.
+								</span>
+							</h1>
 						</div>
 
-						<p className="text-muted-foreground text-sm">
-							Тренд: UI дизайнер, UX судлаач, Андроид, Админ
-						</p>
-					</div>
-
-					<div className="hidden md:block">
-						<div className="flex items-center gap-8">
-							<div className="rounded-lg border border-border bg-card p-8 text-center">
-								<div className="mb-2 font-bold text-4xl text-foreground">
-									100K+
-								</div>
-								<p className="text-muted-foreground">
-									Эндээс ажилд орсон хүмүүс
+						<div className="animate-fade-up [animation-delay:600ms] lg:col-span-4 lg:mb-8">
+							<div className="rounded-lg bg-background/50 p-6 backdrop-blur-sm lg:bg-transparent lg:p-0">
+								<p className="mb-8 font-body text-muted-foreground text-xl leading-relaxed md:text-2xl">
+									Таны цагийг хэмнэх мэргэжлийн туслахууд нэг дор. Гэр
+									цэвэрлэхээс эхлээд засвар үйлчилгээ хүртэл.
 								</p>
+
+								<div className="flex flex-col gap-4 sm:flex-row">
+									<Button
+										size="lg"
+										className="group h-16 rounded-none bg-primary px-8 text-lg text-primary-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 hover:translate-x-[2px] hover:translate-y-[2px] hover:scale-105 hover:bg-primary/90 hover:shadow-none"
+										asChild
+									>
+										<Link href="/tasks">
+											Ажил хайх{" "}
+											<MoveRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+										</Link>
+									</Button>
+									<Button
+										variant="outline"
+										size="lg"
+										className="h-16 rounded-none border-2 border-primary bg-transparent px-8 text-foreground text-lg transition-all duration-300 hover:bg-primary/5 hover:text-primary"
+										asChild
+									>
+										<Link href="/signup">Ажил олгох</Link>
+									</Button>
+								</div>
+
+								<div className="mt-8 flex items-center gap-4 font-mono text-muted-foreground text-sm">
+									<div className="-space-x-3 flex">
+										{[1, 2, 3, 4].map((seed) => (
+											<div
+												key={`avatar-${seed}`}
+												className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-none border-2 border-background bg-muted"
+											>
+												<Image
+													src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${seed * 13}`}
+													alt="User"
+													width={40}
+													height={40}
+													className="h-full w-full"
+													unoptimized
+												/>
+											</div>
+										))}
+									</div>
+									<p>1000+ хэрэглэгч нэгдсэн</p>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 
-				{/* Companies Featured */}
-				<div className="mb-16">
-					<p className="mb-4 text-muted-foreground text-sm">
-						Бидэнтэй хамт өсөж буй компаниуд
-					</p>
-					<div className="flex flex-wrap items-center gap-6">
-						{["Vodafone", "Intel", "Tesla", "AMD", "Talkit"].map((company) => (
-							<span
-								key={company}
-								className="font-semibold text-lg text-muted-foreground"
+				<div className="absolute right-0 bottom-0 left-0 overflow-hidden border-border border-t bg-secondary/20 py-3 backdrop-blur-md">
+					<div className="flex animate-marquee whitespace-nowrap">
+						{Array(12)
+							.fill("• НАЙДВАРТАЙ • ХУРДАН • ХЯЛБАР")
+							.map((text, idx) => (
+								<span
+									key={`marquee-${idx}`}
+									className="mx-4 font-bold font-mono text-lg text-secondary-foreground/70 tracking-[0.2em]"
+								>
+									{text}
+								</span>
+							))}
+					</div>
+				</div>
+			</section>
+
+			<section className="border-border border-b bg-background">
+				<div className="grid grid-cols-2 divide-x divide-border lg:grid-cols-4">
+					{[
+						{ label: "Нийт Даалгавар", value: "5k+", icon: CheckCircle2 },
+						{ label: "Гүйцэтгэгч", value: "1.2k", icon: Zap },
+						{ label: "Дундаж Үнэлгээ", value: "4.9", icon: Star },
+						{ label: "Хэмнэсэн Цаг", value: "10k+", icon: Clock },
+					].map((stat) => (
+						<div
+							key={stat.label}
+							className="group p-8 transition-colors duration-300 hover:bg-secondary/10 md:p-12"
+						>
+							<stat.icon className="mb-4 h-8 w-8 text-primary opacity-80 transition-transform duration-300 group-hover:scale-110" />
+							<div className="mb-2 font-display font-medium text-4xl text-foreground md:text-6xl">
+								{stat.value}
+							</div>
+							<div className="font-mono text-muted-foreground text-sm uppercase tracking-widest">
+								{stat.label}
+							</div>
+						</div>
+					))}
+				</div>
+			</section>
+
+			<section className="bg-background">
+				<div className="flex flex-col items-end justify-between gap-8 border-border border-b p-8 md:flex-row md:p-16">
+					<div>
+						<h2 className="mb-4 font-display text-5xl md:text-7xl">
+							Та юу <span className="text-primary italic">хийлгэмээр</span>{" "}
+							байна?
+						</h2>
+						<p className="max-w-xl font-body text-muted-foreground text-xl">
+							Мэргэжлийн хүмүүс таны өмнөөс бүхнийг хийхэд бэлэн.
+						</p>
+					</div>
+					<Button
+						variant="link"
+						className="font-mono text-lg underline decoration-primary underline-offset-4 transition-colors hover:text-primary"
+						asChild
+					>
+						<Link href="/tasks">Бүх ангиллыг үзэх</Link>
+					</Button>
+				</div>
+
+				<div className="grid grid-cols-1 border-border border-b sm:grid-cols-2 lg:grid-cols-4">
+					{[
+						{
+							title: "Цэвэрлэгээ",
+							icon: Sparkles,
+							desc: "Гэр, оффис цэвэрлэгээ",
+							color: "bg-blue-50 hover:bg-blue-100",
+						},
+						{
+							title: "Нүүлгэлт",
+							icon: Truck,
+							desc: "Ачаа тээвэр, нүүлгэлт",
+							color: "bg-orange-50 hover:bg-orange-100",
+						},
+						{
+							title: "Засвар",
+							icon: Hammer,
+							desc: "Сантехник, цахилгаан",
+							color: "bg-muted hover:bg-muted/80",
+						},
+						{
+							title: "Угсралт",
+							icon: Wrench,
+							desc: "Тавилга угсрах, янзлах",
+							color: "bg-yellow-50 hover:bg-yellow-100",
+						},
+						{
+							title: "Засал чимэглэл",
+							icon: Paintbrush,
+							desc: "Будаг, обой наах",
+							color: "bg-purple-50 hover:bg-purple-100",
+						},
+						{
+							title: "Хүргэлт",
+							icon: ShoppingBag,
+							desc: "Хүнс, бичиг баримт",
+							color: "bg-green-50 hover:bg-green-100",
+						},
+						{
+							title: "Сургалт",
+							icon: GraduationCap,
+							desc: "Гадаад хэл, давтлага",
+							color: "bg-pink-50 hover:bg-pink-100",
+						},
+						{
+							title: "Бусад",
+							icon: ArrowRight,
+							desc: "Бүх төрлийн ажил",
+							color: "bg-gray-50 hover:bg-gray-100",
+						},
+					].map((cat, i) => (
+						<Link
+							href={`/tasks?category=${cat.title}`}
+							key={cat.title}
+							className="group relative flex min-h-[320px] flex-col justify-between border-border border-r border-b p-8 transition-all duration-300 hover:bg-primary/5"
+						>
+							<div className="flex w-full items-start justify-between">
+								<span className="rounded-none border border-border bg-background px-2 py-1 font-mono text-muted-foreground text-xs">
+									0{i + 1}
+								</span>
+								<div className="rounded-none border border-border bg-background p-4 transition-all duration-500 group-hover:rotate-12 group-hover:scale-110">
+									<cat.icon className="h-6 w-6 text-foreground" />
+								</div>
+							</div>
+
+							<div className="relative z-10">
+								<h3 className="mb-3 flex items-center gap-2 font-display text-3xl text-foreground transition-transform duration-300 group-hover:translate-x-2">
+									{cat.title}
+									<ArrowRight className="-ml-4 h-5 w-5 text-primary opacity-0 transition-all duration-300 group-hover:ml-0 group-hover:opacity-100" />
+								</h3>
+								<p className="font-body text-muted-foreground leading-tight transition-colors group-hover:text-foreground">
+									{cat.desc}
+								</p>
+							</div>
+						</Link>
+					))}
+				</div>
+			</section>
+
+			<section className="relative overflow-hidden bg-secondary/10 px-6 py-24">
+				<div className="-translate-y-1/2 absolute top-0 right-0 h-[500px] w-[500px] translate-x-1/2 rounded-none bg-primary/5 blur-3xl" />
+				<div className="-translate-x-1/2 absolute bottom-0 left-0 h-[400px] w-[400px] translate-y-1/2 rounded-none bg-secondary/10 blur-3xl" />
+
+				<div className="relative z-10 mx-auto max-w-[1800px]">
+					<div className="grid grid-cols-1 items-start gap-16 lg:grid-cols-2 lg:gap-24">
+						<div className="sticky top-24">
+							<Badge className="mb-6 bg-secondary text-secondary-foreground hover:bg-secondary/80">
+								Хэрхэн ажилладаг вэ?
+							</Badge>
+							<h2 className="mb-8 font-display text-6xl text-foreground leading-[0.9] md:text-8xl">
+								Хялбар <br />
+								<span className="text-primary italic">3 алхам.</span>
+							</h2>
+							<p className="mb-12 max-w-md font-body text-muted-foreground text-xl leading-relaxed">
+								Таны ажлыг бүтээх үйл явц маш энгийн бөгөөд ойлгомжтой. Илүүдэл
+								зүйлгүй.
+							</p>
+							<Button
+								size="lg"
+								className="h-14 rounded-none bg-foreground px-8 text-background text-lg hover:bg-foreground/90"
+								asChild
 							>
-								{company}
-							</span>
+								<Link href="/signup">Эхлэх</Link>
+							</Button>
+						</div>
+
+						<div className="space-y-8">
+							{[
+								{
+									step: "01",
+									title: "Ажлаа нийтэл",
+									desc: "Юу хийлгэх хэрэгтэй байгаагаа бидэнд хэл. Зураг, тайлбар, үнэ болон хугацаагаа оруул.",
+									icon: Paintbrush,
+								},
+								{
+									step: "02",
+									title: "Санал авах",
+									desc: "Таны ажлыг хийх сонирхолтой хүмүүсээс санал ирнэ. Тэдний үнэлгээ, туршлагыг хараад сонго.",
+									icon: CheckCircle2,
+								},
+								{
+									step: "03",
+									title: "Ажлаа амжуул",
+									desc: "Ажилтан ирж ажлаа хийнэ. Ажил дууссаны дараа төлбөрөө төлж, сэтгэгдэл үлдээ.",
+									icon: Star,
+								},
+							].map((item) => (
+								<Card
+									key={item.step}
+									className="group relative overflow-hidden border-0 bg-background/60 shadow-none backdrop-blur-sm transition-all duration-500 hover:bg-background"
+								>
+									<div className="absolute top-0 bottom-0 left-0 w-1 origin-top scale-y-0 bg-primary transition-transform duration-500 group-hover:scale-y-100" />
+									<CardContent className="flex items-start gap-6 p-8 md:gap-10 md:p-10">
+										<div className="hidden flex-col items-center gap-2 pt-2 md:flex">
+											<span className="font-display text-5xl text-primary/20 transition-colors duration-500 group-hover:text-primary">
+												{item.step}
+											</span>
+										</div>
+										<div>
+											<div className="mb-4 flex items-center gap-4">
+												<div className="font-display text-2xl text-primary md:hidden">
+													{item.step}
+												</div>
+												<h3 className="font-display text-3xl text-foreground">
+													{item.title}
+												</h3>
+											</div>
+											<p className="font-light text-lg text-muted-foreground leading-relaxed transition-colors group-hover:text-foreground/80">
+												{item.desc}
+											</p>
+										</div>
+									</CardContent>
+								</Card>
+							))}
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section className="border-border border-y bg-background py-24">
+				<div className="mx-auto max-w-[1800px] px-6">
+					<div className="mb-16 flex flex-col items-end justify-between gap-8 md:flex-row">
+						<h2 className="max-w-2xl font-display text-4xl md:text-6xl">
+							Хэрэглэгчдийн{" "}
+							<span className="text-secondary italic">сэтгэгдэл</span>
+						</h2>
+						<div className="flex gap-2">
+							<Button
+								size="icon"
+								variant="outline"
+								className="h-12 w-12 rounded-none border-2"
+							>
+								<ArrowRight className="h-5 w-5 rotate-180" />
+							</Button>
+							<Button
+								size="icon"
+								variant="outline"
+								className="h-12 w-12 rounded-none border-2"
+							>
+								<ArrowRight className="h-5 w-5" />
+							</Button>
+						</div>
+					</div>
+
+					<div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+						{[
+							{
+								name: "Б. Болд",
+								role: "Гэрийн эзэн",
+								text: "Гэр цэвэрлэх хүн хайгаад олдохгүй байсан. Ajil Go ашиглаад 30 минутын дотор найдвартай хүн оллоо. Үнэхээр амар!",
+								rating: 5,
+							},
+							{
+								name: "Г. Сараа",
+								role: "Бизнес эрхлэгч",
+								text: "Оффисын нүүлгэлт хийхэд маш тус болсон. Залуучууд цагтаа ирж, маш нямбай ажилласан. Баярлалаа.",
+								rating: 5,
+							},
+							{
+								name: "О. Тэмүүлэн",
+								role: "Оюутан",
+								text: "Чөлөөт цагаараа мөнгө олох боломж олгосонд баярлалаа. Хичээлийнхээ хажуугаар ажиллахад маш тохиромжтой.",
+								rating: 4,
+							},
+						].map((review) => (
+							<div
+								key={review.name}
+								className="hover:-translate-y-2 flex flex-col gap-6 border border-transparent bg-muted/30 p-8 transition-transform duration-300 hover:border-primary/20 md:p-10"
+							>
+								<div className="flex gap-1 text-primary">
+									{[1, 2, 3, 4, 5].map((starNum) => (
+										<Star
+											key={`star-${starNum}`}
+											className={`h-5 w-5 ${starNum <= review.rating ? "fill-current" : "text-muted-foreground/30"}`}
+										/>
+									))}
+								</div>
+								<p className="flex-1 font-body text-xl leading-relaxed">
+									"{review.text}"
+								</p>
+								<div className="mt-auto flex items-center gap-4 border-border/50 border-t pt-6">
+									<div className="flex h-12 w-12 items-center justify-center rounded-none bg-secondary/20 font-display text-secondary-foreground text-xl">
+										{review.name[0]}
+									</div>
+									<div>
+										<div className="font-bold font-display text-lg">
+											{review.name}
+										</div>
+										<div className="font-mono text-muted-foreground text-sm">
+											{review.role}
+										</div>
+									</div>
+								</div>
+							</div>
 						))}
 					</div>
 				</div>
 			</section>
 
-			{/* Explore by Category */}
-			<section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-				<div className="mb-8 flex items-center justify-between">
-					<div>
-						<h2 className="font-bold text-3xl text-foreground">
-							Ангилалаар <span className="text-primary">хайх</span>
-						</h2>
-					</div>
-					<Link
-						href="/find-jobs"
-						className="font-medium text-primary text-sm hover:underline"
-					>
-						Бүх ажлыг харах
-					</Link>
-				</div>
-
-				<div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-					{categories.map((cat) => (
-						<div
-							key={cat.name}
-							className="cursor-pointer rounded-lg border border-border bg-card p-6 transition-shadow hover:shadow-lg"
-						>
-							<div className="mb-2 font-bold text-2xl text-primary">✦</div>
-							<h3 className="mb-1 font-semibold text-foreground">{cat.name}</h3>
-							<p className="text-muted-foreground text-xs">{cat.count}</p>
-						</div>
-					))}
-				</div>
-			</section>
-
-			{/* Featured Jobs */}
-			<section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-				<div className="mb-8 flex items-center justify-between">
-					<h2 className="font-bold text-3xl text-foreground">
-						Онцлох <span className="text-primary">ажлууд</span>
+			<section className="relative overflow-hidden bg-secondary px-6 py-40 text-center text-secondary-foreground">
+				<div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
+				<div className="relative z-10 mx-auto max-w-4xl">
+					<Badge className="mb-8 border-none bg-background/20 px-4 py-2 text-background text-sm backdrop-blur-sm hover:bg-background/30">
+						Яг одоо эхэл
+					</Badge>
+					<h2 className="mb-8 font-display text-6xl tracking-tight md:text-8xl">
+						Ажлаа амжуулахад <br className="hidden md:block" />
+						<span className="italic opacity-80">бэлэн үү?</span>
 					</h2>
-					<Link
-						href="/find-jobs"
-						className="font-medium text-primary text-sm hover:underline"
-					>
-						Бүх ажлыг харах
-					</Link>
-				</div>
-
-				<div className="grid gap-6 md:grid-cols-3">
-					{featuredJobs.map((job) => (
-						<div
-							key={job.id}
-							className="rounded-lg border border-border bg-card p-6 transition-shadow hover:shadow-lg"
-						>
-							<div className="mb-4 flex items-start justify-between">
-								<div
-									className={`h-12 w-12 ${job.color} flex items-center justify-center rounded-lg font-bold text-sm text-white`}
-								>
-									{job.icon}
-								</div>
-								<span className="rounded bg-green-100 px-2 py-1 text-green-700 text-xs">
-									{job.type}
-								</span>
-							</div>
-							<h3 className="mb-1 font-semibold text-foreground">
-								{job.title}
-							</h3>
-							<p className="mb-4 text-muted-foreground text-sm">
-								{job.company} • {job.location}
-							</p>
-							<Link
-								href="/find-jobs"
-								className="font-medium text-primary text-sm hover:underline"
-							>
-								Дэлгэрэнгүй
-							</Link>
-						</div>
-					))}
-				</div>
-			</section>
-
-			{/* Latest Jobs */}
-			<section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-				<div className="mb-8 flex items-center justify-between">
-					<h2 className="font-bold text-3xl text-foreground">
-						Шинээр <span className="text-primary">нээлттэй ажлууд</span>
-					</h2>
-					<Link
-						href="/find-jobs"
-						className="font-medium text-primary text-sm hover:underline"
-					>
-						Бүх ажлыг харах
-					</Link>
-				</div>
-
-				<div className="grid gap-6 md:grid-cols-2">
-					{jobListings.map((job) => (
-						<div
-							key={job.id}
-							className="rounded-lg border border-border bg-card p-6 transition-shadow hover:shadow-lg"
-						>
-							<div className="mb-4 flex items-start justify-between">
-								<div className="flex items-center gap-4">
-									<div
-										className={`h-14 w-14 ${job.color} flex items-center justify-center rounded-lg font-bold text-white`}
-									>
-										{job.icon}
-									</div>
-									<div>
-										<h3 className="font-semibold text-foreground">
-											{job.title}
-										</h3>
-										<p className="text-muted-foreground text-sm">
-											{job.company} • {job.location}
-										</p>
-									</div>
-								</div>
-								<span className="rounded bg-green-100 px-2 py-1 text-green-700 text-xs">
-									{job.type}
-								</span>
-							</div>
-							<div className="mb-4 flex flex-wrap gap-2">
-								{job.tags.map((tag) => (
-									<span
-										key={tag}
-										className="rounded-full border border-border px-2 py-1 text-muted-foreground text-xs"
-									>
-										{tag}
-									</span>
-								))}
-							</div>
-							<p className="text-muted-foreground text-xs">
-								{job.applied} хүн өргөдөл өгсөн, багтаамж {job.capacity}
-							</p>
-						</div>
-					))}
-				</div>
-			</section>
-
-			{/* CTA Section */}
-			<section className="my-16 bg-primary py-16 text-white">
-				<div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-					<h2 className="mb-4 font-bold text-3xl">
-						Ажлын зар тавихаа өнөөдрөөс эхлүүл
-					</h2>
-					<p className="mb-8 text-lg text-primary-foreground/90">
-						Зөвхөн $10-оор ажлын зар тавина
+					<p className="mx-auto mb-12 max-w-2xl font-body text-xl opacity-90 md:text-2xl">
+						Мянга мянган хэрэглэгчидтэй нэгдэж, амьдралаа хялбарчил. Эсвэл
+						өөрийн ур чадвараараа орлого ол.
 					</p>
-					<Link href="/signup">
-						<Button className="bg-white text-primary hover:bg-gray-100">
-							Үнэгүй бүртгүүлэх
+					<div className="flex flex-col justify-center gap-6 sm:flex-row">
+						<Button
+							size="lg"
+							className="h-20 rounded-none bg-background px-12 text-2xl text-foreground shadow-xl transition-all duration-300 hover:scale-105 hover:bg-background/90"
+							asChild
+						>
+							<Link href="/signup">Бүртгүүлэх</Link>
 						</Button>
-					</Link>
+						<Button
+							size="lg"
+							variant="outline"
+							className="h-20 rounded-none border-2 border-background/30 px-12 text-2xl text-background transition-all duration-300 hover:border-background hover:bg-background/10"
+							asChild
+						>
+							<Link href="/tasks">Даалгавар харах</Link>
+						</Button>
+					</div>
 				</div>
 			</section>
 		</main>
