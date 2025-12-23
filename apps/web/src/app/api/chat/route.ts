@@ -26,7 +26,7 @@ async function getRedisClient(): Promise<RedisClientType | null> {
 	}
 
 	// If already connected, return client
-	if (redis && redis.isOpen) return redis;
+	if (redis?.isOpen) return redis;
 
 	// Prevent multiple concurrent connection attempts
 	if (redisConnecting) return null;

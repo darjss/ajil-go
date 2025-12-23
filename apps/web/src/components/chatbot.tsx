@@ -331,7 +331,7 @@ function ChatMessage({ message }: { message: Message }) {
 				text: message.content
 					.replace(/```(tasks|quickactions|action)\n[\s\S]*?```/g, "")
 					.trim(),
-		  }
+			}
 		: parseAIResponse(message.content); // After streaming: parse special blocks
 
 	return (
@@ -443,7 +443,7 @@ export function Chatbot() {
 
 	useEffect(() => {
 		scrollToBottom();
-	}, [messages, scrollToBottom]);
+	}, [scrollToBottom]);
 
 	useEffect(() => {
 		if (isOpen) {
@@ -464,7 +464,10 @@ export function Chatbot() {
 								idx: number,
 							) => ({
 								id: `hist-${idx}`,
-								role: m.role === "ai" ? "assistant" : (m.role as "user" | "assistant"),
+								role:
+									m.role === "ai"
+										? "assistant"
+										: (m.role as "user" | "assistant"),
 								content: m.content,
 							}),
 						),

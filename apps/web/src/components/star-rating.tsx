@@ -30,20 +30,24 @@ export function StarRating({
 
 	return (
 		<div className={cn("flex items-center gap-0.5", className)}>
-			{Array.from({ length: maxRating }).map((_, i) => {
-				const isFilled = i < fullStars || (i === fullStars && hasPartial);
-				return (
-					<Star
-						key={`star-${i}`}
-						className={cn(
-							sizeMap[size],
-							isFilled
-								? "fill-warning text-warning"
-								: "fill-transparent text-muted-foreground/30",
-						)}
-					/>
-				);
-			})}
+			{(() => {
+				const stars = [];
+				for (let i = 0; i < maxRating; i++) {
+					const isFilled = i < fullStars || (i === fullStars && hasPartial);
+					stars.push(
+						<Star
+							key={`star-${rating}-${i}`}
+							className={cn(
+								sizeMap[size],
+								isFilled
+									? "fill-warning text-warning"
+									: "fill-transparent text-muted-foreground/30",
+							)}
+						/>,
+					);
+				}
+				return stars;
+			})()}
 			{showValue && (
 				<span className="ml-1 font-medium text-foreground text-sm">
 					{rating.toFixed(1)}

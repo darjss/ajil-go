@@ -52,6 +52,7 @@ export function ApplicationModal({
 						<p className="text-muted-foreground text-sm">{companyName}</p>
 					</div>
 					<button
+						type="button"
 						onClick={onClose}
 						className="text-2xl text-muted-foreground hover:text-foreground"
 					>
@@ -73,10 +74,14 @@ export function ApplicationModal({
 					{/* Form Fields */}
 					<div className="grid gap-4 md:grid-cols-2">
 						<div>
-							<label className="mb-2 block font-medium text-foreground text-sm">
+							<label
+								htmlFor="fullName"
+								className="mb-2 block font-medium text-foreground text-sm"
+							>
 								Бүтэн нэр
 							</label>
 							<input
+								id="fullName"
 								type="text"
 								name="fullName"
 								placeholder="Нэрээ оруулна уу"
@@ -87,10 +92,14 @@ export function ApplicationModal({
 						</div>
 
 						<div>
-							<label className="mb-2 block font-medium text-foreground text-sm">
+							<label
+								htmlFor="email"
+								className="mb-2 block font-medium text-foreground text-sm"
+							>
 								Имэйл хаяг
 							</label>
 							<input
+								id="email"
 								type="email"
 								name="email"
 								placeholder="Имэйлээ оруулна уу"
@@ -102,10 +111,14 @@ export function ApplicationModal({
 					</div>
 
 					<div>
-						<label className="mb-2 block font-medium text-foreground text-sm">
+						<label
+							htmlFor="phone"
+							className="mb-2 block font-medium text-foreground text-sm"
+						>
 							Утасны дугаар
 						</label>
 						<input
+							id="phone"
 							type="tel"
 							name="phone"
 							placeholder="Утасны дугаараа оруулна уу"
@@ -116,10 +129,14 @@ export function ApplicationModal({
 					</div>
 
 					<div>
-						<label className="mb-2 block font-medium text-foreground text-sm">
+						<label
+							htmlFor="jobTitle"
+							className="mb-2 block font-medium text-foreground text-sm"
+						>
 							Одоогийн эсвэл өмнөх албан тушаал
 						</label>
 						<input
+							id="jobTitle"
 							type="text"
 							name="jobTitle"
 							placeholder="Одоогийн/өмнөх албан тушаал"
@@ -133,10 +150,14 @@ export function ApplicationModal({
 						<h4 className="mb-4 font-semibold text-foreground">ХОЛБООСУУД</h4>
 
 						<div>
-							<label className="mb-2 block font-medium text-foreground text-sm">
+							<label
+								htmlFor="linkedInUrl"
+								className="mb-2 block font-medium text-foreground text-sm"
+							>
 								LinkedIn холбоос
 							</label>
 							<input
+								id="linkedInUrl"
 								type="url"
 								name="linkedInUrl"
 								placeholder="LinkedIn профайлын холбоос"
@@ -147,10 +168,14 @@ export function ApplicationModal({
 						</div>
 
 						<div className="mt-4">
-							<label className="mb-2 block font-medium text-foreground text-sm">
+							<label
+								htmlFor="portfolioUrl"
+								className="mb-2 block font-medium text-foreground text-sm"
+							>
 								Портфолио холбоос
 							</label>
 							<input
+								id="portfolioUrl"
 								type="url"
 								name="portfolioUrl"
 								placeholder="Портфолио, вебсайт, Behance гэх мэт"
@@ -162,10 +187,14 @@ export function ApplicationModal({
 					</div>
 
 					<div>
-						<label className="mb-2 block font-medium text-foreground text-sm">
+						<label
+							htmlFor="additionalInfo"
+							className="mb-2 block font-medium text-foreground text-sm"
+						>
 							Нэмэлт мэдээлэл
 						</label>
 						<textarea
+							id="additionalInfo"
 							name="additionalInfo"
 							placeholder="Хуулга, уриалга эсвэл нэмэлт мэдээллээ бичээрэй"
 							value={formData.additionalInfo}
@@ -198,11 +227,11 @@ export function ApplicationModal({
 
 					<p className="text-center text-muted-foreground text-xs">
 						Өргөдлөө илгээснээр{" "}
-						<a href="#" className="text-primary hover:underline">
+						<a href="/terms" className="text-primary hover:underline">
 							үйлчилгээний нөхцөл
 						</a>{" "}
 						болон{" "}
-						<a href="#" className="text-primary hover:underline">
+						<a href="/privacy" className="text-primary hover:underline">
 							нууцлалын бодлого
 						</a>
 						-г зөвшөөрсөнд тооцно.
