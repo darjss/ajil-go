@@ -31,31 +31,31 @@ import { authClient } from "@/lib/auth-client";
 function SettingsSkeleton() {
 	return (
 		<div className="space-y-6">
-			<Card className="border-slate-100">
+			<Card className="rounded-none border-border">
 				<CardHeader>
-					<Skeleton className="h-6 w-48" />
+					<Skeleton className="h-6 w-48 rounded-sm" />
 				</CardHeader>
 				<CardContent className="space-y-4">
-					<Skeleton className="h-12 w-full" />
-					<Skeleton className="h-12 w-full" />
+					<Skeleton className="h-12 w-full rounded-sm" />
+					<Skeleton className="h-12 w-full rounded-sm" />
 				</CardContent>
 			</Card>
-			<Card className="border-slate-100">
+			<Card className="rounded-none border-border">
 				<CardHeader>
-					<Skeleton className="h-6 w-36" />
+					<Skeleton className="h-6 w-36 rounded-sm" />
 				</CardHeader>
 				<CardContent className="space-y-4">
-					<Skeleton className="h-12 w-full" />
-					<Skeleton className="h-12 w-full" />
-					<Skeleton className="h-12 w-full" />
+					<Skeleton className="h-12 w-full rounded-sm" />
+					<Skeleton className="h-12 w-full rounded-sm" />
+					<Skeleton className="h-12 w-full rounded-sm" />
 				</CardContent>
 			</Card>
-			<Card className="border-slate-100">
+			<Card className="rounded-none border-border">
 				<CardHeader>
-					<Skeleton className="h-6 w-24" />
+					<Skeleton className="h-6 w-24 rounded-sm" />
 				</CardHeader>
 				<CardContent>
-					<Skeleton className="h-12 w-full" />
+					<Skeleton className="h-12 w-full rounded-sm" />
 				</CardContent>
 			</Card>
 		</div>
@@ -96,8 +96,8 @@ export default function WorkerSettingsPage() {
 			<div className="min-h-screen p-6 lg:p-8">
 				<div className="mx-auto max-w-2xl space-y-8">
 					<div className="space-y-2">
-						<Skeleton className="h-8 w-32" />
-						<Skeleton className="h-4 w-64" />
+						<Skeleton className="h-8 w-32 rounded-sm" />
+						<Skeleton className="h-4 w-64 rounded-sm" />
 					</div>
 					<SettingsSkeleton />
 				</div>
@@ -110,39 +110,39 @@ export default function WorkerSettingsPage() {
 			<div className="mx-auto max-w-2xl space-y-8">
 				<header>
 					<div className="flex items-center gap-3">
-						<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-cyan-500 text-white shadow-emerald-500/20 shadow-lg">
+						<div className="flex h-10 w-10 items-center justify-center rounded-none bg-primary text-primary-foreground">
 							<Settings className="h-5 w-5" />
 						</div>
 						<div>
-							<h1 className="font-bold text-2xl text-slate-800 lg:text-3xl">
+							<h1 className="font-display text-2xl text-foreground lg:text-3xl">
 								Тохиргоо
 							</h1>
-							<p className="text-slate-500 text-sm">
+							<p className="font-body text-muted-foreground text-sm">
 								Бүртгэл болон мэдэгдлийн тохиргоо
 							</p>
 						</div>
 					</div>
 				</header>
 
-				<Card className="overflow-hidden border-slate-100 transition-all hover:shadow-md">
-					<CardHeader className="border-slate-100 border-b bg-gradient-to-r from-slate-50 to-slate-100/50">
-						<CardTitle className="flex items-center gap-2 font-semibold text-lg text-slate-800">
-							<User className="h-5 w-5 text-emerald-600" />
+				<Card className="overflow-hidden rounded-none border-border transition-all hover:shadow-sm">
+					<CardHeader className="border-border border-b bg-muted">
+						<CardTitle className="flex items-center gap-2 font-display text-lg text-foreground">
+							<User className="h-5 w-5 text-primary" />
 							Бүртгэлийн мэдээлэл
 						</CardTitle>
 					</CardHeader>
 					<CardContent className="p-6">
 						<div className="space-y-4">
-							<div className="flex items-center justify-between rounded-xl bg-slate-50/80 p-4">
+							<div className="flex items-center justify-between rounded-none bg-muted/50 p-4">
 								<div className="flex items-center gap-3">
-									<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-100 to-cyan-100 text-emerald-600">
+									<div className="flex h-10 w-10 items-center justify-center rounded-none bg-primary/10 text-primary">
 										<Mail className="h-5 w-5" />
 									</div>
 									<div>
-										<Label className="font-medium text-slate-500 text-xs uppercase tracking-wider">
+										<Label className="font-mono text-muted-foreground text-xs uppercase tracking-wider">
 											Имэйл хаяг
 										</Label>
-										<p className="font-medium text-slate-800">
+										<p className="font-body text-foreground">
 											{session?.user?.email || "—"}
 										</p>
 									</div>
@@ -152,28 +152,28 @@ export default function WorkerSettingsPage() {
 					</CardContent>
 				</Card>
 
-				<Card className="overflow-hidden border-slate-100 transition-all hover:shadow-md">
-					<CardHeader className="border-slate-100 border-b bg-gradient-to-r from-slate-50 to-slate-100/50">
-						<CardTitle className="flex items-center gap-2 font-semibold text-lg text-slate-800">
-							<Bell className="h-5 w-5 text-emerald-600" />
+				<Card className="overflow-hidden rounded-none border-border transition-all hover:shadow-sm">
+					<CardHeader className="border-border border-b bg-muted">
+						<CardTitle className="flex items-center gap-2 font-display text-lg text-foreground">
+							<Bell className="h-5 w-5 text-primary" />
 							Мэдэгдэл
 						</CardTitle>
 					</CardHeader>
 					<CardContent className="p-6">
 						<div className="space-y-1">
-							<div className="flex items-center justify-between rounded-xl p-4 transition-colors hover:bg-slate-50/80">
+							<div className="flex items-center justify-between rounded-none p-4 transition-colors hover:bg-muted/50">
 								<div className="flex items-center gap-3">
-									<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-100 to-blue-50 text-blue-600">
+									<div className="flex h-10 w-10 items-center justify-center rounded-none bg-secondary/20 text-secondary-foreground">
 										<Mail className="h-5 w-5" />
 									</div>
 									<div>
 										<Label
 											htmlFor="email-notifications"
-											className="cursor-pointer font-medium text-slate-800"
+											className="cursor-pointer font-body text-foreground"
 										>
 											Имэйл мэдэгдэл
 										</Label>
-										<p className="text-slate-500 text-sm">
+										<p className="font-body text-muted-foreground text-sm">
 											Имэйлээр мэдэгдэл хүлээн авах
 										</p>
 									</div>
@@ -182,23 +182,23 @@ export default function WorkerSettingsPage() {
 									id="email-notifications"
 									checked={emailNotifications}
 									onCheckedChange={setEmailNotifications}
-									className="data-[state=checked]:bg-emerald-500"
+									className="data-[state=checked]:bg-primary"
 								/>
 							</div>
 
-							<div className="flex items-center justify-between rounded-xl p-4 transition-colors hover:bg-slate-50/80">
+							<div className="flex items-center justify-between rounded-none p-4 transition-colors hover:bg-muted/50">
 								<div className="flex items-center gap-3">
-									<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-100 to-emerald-50 text-emerald-600">
+									<div className="flex h-10 w-10 items-center justify-center rounded-none bg-primary/10 text-primary">
 										<Bell className="h-5 w-5" />
 									</div>
 									<div>
 										<Label
 											htmlFor="new-task-notifications"
-											className="cursor-pointer font-medium text-slate-800"
+											className="cursor-pointer font-body text-foreground"
 										>
 											Шинэ даалгаврын мэдэгдэл
 										</Label>
-										<p className="text-slate-500 text-sm">
+										<p className="font-body text-muted-foreground text-sm">
 											Шинэ даалгавар нэмэгдэхэд мэдэгдэл авах
 										</p>
 									</div>
@@ -207,23 +207,23 @@ export default function WorkerSettingsPage() {
 									id="new-task-notifications"
 									checked={newTaskNotifications}
 									onCheckedChange={setNewTaskNotifications}
-									className="data-[state=checked]:bg-emerald-500"
+									className="data-[state=checked]:bg-primary"
 								/>
 							</div>
 
-							<div className="flex items-center justify-between rounded-xl p-4 transition-colors hover:bg-slate-50/80">
+							<div className="flex items-center justify-between rounded-none p-4 transition-colors hover:bg-muted/50">
 								<div className="flex items-center gap-3">
-									<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-amber-100 to-amber-50 text-amber-600">
+									<div className="flex h-10 w-10 items-center justify-center rounded-none bg-accent/20 text-accent-foreground">
 										<Bell className="h-5 w-5" />
 									</div>
 									<div>
 										<Label
 											htmlFor="bid-notifications"
-											className="cursor-pointer font-medium text-slate-800"
+											className="cursor-pointer font-body text-foreground"
 										>
 											Саналын мэдэгдэл
 										</Label>
-										<p className="text-slate-500 text-sm">
+										<p className="font-body text-muted-foreground text-sm">
 											Саналд хариу ирэхэд мэдэгдэл авах
 										</p>
 									</div>
@@ -232,23 +232,23 @@ export default function WorkerSettingsPage() {
 									id="bid-notifications"
 									checked={bidNotifications}
 									onCheckedChange={setBidNotifications}
-									className="data-[state=checked]:bg-emerald-500"
+									className="data-[state=checked]:bg-primary"
 								/>
 							</div>
 
-							<div className="flex items-center justify-between rounded-xl p-4 transition-colors hover:bg-slate-50/80">
+							<div className="flex items-center justify-between rounded-none p-4 transition-colors hover:bg-muted/50">
 								<div className="flex items-center gap-3">
-									<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-100 to-cyan-50 text-cyan-600">
+									<div className="flex h-10 w-10 items-center justify-center rounded-none bg-secondary/20 text-secondary-foreground">
 										<MessageSquare className="h-5 w-5" />
 									</div>
 									<div>
 										<Label
 											htmlFor="message-notifications"
-											className="cursor-pointer font-medium text-slate-800"
+											className="cursor-pointer font-body text-foreground"
 										>
 											Мессежийн мэдэгдэл
 										</Label>
-										<p className="text-slate-500 text-sm">
+										<p className="font-body text-muted-foreground text-sm">
 											Шинэ мессеж ирэхэд мэдэгдэл авах
 										</p>
 									</div>
@@ -257,37 +257,37 @@ export default function WorkerSettingsPage() {
 									id="message-notifications"
 									checked={messageNotifications}
 									onCheckedChange={setMessageNotifications}
-									className="data-[state=checked]:bg-emerald-500"
+									className="data-[state=checked]:bg-primary"
 								/>
 							</div>
 						</div>
 					</CardContent>
 				</Card>
 
-				<Card className="overflow-hidden border-slate-100 transition-all hover:shadow-md">
-					<CardHeader className="border-slate-100 border-b bg-gradient-to-r from-slate-50 to-slate-100/50">
-						<CardTitle className="flex items-center gap-2 font-semibold text-lg text-slate-800">
-							<Globe className="h-5 w-5 text-emerald-600" />
+				<Card className="overflow-hidden rounded-none border-border transition-all hover:shadow-sm">
+					<CardHeader className="border-border border-b bg-muted">
+						<CardTitle className="flex items-center gap-2 font-display text-lg text-foreground">
+							<Globe className="h-5 w-5 text-primary" />
 							Хэл
 						</CardTitle>
 					</CardHeader>
 					<CardContent className="p-6">
-						<div className="flex items-center justify-between rounded-xl bg-slate-50/80 p-4">
+						<div className="flex items-center justify-between rounded-none bg-muted/50 p-4">
 							<div className="flex items-center gap-3">
-								<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-violet-100 to-violet-50 text-violet-600">
+								<div className="flex h-10 w-10 items-center justify-center rounded-none bg-secondary/20 text-secondary-foreground">
 									<Globe className="h-5 w-5" />
 								</div>
 								<div>
-									<Label className="font-medium text-slate-800">
+									<Label className="font-body text-foreground">
 										Интерфэйсийн хэл
 									</Label>
-									<p className="text-slate-500 text-sm">
+									<p className="font-body text-muted-foreground text-sm">
 										Програмын үзүүлэх хэлийг сонгох
 									</p>
 								</div>
 							</div>
 							<Select value={language} onValueChange={setLanguage}>
-								<SelectTrigger className="w-36 border-slate-200 bg-white">
+								<SelectTrigger className="w-36 rounded-none border-border bg-card">
 									<SelectValue />
 								</SelectTrigger>
 								<SelectContent>
@@ -299,12 +299,12 @@ export default function WorkerSettingsPage() {
 					</CardContent>
 				</Card>
 
-				<Card className="overflow-hidden border-slate-100 transition-all hover:shadow-md">
+				<Card className="overflow-hidden rounded-none border-border transition-all hover:shadow-sm">
 					<CardContent className="p-6">
 						<Button
 							type="button"
 							variant="outline"
-							className="w-full justify-center gap-2 border-slate-200 py-6 text-slate-600 transition-all hover:border-slate-300 hover:bg-slate-50"
+							className="w-full justify-center gap-2 rounded-none border-border py-6 text-muted-foreground transition-all hover:border-primary hover:bg-muted"
 							onClick={handleLogout}
 							disabled={isLoggingOut}
 						>
@@ -314,22 +314,24 @@ export default function WorkerSettingsPage() {
 					</CardContent>
 				</Card>
 
-				<Card className="overflow-hidden border-red-200 bg-gradient-to-br from-red-50/50 to-orange-50/30 transition-all hover:shadow-md">
-					<CardHeader className="border-red-100 border-b">
-						<CardTitle className="flex items-center gap-2 font-semibold text-lg text-red-700">
+				<Card className="overflow-hidden rounded-none border-destructive/50 bg-destructive/5 transition-all hover:shadow-sm">
+					<CardHeader className="border-destructive/30 border-b">
+						<CardTitle className="flex items-center gap-2 font-display text-lg text-destructive">
 							<AlertTriangle className="h-5 w-5" />
 							Аюултай бүс
 						</CardTitle>
 					</CardHeader>
 					<CardContent className="p-6">
-						<div className="rounded-xl border border-red-200 bg-white p-4">
+						<div className="rounded-none border border-destructive/30 bg-card p-4">
 							<div className="flex items-start gap-4">
-								<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-red-100 to-red-50 text-red-600">
+								<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-none bg-destructive/10 text-destructive">
 									<Trash2 className="h-5 w-5" />
 								</div>
 								<div className="flex-1">
-									<h3 className="font-semibold text-red-800">Бүртгэл устгах</h3>
-									<p className="mt-1 text-red-600/80 text-sm">
+									<h3 className="font-display text-destructive">
+										Бүртгэл устгах
+									</h3>
+									<p className="mt-1 font-body text-destructive/80 text-sm">
 										Анхааруулга: Бүртгэлээ устгавал таны бүх мэдээлэл,
 										даалгавар, санал бүгд устах болно. Энэ үйлдлийг буцаах
 										боломжгүй.
@@ -337,7 +339,7 @@ export default function WorkerSettingsPage() {
 									<Button
 										type="button"
 										variant="destructive"
-										className="mt-4 gap-2 bg-red-600 hover:bg-red-700"
+										className="mt-4 gap-2 rounded-none"
 									>
 										<Trash2 className="h-4 w-4" />
 										Бүртгэл устгах

@@ -52,7 +52,7 @@ function Footer() {
 				<div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8">
 					<div className="lg:col-span-4">
 						<Link href="/" className="inline-flex items-center gap-3">
-							<div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
+							<div className="flex h-10 w-10 items-center justify-center rounded-none bg-primary">
 								<span className="font-bold text-lg text-primary-foreground">
 									J
 								</span>
@@ -74,7 +74,7 @@ function Footer() {
 									href={social.href}
 									target="_blank"
 									rel="noopener noreferrer"
-									className="flex h-10 w-10 items-center justify-center rounded-full bg-background text-muted-foreground transition-colors duration-200 hover:bg-primary hover:text-primary-foreground"
+									className="flex h-10 w-10 items-center justify-center rounded-none bg-background text-muted-foreground transition-colors duration-200 hover:bg-primary hover:text-primary-foreground"
 									aria-label={social.label}
 								>
 									<social.icon className="h-4 w-4" />
@@ -106,7 +106,7 @@ function Footer() {
 					</div>
 
 					<div className="lg:col-span-3">
-						<div className="rounded-2xl border border-border bg-card p-6">
+						<div className="rounded-none border border-border bg-card p-6">
 							<div className="flex items-center gap-2 text-primary">
 								<Mail className="h-5 w-5" />
 								<h3 className="font-semibold text-foreground">Мэдээлэл авах</h3>

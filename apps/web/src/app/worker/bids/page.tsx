@@ -24,27 +24,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { bidsApi } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 import { bidKeys, bidQueries } from "@/lib/queries";
-
-function formatCurrency(amount: number): string {
-	return new Intl.NumberFormat("mn-MN", {
-		style: "decimal",
-		maximumFractionDigits: 0,
-	}).format(amount);
-}
-
-function formatDate(date: Date): string {
-	return new Intl.DateTimeFormat("mn-MN", {
-		year: "numeric",
-		month: "short",
-		day: "numeric",
-	}).format(new Date(date));
-}
+import { formatCurrency, formatDateShort } from "@/lib/utils";
 
 const statusColors: Record<string, string> = {
-	PENDING: "bg-amber-100 text-amber-700 border-amber-200",
-	ACCEPTED: "bg-emerald-100 text-emerald-700 border-emerald-200",
-	REJECTED: "bg-red-100 text-red-700 border-red-200",
-	WITHDRAWN: "bg-slate-100 text-slate-600 border-slate-200",
+	PENDING: "bg-accent/50 text-accent-foreground border-border",
+	ACCEPTED: "bg-primary/10 text-primary border-primary/30",
+	REJECTED: "bg-destructive/10 text-destructive border-destructive/30",
+	WITHDRAWN: "bg-muted text-muted-foreground border-border",
 };
 
 const statusLabels: Record<string, string> = {
@@ -65,10 +51,10 @@ const tabItems: { value: BidStatus; label: string }[] = [
 
 function BidCardSkeleton() {
 	return (
-		<Card className="border-slate-100">
+		<Card className="border-border">
 			<CardContent className="p-6">
 				<div className="flex items-start gap-4">
-					<Skeleton className="h-12 w-12 shrink-0 rounded-xl" />
+					<Skeleton className="h-12 w-12 shrink-0 rounded-sm" />
 					<div className="flex-1 space-y-3">
 						<Skeleton className="h-5 w-3/4" />
 						<Skeleton className="h-4 w-1/2" />
@@ -77,7 +63,7 @@ function BidCardSkeleton() {
 							<Skeleton className="h-4 w-24" />
 						</div>
 					</div>
-					<Skeleton className="h-6 w-24 rounded-full" />
+					<Skeleton className="h-6 w-24 rounded-sm" />
 				</div>
 			</CardContent>
 		</Card>
@@ -147,10 +133,10 @@ export default function WorkerBidsPage() {
 		<div className="min-h-screen p-6 lg:p-8">
 			<div className="mx-auto max-w-4xl space-y-6">
 				<header>
-					<h1 className="font-bold text-2xl text-slate-800 lg:text-3xl">
+					<h1 className="font-display font-bold text-2xl text-foreground lg:text-3xl">
 						Миний саналууд
 					</h1>
-					<p className="mt-1 text-slate-500">
+					<p className="mt-1 text-muted-foreground">
 						Таны илгээсэн бүх саналуудыг энд харах боломжтой
 					</p>
 				</header>
@@ -160,7 +146,7 @@ export default function WorkerBidsPage() {
 					onValueChange={(v) => setActiveTab(v as BidStatus)}
 					className="w-full"
 				>
-					<TabsList className="grid w-full max-w-lg grid-cols-4 bg-slate-100/80">
+					<TabsList className="grid w-full max-w-lg grid-cols-4 bg-muted">
 						{tabItems.map((tab) => (
 							<TabsTrigger
 								key={tab.value}
@@ -169,7 +155,7 @@ export default function WorkerBidsPage() {
 							>
 								{tab.label}
 								{counts[tab.value] > 0 && (
-									<span className="ml-1.5 rounded-full bg-slate-200 px-1.5 py-0.5 font-semibold text-[10px] data-[state=active]:bg-emerald-100 data-[state=active]:text-emerald-700">
+									<span className="ml-1.5 rounded-sm bg-muted px-1.5 py-0.5 font-mono text-[10px] font-semibold data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
 										{counts[tab.value]}
 									</span>
 								)}
@@ -185,22 +171,22 @@ export default function WorkerBidsPage() {
 								))}
 							</div>
 						) : filteredBids.length === 0 ? (
-							<div className="flex flex-col items-center justify-center rounded-2xl border-2 border-slate-100 border-dashed bg-slate-50/50 py-16 text-center">
-								<div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
-									<FileText className="h-8 w-8 text-slate-400" />
+							<div className="flex flex-col items-center justify-center rounded-none border-2 border-border border-dashed bg-muted/50 py-16 text-center">
+								<div className="mb-4 flex h-16 w-16 items-center justify-center rounded-none bg-muted">
+									<FileText className="h-8 w-8 text-muted-foreground" />
 								</div>
-								<h3 className="font-semibold text-slate-700">
+								<h3 className="font-semibold text-foreground">
 									{activeTab === "ALL"
 										? "Санал байхгүй байна"
 										: `${statusLabels[activeTab]} санал байхгүй`}
 								</h3>
-								<p className="mt-1 max-w-sm text-slate-500 text-sm">
+								<p className="mt-1 max-w-sm text-muted-foreground text-sm">
 									Даалгавруудаас сонгон санал илгээнэ үү
 								</p>
 								<Link href="/tasks" className="mt-4">
 									<Button
 										type="button"
-										className="bg-gradient-to-r from-emerald-500 to-cyan-500 text-white"
+										className="bg-primary text-primary-foreground"
 									>
 										<Search className="mr-2 h-4 w-4" />
 										Даалгавар хайх
@@ -212,12 +198,12 @@ export default function WorkerBidsPage() {
 								{filteredBids.map((bid) => (
 									<Card
 										key={bid.id}
-										className="group overflow-hidden border-slate-100 transition-all hover:border-slate-200 hover:shadow-lg"
+										className="group overflow-hidden border-border transition-all hover:border-primary/50 hover:shadow-lg"
 									>
 										<CardContent className="p-6">
 											<div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-												<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500/10 to-cyan-500/10">
-													<Briefcase className="h-6 w-6 text-emerald-600" />
+												<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-none bg-primary/10">
+													<Briefcase className="h-6 w-6 text-primary" />
 												</div>
 
 												<div className="min-w-0 flex-1">
@@ -226,10 +212,10 @@ export default function WorkerBidsPage() {
 															href={`/task/${bid.taskId}`}
 															className="group/link flex items-center gap-2"
 														>
-															<h3 className="font-semibold text-slate-800 transition-colors group-hover/link:text-emerald-600">
+															<h3 className="font-semibold text-foreground transition-colors group-hover/link:text-primary">
 																{bid.task?.title || "Даалгавар"}
 															</h3>
-															<ExternalLink className="h-4 w-4 text-slate-400 opacity-0 transition-all group-hover/link:opacity-100" />
+															<ExternalLink className="h-4 w-4 text-muted-foreground opacity-0 transition-all group-hover/link:opacity-100" />
 														</Link>
 														<Badge
 															variant="outline"
@@ -239,9 +225,9 @@ export default function WorkerBidsPage() {
 														</Badge>
 													</div>
 
-													<div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-slate-500 text-sm">
+													<div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-muted-foreground text-sm">
 														<div className="flex items-center gap-1.5">
-															<span className="font-semibold text-emerald-600">
+															<span className="font-semibold text-primary">
 																{formatCurrency(bid.amount)}₮
 															</span>
 														</div>
@@ -253,12 +239,12 @@ export default function WorkerBidsPage() {
 														)}
 														<div className="flex items-center gap-1.5">
 															<Calendar className="h-4 w-4" />
-															<span>{formatDate(bid.createdAt)}</span>
+															<span>{formatDateShort(bid.createdAt)}</span>
 														</div>
 													</div>
 
 													{bid.message && (
-														<p className="mt-3 line-clamp-2 text-slate-600 text-sm">
+														<p className="mt-3 line-clamp-2 text-muted-foreground text-sm">
 															{bid.message}
 														</p>
 													)}
@@ -281,7 +267,7 @@ export default function WorkerBidsPage() {
 																	variant="outline"
 																	size="sm"
 																	type="button"
-																	className="border-slate-200"
+																	className="border-border"
 																>
 																	Даалгавар үзэх
 																	<ArrowRight className="ml-1.5 h-3.5 w-3.5" />
@@ -291,9 +277,9 @@ export default function WorkerBidsPage() {
 													)}
 
 													{bid.status === "ACCEPTED" && bid.task && (
-														<div className="mt-4 flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-2">
-															<AlertCircle className="h-4 w-4 text-emerald-600" />
-															<span className="text-emerald-700 text-sm">
+														<div className="mt-4 flex items-center gap-2 rounded-none bg-primary/10 px-3 py-2">
+															<AlertCircle className="h-4 w-4 text-primary" />
+															<span className="text-primary text-sm">
 																Таны санал хүлээн авагдлаа. Даалгавар дээр
 																ажиллаж эхлэх боломжтой.
 															</span>
@@ -304,7 +290,7 @@ export default function WorkerBidsPage() {
 																<Button
 																	size="sm"
 																	type="button"
-																	className="bg-emerald-600 text-white hover:bg-emerald-700"
+																	className="bg-primary text-primary-foreground hover:bg-primary/90"
 																>
 																	Үзэх
 																</Button>

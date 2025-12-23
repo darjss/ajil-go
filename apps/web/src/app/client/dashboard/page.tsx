@@ -34,24 +34,26 @@ function TaskRow({ task }: { task: TaskApiResponse }) {
 	const bidCount = task._count?.bids || 0;
 
 	return (
-		<div className="flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition-all hover:border-border hover:shadow-md">
+		<div className="flex items-center gap-4 rounded-none border border-border bg-card p-4 transition-all hover:border-primary/20 hover:shadow-none">
 			<div className="min-w-0 flex-1">
 				<Link
 					href={`/client/tasks/${task.id}/bids`}
-					className="line-clamp-1 font-semibold text-foreground transition-colors hover:text-primary"
+					className="line-clamp-1 font-display font-medium text-foreground transition-colors hover:text-primary"
 				>
 					{task.title}
 				</Link>
-				<div className="mt-1 flex items-center gap-3 text-muted-foreground text-sm">
-					<span>{formatBudget(task.budgetMin, task.budgetMax)}</span>
+				<div className="mt-1 flex items-center gap-3 font-body text-muted-foreground text-sm">
+					<span className="font-mono">
+						{formatBudget(task.budgetMin, task.budgetMax)}
+					</span>
 					<span className="text-border">•</span>
-					<span>{formatTimeAgo(task.createdAt)}</span>
+					<span className="font-mono">{formatTimeAgo(task.createdAt)}</span>
 				</div>
 			</div>
 			<div className="flex items-center gap-3">
 				<Link
 					href={`/client/tasks/${task.id}/bids`}
-					className="flex items-center gap-1.5 rounded-lg bg-muted px-3 py-1.5 font-medium text-muted-foreground text-sm transition-colors hover:bg-primary/10 hover:text-primary"
+					className="flex items-center gap-1.5 rounded-sm bg-muted px-3 py-1.5 font-mono text-sm text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
 				>
 					<Users className="h-4 w-4" />
 					{bidCount} санал
@@ -71,14 +73,14 @@ function DashboardSkeleton() {
 				<StatCardSkeleton />
 				<StatCardSkeleton />
 			</div>
-			<Card>
+			<Card className="rounded-none">
 				<CardHeader>
-					<Skeleton className="h-6 w-40" />
+					<Skeleton className="h-6 w-40 rounded-sm" />
 				</CardHeader>
 				<CardContent className="space-y-4">
-					<Skeleton className="h-20 w-full rounded-xl" />
-					<Skeleton className="h-20 w-full rounded-xl" />
-					<Skeleton className="h-20 w-full rounded-xl" />
+					<Skeleton className="h-20 w-full rounded-sm" />
+					<Skeleton className="h-20 w-full rounded-sm" />
+					<Skeleton className="h-20 w-full rounded-sm" />
 				</CardContent>
 			</Card>
 		</div>
@@ -150,13 +152,17 @@ function DashboardContent() {
 			</div>
 
 			<div className="grid gap-6 lg:grid-cols-3">
-				<Card className="lg:col-span-2">
+				<Card className="rounded-none lg:col-span-2">
 					<CardHeader className="flex flex-row items-center justify-between">
-						<CardTitle className="font-semibold text-foreground text-lg">
+						<CardTitle className="font-display text-lg font-medium text-foreground">
 							Сүүлийн даалгаврууд
 						</CardTitle>
 						<Link href="/client/tasks">
-							<Button variant="ghost" size="sm" className="gap-1.5">
+							<Button
+								variant="ghost"
+								size="sm"
+								className="gap-1.5 rounded-none font-mono"
+							>
 								Бүгдийг харах
 								<ArrowRight className="h-4 w-4" />
 							</Button>
@@ -184,15 +190,18 @@ function DashboardContent() {
 					</CardContent>
 				</Card>
 
-				<Card>
+				<Card className="rounded-none">
 					<CardHeader>
-						<CardTitle className="font-semibold text-foreground text-lg">
+						<CardTitle className="font-display text-lg font-medium text-foreground">
 							Хурдан үйлдлүүд
 						</CardTitle>
 					</CardHeader>
 					<CardContent className="space-y-3">
 						<Link href="/client/post-task" className="block">
-							<Button className="w-full justify-start gap-3" size="lg">
+							<Button
+								className="w-full justify-start gap-3 rounded-none font-medium"
+								size="lg"
+							>
 								<PlusCircle className="h-5 w-5" />
 								Шинэ даалгавар нийтлэх
 							</Button>
@@ -200,7 +209,7 @@ function DashboardContent() {
 						<Link href="/client/tasks" className="block">
 							<Button
 								variant="outline"
-								className="w-full justify-start gap-3"
+								className="w-full justify-start gap-3 rounded-none font-medium"
 								size="lg"
 							>
 								<ListTodo className="h-5 w-5" />
@@ -210,7 +219,7 @@ function DashboardContent() {
 						<Link href="/tasks" className="block">
 							<Button
 								variant="outline"
-								className="w-full justify-start gap-3"
+								className="w-full justify-start gap-3 rounded-none font-medium"
 								size="lg"
 							>
 								<TrendingUp className="h-5 w-5" />

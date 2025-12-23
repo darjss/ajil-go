@@ -27,7 +27,7 @@ export default function DashboardPage() {
 
 	if (isPending || !session) {
 		return (
-			<div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+			<div className="flex min-h-screen items-center justify-center bg-muted">
 				<Loader2 className="h-8 w-8 animate-spin text-primary" />
 			</div>
 		);
@@ -39,15 +39,15 @@ export default function DashboardPage() {
 	};
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-			<div className="border-b bg-white/80 backdrop-blur-sm">
+		<div className="min-h-screen bg-muted">
+			<div className="border-b border-border bg-background/80 backdrop-blur-sm">
 				<div className="mx-auto max-w-4xl px-6 py-4">
 					<div className="flex items-center gap-3">
-						<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-emerald-500">
-							<span className="font-bold text-white">А</span>
+						<div className="flex h-10 w-10 items-center justify-center rounded-none bg-primary">
+							<span className="font-bold text-primary-foreground">А</span>
 						</div>
 						<div>
-							<h1 className="font-bold text-xl">Ажил-GO</h1>
+							<h1 className="font-display text-xl text-foreground">Ажил-GO</h1>
 							<p className="text-muted-foreground text-sm">
 								Даалгаврын платформ
 							</p>
@@ -58,7 +58,7 @@ export default function DashboardPage() {
 
 			<div className="mx-auto max-w-4xl px-6 py-16">
 				<div className="mb-12 text-center">
-					<h2 className="mb-3 font-bold text-3xl text-foreground">
+					<h2 className="mb-3 font-display text-3xl text-foreground">
 						Сайн байна уу, {session.user.name}!
 					</h2>
 					<p className="text-lg text-muted-foreground">
@@ -72,10 +72,10 @@ export default function DashboardPage() {
 						onClick={() => handleNavigate("/worker/dashboard")}
 					>
 						<CardHeader className="pb-4">
-							<div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-cyan-500 shadow-emerald-500/20 shadow-lg transition-transform group-hover:scale-105">
-								<Briefcase className="h-8 w-8 text-white" />
+							<div className="mb-4 flex h-16 w-16 items-center justify-center rounded-none bg-primary shadow-lg transition-transform group-hover:scale-105">
+								<Briefcase className="h-8 w-8 text-primary-foreground" />
 							</div>
-							<CardTitle className="text-xl">Гүйцэтгэгч</CardTitle>
+							<CardTitle className="font-display text-xl">Гүйцэтгэгч</CardTitle>
 							<CardDescription className="text-base">
 								Даалгавар хайж, санал илгээж, орлого олох
 							</CardDescription>
@@ -83,20 +83,20 @@ export default function DashboardPage() {
 						<CardContent>
 							<ul className="mb-6 space-y-2 text-muted-foreground text-sm">
 								<li className="flex items-center gap-2">
-									<div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+									<div className="h-1.5 w-1.5 rounded-none bg-primary" />
 									Нээлттэй даалгаврууд хайх
 								</li>
 								<li className="flex items-center gap-2">
-									<div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+									<div className="h-1.5 w-1.5 rounded-none bg-primary" />
 									Өөрийн саналуудыг удирдах
 								</li>
 								<li className="flex items-center gap-2">
-									<div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+									<div className="h-1.5 w-1.5 rounded-none bg-primary" />
 									Захиалагчтай холбогдох
 								</li>
 							</ul>
 							<Button
-								className="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600"
+								className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
 								disabled={isNavigating}
 							>
 								{isNavigating ? (
@@ -116,10 +116,10 @@ export default function DashboardPage() {
 						onClick={() => handleNavigate("/client/dashboard")}
 					>
 						<CardHeader className="pb-4">
-							<div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-violet-500 shadow-lg shadow-primary/20 transition-transform group-hover:scale-105">
-								<ClipboardList className="h-8 w-8 text-white" />
+							<div className="mb-4 flex h-16 w-16 items-center justify-center rounded-none bg-secondary shadow-lg transition-transform group-hover:scale-105">
+								<ClipboardList className="h-8 w-8 text-secondary-foreground" />
 							</div>
-							<CardTitle className="text-xl">Захиалагч</CardTitle>
+							<CardTitle className="font-display text-xl">Захиалагч</CardTitle>
 							<CardDescription className="text-base">
 								Даалгавар нийтлэх, гүйцэтгэгч сонгох
 							</CardDescription>
@@ -127,19 +127,23 @@ export default function DashboardPage() {
 						<CardContent>
 							<ul className="mb-6 space-y-2 text-muted-foreground text-sm">
 								<li className="flex items-center gap-2">
-									<div className="h-1.5 w-1.5 rounded-full bg-primary" />
+									<div className="h-1.5 w-1.5 rounded-none bg-secondary-foreground" />
 									Шинэ даалгавар нийтлэх
 								</li>
 								<li className="flex items-center gap-2">
-									<div className="h-1.5 w-1.5 rounded-full bg-primary" />
+									<div className="h-1.5 w-1.5 rounded-none bg-secondary-foreground" />
 									Ирсэн саналуудыг харах
 								</li>
 								<li className="flex items-center gap-2">
-									<div className="h-1.5 w-1.5 rounded-full bg-primary" />
+									<div className="h-1.5 w-1.5 rounded-none bg-secondary-foreground" />
 									Гүйцэтгэгчтэй холбогдох
 								</li>
 							</ul>
-							<Button className="w-full" disabled={isNavigating}>
+							<Button
+								className="w-full"
+								variant="secondary"
+								disabled={isNavigating}
+							>
 								{isNavigating ? (
 									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
 								) : (

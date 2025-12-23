@@ -31,93 +31,61 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { bidsApi, tasksApi } from "@/lib/api";
 import { bidKeys, bidQueries, taskKeys, taskQueries } from "@/lib/queries";
+import { formatCurrency, formatDateShort, formatTimeAgo } from "@/lib/utils";
 
 type SortOption = "date" | "price-low" | "price-high" | "rating";
 
 const statusConfig: Record<string, { label: string; className: string }> = {
 	OPEN: {
 		label: "Нээлттэй",
-		className:
-			"bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
+		className: "bg-primary/10 text-primary",
 	},
 	ASSIGNED: {
 		label: "Хуваарилагдсан",
-		className:
-			"bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+		className: "bg-secondary text-secondary-foreground",
 	},
 	IN_PROGRESS: {
 		label: "Гүйцэтгэж буй",
-		className:
-			"bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+		className: "bg-accent text-accent-foreground",
 	},
 	COMPLETED: {
 		label: "Дууссан",
-		className:
-			"bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400",
+		className: "bg-muted text-muted-foreground",
 	},
 };
 
 const bidStatusConfig: Record<string, { label: string; className: string }> = {
 	PENDING: {
 		label: "Хүлээгдэж буй",
-		className:
-			"bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+		className: "bg-accent text-accent-foreground",
 	},
 	ACCEPTED: {
 		label: "Зөвшөөрсөн",
-		className:
-			"bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
+		className: "bg-primary/10 text-primary",
 	},
 	REJECTED: {
 		label: "Татгалзсан",
-		className: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+		className: "bg-destructive/10 text-destructive",
 	},
 	WITHDRAWN: {
 		label: "Буцаагдсан",
-		className:
-			"bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400",
+		className: "bg-muted text-muted-foreground",
 	},
 };
 
-function formatBudget(amount: number): string {
-	return new Intl.NumberFormat("mn-MN", {
-		style: "decimal",
-		maximumFractionDigits: 0,
-	}).format(amount);
-}
-
-function formatDate(date: Date): string {
-	return new Intl.DateTimeFormat("mn-MN", {
-		year: "numeric",
-		month: "short",
-		day: "numeric",
-	}).format(new Date(date));
-}
-
-function formatTimeAgo(date: Date): string {
-	const now = new Date();
-	const diff = now.getTime() - new Date(date).getTime();
-	const hours = Math.floor(diff / (1000 * 60 * 60));
-	const days = Math.floor(hours / 24);
-
-	if (days > 0) return `${days} өдрийн өмнө`;
-	if (hours > 0) return `${hours} цагийн өмнө`;
-	return "Саяхан";
-}
-
 function TaskSummarySkeleton() {
 	return (
-		<Card className="border-slate-200/70 dark:border-slate-800">
+		<Card className="border-border">
 			<CardContent className="p-6">
 				<div className="mb-4 flex gap-2">
-					<Skeleton className="h-5 w-20" />
-					<Skeleton className="h-5 w-16" />
+					<Skeleton className="h-5 w-20 rounded-none" />
+					<Skeleton className="h-5 w-16 rounded-none" />
 				</div>
-				<Skeleton className="mb-2 h-7 w-3/4" />
-				<Skeleton className="mb-4 h-4 w-full" />
+				<Skeleton className="mb-2 h-7 w-3/4 rounded-none" />
+				<Skeleton className="mb-4 h-4 w-full rounded-none" />
 				<div className="flex gap-4">
-					<Skeleton className="h-5 w-32" />
-					<Skeleton className="h-5 w-24" />
+					<Skeleton className="h-5 w-32 rounded-none" />
+					<Skeleton className="h-5 w-24 rounded-none" />
 				</div>
 			</CardContent>
 		</Card>
@@ -132,13 +100,13 @@ function BidListSkeleton() {
 				<Card key={id} className="overflow-hidden">
 					<CardContent className="p-6">
 						<div className="flex gap-4">
-							<Skeleton className="h-14 w-14 rounded-full" />
+							<Skeleton className="h-14 w-14 rounded-none" />
 							<div className="flex-1">
-								<Skeleton className="mb-2 h-5 w-32" />
-								<Skeleton className="mb-4 h-4 w-48" />
-								<Skeleton className="h-16 w-full" />
+								<Skeleton className="mb-2 h-5 w-32 rounded-none" />
+								<Skeleton className="mb-4 h-4 w-48 rounded-none" />
+								<Skeleton className="h-16 w-full rounded-none" />
 							</div>
-							<Skeleton className="h-6 w-24" />
+							<Skeleton className="h-6 w-24 rounded-none" />
 						</div>
 					</CardContent>
 				</Card>
@@ -222,12 +190,12 @@ export default function TaskBidsPage() {
 	if (taskError || bidsError) {
 		return (
 			<div className="p-6 lg:p-8">
-				<div className="flex flex-col items-center justify-center rounded-2xl border border-red-200 border-dashed py-16 dark:border-red-900">
-					<XCircle className="mb-4 h-12 w-12 text-red-400" />
-					<h3 className="mb-2 font-semibold text-lg text-slate-900 dark:text-white">
+				<div className="flex flex-col items-center justify-center rounded-none border border-destructive/30 border-dashed py-16">
+					<XCircle className="mb-4 h-12 w-12 text-destructive" />
+					<h3 className="mb-2 font-display text-lg text-foreground">
 						Алдаа гарлаа
 					</h3>
-					<p className="text-slate-500 dark:text-slate-400">
+					<p className="text-muted-foreground">
 						Даалгавар олдсонгүй эсвэл та энэ даалгаврыг харах эрхгүй байна
 					</p>
 					<Link href="/client/tasks" className="mt-4">
@@ -249,12 +217,12 @@ export default function TaskBidsPage() {
 			<div className="mb-6">
 				<Link
 					href="/client/tasks"
-					className="mb-4 inline-flex items-center gap-2 font-medium text-slate-500 text-sm transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+					className="mb-4 inline-flex items-center gap-2 font-medium text-muted-foreground text-sm transition-colors hover:text-foreground"
 				>
 					<ArrowLeft className="h-4 w-4" />
 					Миний даалгаврууд
 				</Link>
-				<h1 className="font-bold text-2xl text-slate-900 tracking-tight lg:text-3xl dark:text-white">
+				<h1 className="font-display text-2xl text-foreground tracking-tight lg:text-3xl">
 					Санал хүлээн авах
 				</h1>
 			</div>
@@ -262,14 +230,14 @@ export default function TaskBidsPage() {
 			{isLoadingTask ? (
 				<TaskSummarySkeleton />
 			) : task ? (
-				<Card className="mb-8 overflow-hidden border-slate-200/70 dark:border-slate-800">
+				<Card className="mb-8 overflow-hidden border-border">
 					<CardContent className="p-6">
 						<div className="mb-4 flex flex-wrap items-center gap-2">
 							<Badge className={taskStatus.className}>{taskStatus.label}</Badge>
 							{task.isRemote ? (
 								<Badge
 									variant="outline"
-									className="border-emerald-200 text-emerald-600 dark:border-emerald-800 dark:text-emerald-400"
+									className="border-primary/30 text-primary"
 								>
 									<Wifi className="mr-1 h-3 w-3" />
 									Алсаас
@@ -285,24 +253,22 @@ export default function TaskBidsPage() {
 							)}
 						</div>
 
-						<h2 className="mb-2 font-semibold text-slate-900 text-xl dark:text-white">
+						<h2 className="mb-2 font-display text-xl text-foreground">
 							{task.title}
 						</h2>
-						<p className="mb-4 text-slate-500 dark:text-slate-400">
-							{task.description}
-						</p>
+						<p className="mb-4 text-muted-foreground">{task.description}</p>
 
-						<div className="flex flex-wrap items-center gap-4 text-slate-500 text-sm dark:text-slate-400">
-							<span className="font-semibold text-emerald-600 text-lg dark:text-emerald-400">
-								{formatBudget(task.budgetMin)}₮
+						<div className="flex flex-wrap items-center gap-4 text-muted-foreground text-sm">
+							<span className="font-mono font-semibold text-primary text-lg">
+								{formatCurrency(task.budgetMin)}₮
 								{task.budgetMax && task.budgetMax !== task.budgetMin
-									? ` - ${formatBudget(task.budgetMax)}₮`
+									? ` - ${formatCurrency(task.budgetMax)}₮`
 									: ""}
 							</span>
 							{task.deadline && (
 								<span className="flex items-center gap-1">
 									<Calendar className="h-4 w-4" />
-									Эцсийн хугацаа: {formatDate(task.deadline)}
+									Эцсийн хугацаа: {formatDateShort(task.deadline)}
 								</span>
 							)}
 							{task.estimatedHours && (
@@ -317,8 +283,8 @@ export default function TaskBidsPage() {
 
 			<div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 				<div className="flex items-center gap-3">
-					<Users className="h-5 w-5 text-slate-400" />
-					<span className="font-semibold text-slate-900 dark:text-white">
+					<Users className="h-5 w-5 text-muted-foreground" />
+					<span className="font-semibold text-foreground">
 						{bidsData?.data.length || 0} санал ирсэн
 					</span>
 				</div>
@@ -341,13 +307,13 @@ export default function TaskBidsPage() {
 			{isLoadingBids ? (
 				<BidListSkeleton />
 			) : sortedBids.length === 0 ? (
-				<Card className="border-slate-200 border-dashed dark:border-slate-800">
+				<Card className="border-border border-dashed">
 					<CardContent className="flex flex-col items-center justify-center py-16">
-						<Users className="mb-4 h-12 w-12 text-slate-300 dark:text-slate-600" />
-						<h3 className="mb-2 font-semibold text-lg text-slate-900 dark:text-white">
+						<Users className="mb-4 h-12 w-12 text-muted-foreground" />
+						<h3 className="mb-2 font-display text-lg text-foreground">
 							Одоогоор санал ирээгүй байна
 						</h3>
-						<p className="max-w-sm text-center text-slate-500 dark:text-slate-400">
+						<p className="max-w-sm text-center text-muted-foreground">
 							Гүйцэтгэгчид удахгүй санал илгээнэ. Түр хүлээнэ үү.
 						</p>
 					</CardContent>
@@ -364,20 +330,20 @@ export default function TaskBidsPage() {
 						return (
 							<Card
 								key={bid.id}
-								className="overflow-hidden border-slate-200/70 transition-all hover:border-slate-300 dark:border-slate-800 dark:hover:border-slate-700"
+								className="overflow-hidden border-border transition-all hover:border-primary/30"
 							>
 								<CardContent className="p-6">
 									<div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-										<Avatar className="h-14 w-14 ring-2 ring-emerald-500/20">
+										<Avatar className="h-14 w-14 ring-2 ring-primary/20">
 											<AvatarImage src={bidder?.image || undefined} />
-											<AvatarFallback className="bg-gradient-to-br from-emerald-500 to-cyan-500 font-semibold text-white">
+											<AvatarFallback className="bg-primary font-semibold text-primary-foreground">
 												{bidder?.name?.charAt(0) || "?"}
 											</AvatarFallback>
 										</Avatar>
 
 										<div className="min-w-0 flex-1">
 											<div className="mb-2 flex flex-wrap items-center gap-2">
-												<span className="font-semibold text-slate-900 dark:text-white">
+												<span className="font-semibold text-foreground">
 													{bidder?.name || "Хэрэглэгч"}
 												</span>
 												<Badge className={bidStatus.className}>
@@ -385,10 +351,10 @@ export default function TaskBidsPage() {
 												</Badge>
 											</div>
 
-											<div className="mb-3 flex flex-wrap items-center gap-3 text-slate-500 text-sm dark:text-slate-400">
+											<div className="mb-3 flex flex-wrap items-center gap-3 text-muted-foreground text-sm">
 												{bidder?.avgRatingAsWorker &&
 													bidder.avgRatingAsWorker > 0 && (
-														<span className="flex items-center gap-1 font-medium text-amber-500">
+														<span className="flex items-center gap-1 font-medium text-accent-foreground">
 															<Star className="h-4 w-4 fill-current" />
 															{bidder.avgRatingAsWorker.toFixed(1)}
 														</span>
@@ -401,24 +367,24 @@ export default function TaskBidsPage() {
 											</div>
 
 											<div className="mb-3 flex flex-wrap items-center gap-4">
-												<span className="font-bold text-emerald-600 text-lg dark:text-emerald-400">
-													{formatBudget(bid.amount)}₮
+												<span className="font-mono font-bold text-primary text-lg">
+													{formatCurrency(bid.amount)}₮
 												</span>
 												{bid.estimatedHours && (
-													<span className="flex items-center gap-1 text-slate-500 text-sm dark:text-slate-400">
+													<span className="flex items-center gap-1 text-muted-foreground text-sm">
 														<Clock className="h-4 w-4" />~{bid.estimatedHours}{" "}
 														цаг
 													</span>
 												)}
-												<span className="text-slate-400 text-sm">
+												<span className="font-mono text-muted-foreground text-sm">
 													{formatTimeAgo(bid.createdAt)}
 												</span>
 											</div>
 
 											<div
-												className={`rounded-lg bg-slate-50 p-4 dark:bg-slate-800/50 ${isExpanded ? "" : "line-clamp-2"}`}
+												className={`rounded-none bg-muted p-4 ${isExpanded ? "" : "line-clamp-2"}`}
 											>
-												<p className="whitespace-pre-wrap text-slate-600 text-sm dark:text-slate-300">
+												<p className="whitespace-pre-wrap text-muted-foreground text-sm">
 													{bid.message}
 												</p>
 											</div>
@@ -426,7 +392,7 @@ export default function TaskBidsPage() {
 												<button
 													type="button"
 													onClick={() => toggleBidExpand(bid.id)}
-													className="mt-2 font-medium text-emerald-600 text-sm hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
+													className="mt-2 font-medium text-primary text-sm hover:text-primary/80"
 												>
 													{isExpanded ? "Багасгах" : "Дэлгэрэнгүй"}
 												</button>
@@ -437,7 +403,7 @@ export default function TaskBidsPage() {
 											<div className="flex gap-2 sm:flex-col">
 												<Button
 													size="sm"
-													className="gap-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white"
+													className="gap-2 bg-primary text-primary-foreground"
 													onClick={() => acceptBidMutation.mutate(bid.id)}
 													disabled={
 														acceptBidMutation.isPending ||
@@ -454,7 +420,7 @@ export default function TaskBidsPage() {
 												<Button
 													size="sm"
 													variant="outline"
-													className="gap-2 border-red-200 text-red-600 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20"
+													className="gap-2 border-destructive/30 text-destructive hover:bg-destructive/10"
 													onClick={() => rejectBidMutation.mutate(bid.id)}
 													disabled={
 														acceptBidMutation.isPending ||

@@ -33,14 +33,14 @@ function RecentBidsSkeleton() {
 			{Array.from({ length: 5 }).map((_, i) => (
 				<div
 					key={`bid-skeleton-${i.toString()}`}
-					className="flex items-center gap-4 rounded-xl bg-muted/50 p-4"
+					className="flex items-center gap-4 rounded-sm bg-muted/50 p-4"
 				>
-					<Skeleton className="h-10 w-10 rounded-lg" />
+					<Skeleton className="h-10 w-10 rounded-sm" />
 					<div className="flex-1 space-y-2">
 						<Skeleton className="h-4 w-3/4" />
 						<Skeleton className="h-3 w-1/2" />
 					</div>
-					<Skeleton className="h-6 w-20 rounded-full" />
+					<Skeleton className="h-6 w-20 rounded-sm" />
 				</div>
 			))}
 		</div>
@@ -183,7 +183,7 @@ export default function WorkerDashboardPage() {
 										<Link
 											key={bid.id}
 											href={`/task/${bid.taskId}`}
-											className="group flex items-center gap-4 rounded-xl bg-muted/50 p-4 transition-all hover:bg-muted"
+											className="group flex items-center gap-4 rounded-sm bg-muted/50 p-4 transition-all hover:bg-muted"
 										>
 											<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
 												<Briefcase className="h-5 w-5 text-primary" />
@@ -258,7 +258,7 @@ export default function WorkerDashboardPage() {
 
 						<Card className="bg-primary/5">
 							<CardContent className="p-6">
-								<div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+								<div className="mb-4 flex h-12 w-12 items-center justify-center rounded-sm bg-primary text-primary-foreground">
 									<Banknote className="h-6 w-6" />
 								</div>
 								<h3 className="font-semibold text-foreground">

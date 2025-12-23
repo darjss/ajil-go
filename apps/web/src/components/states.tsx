@@ -24,21 +24,27 @@ export function EmptyState({
 	return (
 		<div
 			className={cn(
-				"flex flex-col items-center justify-center py-12 text-center",
+				"flex flex-col items-center justify-center py-16 text-center border border-dashed border-border/60 bg-muted/5 rounded-none",
 				className,
 			)}
 		>
-			<div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+			<div className="mb-6 flex h-16 w-16 items-center justify-center rounded-none bg-muted ring-1 ring-border">
 				{icon ?? <FileQuestion className="h-8 w-8 text-muted-foreground" />}
 			</div>
-			<h3 className="font-semibold text-foreground">{title}</h3>
+			<h3 className="font-display text-xl font-bold tracking-tight text-foreground">
+				{title}
+			</h3>
 			{description && (
-				<p className="mt-1 max-w-sm text-sm text-muted-foreground">
+				<p className="mt-2 max-w-sm font-body text-muted-foreground">
 					{description}
 				</p>
 			)}
 			{action && (
-				<Button onClick={action.onClick} className="mt-4" variant="outline">
+				<Button
+					onClick={action.onClick}
+					className="mt-6 rounded-none font-mono text-xs uppercase tracking-wider"
+					variant="outline"
+				>
 					{action.label}
 				</Button>
 			)}
@@ -58,12 +64,14 @@ export function LoadingState({
 	return (
 		<div
 			className={cn(
-				"flex flex-col items-center justify-center py-12",
+				"flex flex-col items-center justify-center py-16",
 				className,
 			)}
 		>
-			<Loader2 className="h-8 w-8 animate-spin text-primary" />
-			<p className="mt-2 text-sm text-muted-foreground">{message}</p>
+			<Loader2 className="h-10 w-10 animate-spin text-primary" />
+			<p className="mt-4 font-mono text-xs uppercase tracking-wider text-muted-foreground animate-pulse">
+				{message}
+			</p>
 		</div>
 	);
 }
@@ -84,17 +92,23 @@ export function ErrorState({
 	return (
 		<div
 			className={cn(
-				"flex flex-col items-center justify-center py-12 text-center",
+				"flex flex-col items-center justify-center py-16 text-center border border-destructive/20 bg-destructive/5 rounded-none",
 				className,
 			)}
 		>
-			<div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
+			<div className="mb-6 flex h-16 w-16 items-center justify-center rounded-none bg-destructive/10 ring-1 ring-destructive/20">
 				<AlertTriangle className="h-8 w-8 text-destructive" />
 			</div>
-			<h3 className="font-semibold text-foreground">{title}</h3>
-			<p className="mt-1 max-w-sm text-sm text-muted-foreground">{message}</p>
+			<h3 className="font-display text-xl font-bold tracking-tight text-foreground">
+				{title}
+			</h3>
+			<p className="mt-2 max-w-sm font-body text-muted-foreground">{message}</p>
 			{retry && (
-				<Button onClick={retry} className="mt-4" variant="outline">
+				<Button
+					onClick={retry}
+					className="mt-6 rounded-none font-mono uppercase tracking-wider"
+					variant="outline"
+				>
 					Дахин оролдох
 				</Button>
 			)}

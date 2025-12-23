@@ -18,7 +18,7 @@ import {
 import Link from "next/link";
 import { use, useState } from "react";
 import { toast } from "sonner";
-
+import { getTaskStatusConfig, SkillBadges } from "@/components/tasks";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -37,28 +37,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { bidsApi } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 import { bidQueries, taskQueries } from "@/lib/queries";
+import { formatBudget, formatDate, formatTimeAgo } from "@/lib/utils";
 
 interface TaskDetailPageProps {
 	params: Promise<{ id: string }>;
-}
-
-function formatBudget(min: number, max: number | null): string {
-	const formatter = new Intl.NumberFormat("mn-MN", {
-		style: "decimal",
-		maximumFractionDigits: 0,
-	});
-	if (max && max !== min) {
-		return `${formatter.format(min)}₮ - ${formatter.format(max)}₮`;
-	}
-	return `${formatter.format(min)}₮`;
-}
-
-function formatDate(date: Date | string): string {
-	return new Intl.DateTimeFormat("mn-MN", {
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-	}).format(new Date(date));
 }
 
 function formatDateTime(date: Date | string): string {
@@ -70,33 +52,6 @@ function formatDateTime(date: Date | string): string {
 		minute: "2-digit",
 	}).format(new Date(date));
 }
-
-function formatTimeAgo(date: Date | string): string {
-	const now = new Date();
-	const diff = now.getTime() - new Date(date).getTime();
-	const hours = Math.floor(diff / (1000 * 60 * 60));
-	const days = Math.floor(hours / 24);
-
-	if (days > 0) return `${days} өдрийн өмнө`;
-	if (hours > 0) return `${hours} цагийн өмнө`;
-	return "Саяхан";
-}
-
-const statusMap: Record<
-	string,
-	{
-		label: string;
-		variant: "default" | "secondary" | "destructive" | "outline";
-	}
-> = {
-	OPEN: { label: "Нээлттэй", variant: "default" },
-	ASSIGNED: { label: "Гүйцэтгэгч сонгогдсон", variant: "secondary" },
-	IN_PROGRESS: { label: "Гүйцэтгэлд", variant: "secondary" },
-	COMPLETED: { label: "Дууссан", variant: "outline" },
-	REVIEWED: { label: "Үнэлгээ өгөгдсөн", variant: "outline" },
-	CANCELLED: { label: "Цуцлагдсан", variant: "destructive" },
-	DISPUTED: { label: "Маргаантай", variant: "destructive" },
-};
 
 function TaskDetailSkeleton() {
 	return (
@@ -124,7 +79,7 @@ function TaskDetailSkeleton() {
 						<CardContent className="p-6">
 							<Skeleton className="mb-4 h-6 w-24" />
 							<div className="flex items-center gap-4">
-								<Skeleton className="h-16 w-16 rounded-full" />
+								<Skeleton className="h-16 w-16 rounded-sm" />
 								<div className="space-y-2">
 									<Skeleton className="h-5 w-32" />
 									<Skeleton className="h-4 w-24" />
@@ -288,7 +243,7 @@ function BidSubmissionForm({
 
 			<Button
 				type="submit"
-				className="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 text-white shadow-lg transition-all hover:from-emerald-600 hover:to-cyan-600 hover:shadow-xl"
+				className="w-full bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
 				disabled={mutation.isPending}
 			>
 				{mutation.isPending ? (
@@ -321,19 +276,19 @@ function UserBidCard({
 	const bidStatusMap: Record<string, { label: string; color: string }> = {
 		PENDING: {
 			label: "Хүлээгдэж буй",
-			color: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+			color: "bg-secondary/10 text-secondary-foreground",
 		},
 		ACCEPTED: {
 			label: "Зөвшөөрөгдсөн",
-			color: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+			color: "bg-primary/10 text-primary",
 		},
 		REJECTED: {
 			label: "Татгалзсан",
-			color: "bg-red-500/10 text-red-600 dark:text-red-400",
+			color: "bg-destructive/10 text-destructive",
 		},
 		WITHDRAWN: {
 			label: "Буцаагдсан",
-			color: "bg-slate-500/10 text-slate-600 dark:text-slate-400",
+			color: "bg-muted text-muted-foreground",
 		},
 	};
 
@@ -361,7 +316,9 @@ function UserBidCard({
 				<Separator />
 				<div>
 					<span className="text-muted-foreground text-sm">Танилцуулга</span>
-					<p className="mt-1 text-foreground text-sm">{bid.message}</p>
+					<p className="mt-1 text-foreground text-sm font-body">
+						{bid.message}
+					</p>
 				</div>
 				<p className="text-muted-foreground text-xs">
 					Илгээсэн: {formatTimeAgo(bid.createdAt)}
@@ -380,7 +337,7 @@ function BidsList({ taskId }: { taskId: string }) {
 				{[1, 2, 3].map((i) => (
 					<div key={`bid-skeleton-${i}`} className="rounded-lg border p-4">
 						<div className="flex items-center gap-3">
-							<Skeleton className="h-10 w-10 rounded-full" />
+							<Skeleton className="h-10 w-10 rounded-sm" />
 							<div className="space-y-2">
 								<Skeleton className="h-4 w-32" />
 								<Skeleton className="h-3 w-24" />
@@ -413,13 +370,13 @@ function BidsList({ taskId }: { taskId: string }) {
 			{bids.map((bid) => (
 				<div
 					key={bid.id}
-					className="group rounded-xl border bg-card p-5 transition-all hover:border-primary/30 hover:shadow-md"
+					className="group rounded-lg border bg-card p-5 transition-all hover:border-primary hover:bg-muted/5"
 				>
 					<div className="flex items-start justify-between gap-4">
 						<div className="flex items-start gap-4">
-							<Avatar className="h-12 w-12 ring-2 ring-background">
+							<Avatar className="h-12 w-12 ring-1 ring-border">
 								<AvatarImage src={bid.bidder?.image || undefined} />
-								<AvatarFallback className="bg-gradient-to-br from-emerald-500 to-cyan-500 font-semibold text-white">
+								<AvatarFallback className="bg-primary/10 font-semibold text-primary">
 									{bid.bidder?.name?.charAt(0) || "?"}
 								</AvatarFallback>
 							</Avatar>
@@ -430,7 +387,7 @@ function BidsList({ taskId }: { taskId: string }) {
 									</h4>
 									{bid.bidder?.avgRatingAsWorker &&
 										bid.bidder.avgRatingAsWorker > 0 && (
-											<div className="flex items-center gap-1 text-amber-500">
+											<div className="flex items-center gap-1 text-primary">
 												<Star className="h-3.5 w-3.5 fill-current" />
 												<span className="font-medium text-sm">
 													{bid.bidder.avgRatingAsWorker.toFixed(1)}
@@ -458,7 +415,7 @@ function BidsList({ taskId }: { taskId: string }) {
 						</div>
 					</div>
 
-					<p className="mt-4 line-clamp-3 text-muted-foreground text-sm">
+					<p className="mt-4 line-clamp-3 text-muted-foreground text-sm font-body">
 						{bid.message}
 					</p>
 
@@ -472,7 +429,7 @@ function BidsList({ taskId }: { taskId: string }) {
 							</Button>
 							<Button
 								size="sm"
-								className="bg-gradient-to-r from-emerald-500 to-cyan-500 text-white hover:from-emerald-600 hover:to-cyan-600"
+								className="bg-primary text-primary-foreground hover:bg-primary/90"
 							>
 								Сонгох
 							</Button>
@@ -524,7 +481,7 @@ function TaskDetailContent({ taskId }: { taskId: string }) {
 		);
 	}
 
-	const statusInfo = statusMap[task.status] || statusMap.OPEN;
+	const statusInfo = getTaskStatusConfig(task.status);
 
 	return (
 		<div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -542,16 +499,15 @@ function TaskDetailContent({ taskId }: { taskId: string }) {
 
 			<div className="grid gap-8 lg:grid-cols-3">
 				<div className="space-y-6 lg:col-span-2">
-					<Card className="overflow-hidden border-0 shadow-lg">
-						<div className="h-1.5 bg-gradient-to-r from-emerald-500 via-cyan-500 to-emerald-500" />
+					<Card className="overflow-hidden border-t-4 border-primary shadow-sm">
 						<CardContent className="p-6 pt-6">
 							<div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-								<h1 className="font-bold text-2xl text-foreground leading-tight md:text-3xl">
+								<h1 className="font-display font-bold text-3xl text-foreground leading-tight md:text-4xl">
 									{task.title}
 								</h1>
 								<Badge
 									variant={statusInfo.variant}
-									className="shrink-0 text-sm"
+									className="shrink-0 rounded-none text-sm"
 								>
 									{statusInfo.label}
 								</Badge>
@@ -561,7 +517,7 @@ function TaskDetailContent({ taskId }: { taskId: string }) {
 								{task.category && (
 									<Badge
 										variant="secondary"
-										className="bg-primary/10 text-primary"
+										className="bg-secondary/30 text-secondary-foreground"
 									>
 										<Tag className="mr-1 h-3 w-3" />
 										{task.category.name}
@@ -571,7 +527,7 @@ function TaskDetailContent({ taskId }: { taskId: string }) {
 									variant={task.isRemote ? "default" : "outline"}
 									className={
 										task.isRemote
-											? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+											? "bg-primary/10 text-primary hover:bg-primary/20"
 											: ""
 									}
 								>
@@ -595,47 +551,49 @@ function TaskDetailContent({ taskId }: { taskId: string }) {
 								)}
 							</div>
 
-							<div className="prose prose-slate dark:prose-invert mb-6 max-w-none">
+							<div className="prose prose-slate dark:prose-invert mb-6 max-w-none font-body">
 								<p className="whitespace-pre-wrap text-muted-foreground leading-relaxed">
 									{task.description}
 								</p>
 							</div>
 
-							<div className="mb-6 rounded-xl bg-gradient-to-br from-emerald-500/10 via-cyan-500/5 to-emerald-500/10 p-5">
-								<div className="mb-1 flex items-center gap-2 text-muted-foreground text-sm">
-									<span>Төсөв</span>
+							<div className="mb-6 bg-primary/5 p-6 border-l-4 border-primary/20">
+								<div className="mb-2 flex items-center gap-2 text-muted-foreground text-sm">
+									<span className="font-mono text-xs uppercase tracking-wider">
+										Төсөв
+									</span>
 								</div>
-								<div className="font-bold text-2xl text-foreground md:text-3xl">
+								<div className="font-mono font-bold text-3xl text-foreground md:text-4xl">
 									{formatBudget(task.budgetMin, task.budgetMax)}
 								</div>
 							</div>
 
 							<div className="grid gap-4 sm:grid-cols-2">
 								{task.deadline && (
-									<div className="flex items-center gap-3 rounded-lg bg-muted/50 p-4">
-										<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500/10">
-											<Calendar className="h-5 w-5 text-amber-500" />
+									<div className="flex items-center gap-3 rounded-lg border border-border bg-card p-4">
+										<div className="flex h-10 w-10 items-center justify-center rounded-md bg-secondary text-secondary-foreground">
+											<Calendar className="h-5 w-5" />
 										</div>
 										<div>
-											<p className="text-muted-foreground text-sm">
+											<p className="text-muted-foreground text-xs uppercase tracking-wider">
 												Эцсийн хугацаа
 											</p>
-											<p className="font-medium text-foreground">
+											<p className="font-medium text-foreground font-mono">
 												{formatDate(task.deadline)}
 											</p>
 										</div>
 									</div>
 								)}
 								{task.estimatedHours && (
-									<div className="flex items-center gap-3 rounded-lg bg-muted/50 p-4">
-										<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-cyan-500/10">
-											<Clock className="h-5 w-5 text-cyan-500" />
+									<div className="flex items-center gap-3 rounded-lg border border-border bg-card p-4">
+										<div className="flex h-10 w-10 items-center justify-center rounded-md bg-secondary text-secondary-foreground">
+											<Clock className="h-5 w-5" />
 										</div>
 										<div>
-											<p className="text-muted-foreground text-sm">
+											<p className="text-muted-foreground text-xs uppercase tracking-wider">
 												Тооцоолсон хугацаа
 											</p>
-											<p className="font-medium text-foreground">
+											<p className="font-medium text-foreground font-mono">
 												{task.estimatedHours} цаг
 											</p>
 										</div>
@@ -648,26 +606,7 @@ function TaskDetailContent({ taskId }: { taskId: string }) {
 									<h3 className="mb-3 font-semibold text-foreground">
 										Шаардлагатай чадвар
 									</h3>
-									<div className="flex flex-wrap gap-2">
-										{task.skills.map((taskSkill) => {
-											const skillName =
-												taskSkill.skill?.name || taskSkill.customSkill?.name;
-											if (!skillName) return null;
-											const skillId =
-												taskSkill.skill?.id ||
-												taskSkill.customSkill?.id ||
-												skillName;
-											return (
-												<Badge
-													key={`skill-${skillId}`}
-													variant="outline"
-													className="bg-background"
-												>
-													{skillName}
-												</Badge>
-											);
-										})}
-									</div>
+									<SkillBadges skills={task.skills} />
 								</div>
 							)}
 
@@ -710,9 +649,9 @@ function TaskDetailContent({ taskId }: { taskId: string }) {
 						</CardHeader>
 						<CardContent>
 							<div className="flex items-center gap-4">
-								<Avatar className="h-16 w-16 ring-2 ring-border">
+								<Avatar className="h-16 w-16 ring-1 ring-border">
 									<AvatarImage src={task.poster?.image || undefined} />
-									<AvatarFallback className="bg-gradient-to-br from-slate-700 to-slate-900 font-semibold text-lg text-white">
+									<AvatarFallback className="bg-primary text-primary-foreground font-semibold text-lg">
 										{task.poster?.name?.charAt(0) || "?"}
 									</AvatarFallback>
 								</Avatar>
@@ -722,7 +661,7 @@ function TaskDetailContent({ taskId }: { taskId: string }) {
 									</h3>
 									{task.poster?.avgRatingAsClient !== undefined &&
 										task.poster.avgRatingAsClient > 0 && (
-											<div className="mt-1 flex items-center gap-1 text-amber-500">
+											<div className="mt-1 flex items-center gap-1 text-primary">
 												<Star className="h-4 w-4 fill-current" />
 												<span className="font-medium">
 													{task.poster.avgRatingAsClient.toFixed(1)}

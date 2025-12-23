@@ -56,3 +56,37 @@ export function truncate(str: string, length: number): string {
 	if (str.length <= length) return str;
 	return `${str.slice(0, length)}...`;
 }
+
+export function formatBudget(min: number, max: number | null): string {
+	const formatted = formatCurrency(min);
+	if (max && max !== min) {
+		return `${formatted}₮ - ${formatCurrency(max)}₮`;
+	}
+	return `${formatted}₮`;
+}
+
+export function formatMessageTime(date: Date | string): string {
+	const now = new Date();
+	const messageDate = new Date(date);
+	const diffMs = now.getTime() - messageDate.getTime();
+	const diffMins = Math.floor(diffMs / 60000);
+	const diffHours = Math.floor(diffMs / 3600000);
+	const diffDays = Math.floor(diffMs / 86400000);
+
+	if (diffMins < 1) return "Одоо";
+	if (diffMins < 60) return `${diffMins}м`;
+	if (diffHours < 24) return `${diffHours}ц`;
+	if (diffDays < 7) return `${diffDays}ө`;
+
+	return messageDate.toLocaleDateString("mn-MN", {
+		month: "short",
+		day: "numeric",
+	});
+}
+
+export function formatFullTime(date: Date | string): string {
+	return new Date(date).toLocaleTimeString("mn-MN", {
+		hour: "2-digit",
+		minute: "2-digit",
+	});
+}

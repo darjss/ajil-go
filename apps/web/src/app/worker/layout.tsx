@@ -1,5 +1,5 @@
 import type React from "react";
-import { WorkerSidebar } from "./components/sidebar";
+import { MobileHeader, WorkerSidebar } from "./components/sidebar";
 
 export default function WorkerLayout({
 	children,
@@ -7,10 +7,13 @@ export default function WorkerLayout({
 	children: React.ReactNode;
 }) {
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30">
-			<div className="flex">
-				<WorkerSidebar />
-				<main className="min-h-screen flex-1">{children}</main>
+		<div className="flex min-h-screen bg-background dark:bg-background">
+			<WorkerSidebar />
+			<div className="flex flex-1 flex-col">
+				<MobileHeader />
+				<main className="min-h-[calc(100vh-4rem)] flex-1 overflow-x-hidden lg:min-h-screen">
+					{children}
+				</main>
 			</div>
 		</div>
 	);

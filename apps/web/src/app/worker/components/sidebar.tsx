@@ -1,7 +1,10 @@
 "use client";
 
+import { type ReactNode, useState } from "react";
+
 import {
 	Briefcase,
+	ChevronRight,
 	FileText,
 	HelpCircle,
 	LayoutDashboard,
@@ -14,7 +17,6 @@ import {
 import type { Route } from "next";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import type { ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +26,7 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from "@/components/ui/sheet";
+import { Skeleton } from "@/components/ui/skeleton";
 import { UserAvatar } from "@/components/user-avatar";
 import { authClient } from "@/lib/auth-client";
 
@@ -75,41 +78,53 @@ const settingsNav: SidebarItem[] = [
 	},
 ];
 
-function NavBlock({ items, title }: { items: SidebarItem[]; title?: string }) {
+function NavBlock({
+	items,
+	title,
+	onNavigate,
+}: {
+	items: SidebarItem[];
+	title?: string;
+	onNavigate?: () => void;
+}) {
 	const pathname = usePathname();
+
 	return (
 		<div className="space-y-1">
-			{title ? (
-				<p className="mb-3 px-4 font-semibold text-[11px] text-muted-foreground uppercase tracking-wider">
+			{title && (
+				<p className="mb-3 px-3 font-semibold text-[11px] text-muted-foreground uppercase tracking-wider">
 					{title}
 				</p>
-			) : null}
+			)}
 			{items.map((item) => {
-				const active = pathname === item.href;
+				const isActive =
+					pathname === item.href || pathname.startsWith(`${item.href}/`);
 				return (
 					<Link
 						key={item.href}
 						href={item.href as Route}
-						className={`group relative flex items-center gap-3 rounded-xl px-4 py-3 font-medium text-sm transition-all duration-200 ${
-							active
+						onClick={onNavigate}
+						className={`group relative flex items-center gap-3 rounded-sm px-3 py-2.5 font-medium text-sm transition-all duration-200 ${
+							isActive
 								? "bg-primary/10 text-primary"
 								: "text-muted-foreground hover:bg-muted hover:text-foreground"
 						}`}
 					>
-						{active && (
-							<span className="absolute left-0 h-8 w-1 rounded-r-full bg-primary" />
+						{isActive && (
+							<span className="absolute inset-y-0 left-0 w-1 rounded-none bg-primary" />
 						)}
 						<span
-							className={`transition-colors ${active ? "text-primary" : "text-muted-foreground group-hover:text-foreground"}`}
+							className={`transition-colors ${isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"}`}
 						>
 							{item.icon}
 						</span>
 						<span className="flex-1">{item.label}</span>
-						{item.badge ? (
-							<span className="rounded-full bg-primary px-2.5 py-0.5 font-semibold text-[11px] text-primary-foreground shadow-sm">
+						{item.badge && (
+							<span className="flex h-5 min-w-5 items-center justify-center rounded-sm bg-primary px-1.5 font-mono text-[10px] font-semibold text-primary-foreground">
 								{item.badge}
 							</span>
-						) : null}
+						)}
+						{isActive && <ChevronRight className="h-4 w-4 text-primary/50" />}
 					</Link>
 				);
 			})}
@@ -117,20 +132,69 @@ function NavBlock({ items, title }: { items: SidebarItem[]; title?: string }) {
 	);
 }
 
-function SidebarContent() {
+function UserProfileCard({ onNavigate }: { onNavigate?: () => void }) {
 	const router = useRouter();
-	const { data: session } = authClient.useSession();
+	const { data: session, isPending: isLoading } = authClient.useSession();
 
-	const handleLogout = async () => {
+	const handleSignOut = async () => {
 		await authClient.signOut();
+		onNavigate?.();
 		router.push("/login");
 	};
 
+	if (isLoading) {
+		return (
+			<div className="flex items-center gap-3 rounded-sm bg-muted p-3">
+				<Skeleton className="h-10 w-10 rounded-sm" />
+				<div className="min-w-0 flex-1">
+					<Skeleton className="mb-1 h-4 w-24" />
+					<Skeleton className="h-3 w-32" />
+				</div>
+			</div>
+		);
+	}
+
 	return (
-		<div className="flex h-full flex-col">
-			<div className="p-6">
-				<Link href="/" className="group flex items-center gap-3">
-					<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-lg transition-shadow">
+		<div className="space-y-3">
+			<div className="flex items-center gap-3 rounded-sm bg-muted p-3">
+				<UserAvatar
+					name={session?.user?.name}
+					image={session?.user?.image}
+					size="md"
+					className="ring-2 ring-primary/20"
+				/>
+				<div className="min-w-0 flex-1">
+					<p className="truncate font-semibold text-foreground text-sm">
+						{session?.user?.name || "Хэрэглэгч"}
+					</p>
+					<p className="truncate text-muted-foreground text-xs">
+						{session?.user?.email || ""}
+					</p>
+				</div>
+			</div>
+			<Button
+				variant="ghost"
+				size="sm"
+				onClick={handleSignOut}
+				className="w-full justify-start gap-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+			>
+				<LogOut className="h-4 w-4" />
+				Гарах
+			</Button>
+		</div>
+	);
+}
+
+function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
+	return (
+		<>
+			<div className="border-border border-b p-6">
+				<Link
+					href="/"
+					className="flex items-center gap-2.5"
+					onClick={onNavigate}
+				>
+					<div className="flex h-9 w-9 items-center justify-center rounded-sm bg-primary shadow-lg">
 						<Briefcase className="h-5 w-5 text-primary-foreground" />
 					</div>
 					<span className="font-bold text-foreground text-xl tracking-tight">
@@ -139,82 +203,77 @@ function SidebarContent() {
 				</Link>
 			</div>
 
-			<div className="flex-1 overflow-y-auto px-3">
-				<NavBlock items={navItems} />
-				<div className="my-6 h-px bg-border" />
-				<NavBlock items={settingsNav} title="Тохиргоо" />
+			<div className="flex-1 overflow-y-auto p-4">
+				<nav className="space-y-6">
+					<NavBlock items={navItems} onNavigate={onNavigate} />
+					<div className="h-px bg-border" />
+					<NavBlock
+						items={settingsNav}
+						title="Тохиргоо"
+						onNavigate={onNavigate}
+					/>
+				</nav>
 			</div>
 
 			<div className="border-border border-t p-4">
-				<div className="flex items-center gap-3 rounded-xl bg-muted p-3">
-					<UserAvatar
-						name={session?.user?.name}
-						image={session?.user?.image}
-						size="md"
-						className="ring-2 ring-primary/20 ring-offset-2 ring-offset-background"
-					/>
-					<div className="min-w-0 flex-1">
-						<p className="truncate font-semibold text-foreground text-sm">
-							{session?.user?.name || "Хэрэглэгч"}
-						</p>
-						<p className="truncate text-muted-foreground text-xs">
-							{session?.user?.email || ""}
-						</p>
-					</div>
-					<Button
-						variant="ghost"
-						size="icon"
-						onClick={handleLogout}
-						className="h-8 w-8 shrink-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-						title="Гарах"
-						type="button"
-					>
-						<LogOut className="h-4 w-4" />
-					</Button>
-				</div>
+				<UserProfileCard onNavigate={onNavigate} />
 			</div>
-		</div>
-	);
-}
-
-function DesktopSidebar() {
-	return (
-		<aside className="hidden w-72 flex-col border-border border-r bg-card backdrop-blur-xl lg:flex">
-			<SidebarContent />
-		</aside>
-	);
-}
-
-function MobileSidebar() {
-	return (
-		<div className="fixed top-4 left-4 z-50 lg:hidden">
-			<Sheet>
-				<SheetTrigger asChild>
-					<Button
-						size="icon"
-						variant="outline"
-						className="h-10 w-10 rounded-xl border-border bg-background/90 shadow-lg backdrop-blur-sm"
-						type="button"
-					>
-						<Menu className="h-5 w-5 text-muted-foreground" />
-					</Button>
-				</SheetTrigger>
-				<SheetContent side="left" className="w-72 p-0">
-					<SheetHeader className="sr-only">
-						<SheetTitle>Цэс</SheetTitle>
-					</SheetHeader>
-					<SidebarContent />
-				</SheetContent>
-			</Sheet>
-		</div>
+		</>
 	);
 }
 
 export function WorkerSidebar() {
 	return (
-		<>
-			<DesktopSidebar />
-			<MobileSidebar />
-		</>
+		<aside className="hidden w-72 flex-col border-border border-r bg-card lg:flex">
+			<SidebarContent />
+		</aside>
+	);
+}
+
+export function MobileHeader() {
+	const [open, setOpen] = useState(false);
+	const pathname = usePathname();
+
+	const currentPage = [...navItems, ...settingsNav].find(
+		(item) => pathname === item.href || pathname.startsWith(`${item.href}/`),
+	);
+
+	return (
+		<header className="sticky top-0 z-40 flex h-16 items-center justify-between border-border border-b bg-background/80 px-4 backdrop-blur-lg lg:hidden">
+			<Sheet open={open} onOpenChange={setOpen}>
+				<SheetTrigger asChild>
+					<Button
+						variant="ghost"
+						size="icon"
+						className="shrink-0 rounded-sm hover:bg-muted"
+					>
+						<Menu className="h-5 w-5" />
+						<span className="sr-only">Цэс нээх</span>
+					</Button>
+				</SheetTrigger>
+				<SheetContent
+					side="left"
+					className="flex w-80 flex-col p-0 [&>button]:hidden"
+				>
+					<SheetHeader className="sr-only">
+						<SheetTitle>Навигаци</SheetTitle>
+					</SheetHeader>
+					<div className="flex h-full flex-col bg-card">
+						<SidebarContent onNavigate={() => setOpen(false)} />
+					</div>
+				</SheetContent>
+			</Sheet>
+
+			<div className="flex items-center gap-2">
+				<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary shadow-lg">
+					<Briefcase className="h-4 w-4 text-primary-foreground" />
+				</div>
+				<span className="font-bold text-foreground text-lg tracking-tight">
+					{currentPage?.label || "Ажил-GO"}
+				</span>
+			</div>
+
+			<div className="w-10" />
+		</header>
 	);
 }

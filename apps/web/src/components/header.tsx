@@ -103,7 +103,7 @@ function Header() {
 						href="/"
 						className="group flex items-center gap-2.5 transition-opacity hover:opacity-80"
 					>
-						<div className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-primary shadow-sm transition-transform duration-200 group-hover:scale-105">
+						<div className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-none bg-primary shadow-sm transition-transform duration-200 group-hover:scale-105">
 							<span className="font-bold text-lg text-primary-foreground tracking-tight">
 								A
 							</span>

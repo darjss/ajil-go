@@ -2,8 +2,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import z from "zod";
 import { authClient } from "@/lib/auth-client";
+import { type SignUpFormData, signUpSchema } from "@/lib/schemas";
 import Loader from "./loader";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -17,14 +17,8 @@ export default function SignUpForm({
 	const router = useRouter();
 	const { isPending } = authClient.useSession();
 
-	const formSchema = z.object({
-		name: z.string().min(2, "Name must be at least 2 characters"),
-		email: z.email("Invalid email address"),
-		password: z.string().min(8, "Password must be at least 8 characters"),
-	});
-
-	const form = useForm({
-		resolver: zodResolver(formSchema),
+	const form = useForm<SignUpFormData>({
+		resolver: zodResolver(signUpSchema),
 		defaultValues: {
 			email: "",
 			password: "",
@@ -32,7 +26,7 @@ export default function SignUpForm({
 		},
 	});
 
-	const onSubmit = async (data: z.infer<typeof formSchema>) => {
+	const onSubmit = async (data: SignUpFormData) => {
 		await authClient.signUp.email(
 			{
 				email: data.email,

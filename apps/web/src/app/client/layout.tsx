@@ -11,9 +11,9 @@ import { userQueries } from "@/lib/queries";
 
 function LoadingState() {
 	return (
-		<div className="flex min-h-screen bg-slate-50 dark:bg-slate-950">
-			<aside className="hidden w-72 flex-col border-slate-200/70 border-r bg-white lg:flex dark:border-slate-800 dark:bg-slate-900">
-				<div className="border-slate-200/70 border-b p-6 dark:border-slate-800">
+		<div className="flex min-h-screen bg-background">
+			<aside className="hidden w-72 flex-col border-r border-border bg-card lg:flex">
+				<div className="border-b border-border p-6">
 					<Skeleton className="h-9 w-32" />
 				</div>
 				<div className="flex-1 p-4">
@@ -25,19 +25,19 @@ function LoadingState() {
 						<Skeleton className="h-10 w-full" />
 					</div>
 				</div>
-				<div className="border-slate-200/70 border-t p-4 dark:border-slate-800">
+				<div className="border-t border-border p-4">
 					<Skeleton className="h-16 w-full" />
 				</div>
 			</aside>
 			<div className="flex flex-1 flex-col">
-				<div className="flex h-16 items-center border-slate-200/70 border-b px-4 lg:hidden dark:border-slate-800">
+				<div className="flex h-16 items-center border-b border-border px-4 lg:hidden">
 					<Skeleton className="h-8 w-8 rounded-lg" />
 					<Skeleton className="ml-3 h-6 w-32" />
 				</div>
 				<main className="flex min-h-[calc(100vh-4rem)] flex-1 items-center justify-center lg:min-h-screen">
 					<div className="flex flex-col items-center gap-4">
-						<div className="h-12 w-12 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent" />
-						<p className="text-slate-500">Уншиж байна...</p>
+						<div className="h-12 w-12 animate-spin rounded-sm border-4 border-primary border-t-transparent" />
+						<p className="text-muted-foreground">Уншиж байна...</p>
 					</div>
 				</main>
 			</div>
@@ -64,7 +64,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
 	}
 
 	return (
-		<div className="flex min-h-screen bg-slate-50 dark:bg-slate-950">
+		<div className="flex min-h-screen bg-background">
 			<ClientSidebar />
 			<div className="flex flex-1 flex-col">
 				<MobileHeader />

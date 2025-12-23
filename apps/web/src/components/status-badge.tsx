@@ -53,7 +53,13 @@ export function StatusBadge({
 	if (!config) return null;
 
 	return (
-		<Badge variant={config.variant} className={cn(className)}>
+		<Badge
+			variant={config.variant}
+			className={cn(
+				"rounded-none font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 border shadow-sm",
+				className,
+			)}
+		>
 			{config.label}
 		</Badge>
 	);

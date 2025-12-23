@@ -88,7 +88,7 @@ function NavBlock({
 	return (
 		<div className="space-y-1">
 			{title && (
-				<p className="mb-3 px-3 font-semibold text-[11px] text-muted-foreground uppercase tracking-wider">
+				<p className="mb-2 px-3 font-mono text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
 					{title}
 				</p>
 			)}
@@ -100,14 +100,14 @@ function NavBlock({
 						key={item.href}
 						href={item.href as Route}
 						onClick={onNavigate}
-						className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 font-medium text-sm transition-all duration-200 ${
+						className={`group relative flex items-center gap-3 rounded-sm px-3 py-2 font-body text-sm font-medium transition-all duration-200 ${
 							isActive
 								? "bg-primary/10 text-primary"
 								: "text-muted-foreground hover:bg-muted hover:text-foreground"
 						}`}
 					>
 						{isActive && (
-							<span className="absolute inset-y-0 left-0 w-1 rounded-full bg-primary" />
+							<span className="absolute inset-y-0 left-0 w-0.5 rounded-none bg-primary" />
 						)}
 						<span
 							className={`transition-colors ${isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"}`}
@@ -116,7 +116,7 @@ function NavBlock({
 						</span>
 						<span className="flex-1">{item.label}</span>
 						{item.badge && (
-							<span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 font-semibold text-[10px] text-primary-foreground">
+							<span className="flex h-5 min-w-5 items-center justify-center rounded-sm bg-primary px-1.5 font-mono text-[10px] font-semibold text-primary-foreground">
 								{item.badge}
 							</span>
 						)}
@@ -140,10 +140,10 @@ function UserProfileCard({ onNavigate }: { onNavigate?: () => void }) {
 
 	if (isLoading) {
 		return (
-			<div className="flex items-center gap-3 rounded-xl bg-muted p-3">
-				<Skeleton className="h-10 w-10 rounded-full" />
+			<div className="flex items-center gap-3 rounded-sm bg-muted/50 p-3">
+				<Skeleton className="h-9 w-9 rounded-sm" />
 				<div className="min-w-0 flex-1">
-					<Skeleton className="mb-1 h-4 w-24" />
+					<Skeleton className="mb-1 h-3.5 w-24" />
 					<Skeleton className="h-3 w-32" />
 				</div>
 			</div>
@@ -152,18 +152,18 @@ function UserProfileCard({ onNavigate }: { onNavigate?: () => void }) {
 
 	return (
 		<div className="space-y-3">
-			<div className="flex items-center gap-3 rounded-xl bg-muted p-3">
+			<div className="flex items-center gap-3 rounded-sm border border-border bg-card p-3 shadow-sm">
 				<UserAvatar
 					name={user?.name}
 					image={user?.image}
-					size="md"
-					className="ring-2 ring-primary/20"
+					size="sm"
+					className="ring-1 ring-border"
 				/>
 				<div className="min-w-0 flex-1">
-					<p className="truncate font-semibold text-foreground text-sm">
+					<p className="truncate font-body text-sm font-semibold text-foreground">
 						{user?.name || "Хэрэглэгч"}
 					</p>
-					<p className="truncate text-muted-foreground text-xs">
+					<p className="truncate font-mono text-xs text-muted-foreground">
 						{user?.email || ""}
 					</p>
 				</div>
@@ -172,7 +172,7 @@ function UserProfileCard({ onNavigate }: { onNavigate?: () => void }) {
 				variant="ghost"
 				size="sm"
 				onClick={handleSignOut}
-				className="w-full justify-start gap-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+				className="w-full justify-start gap-2 rounded-sm text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
 			>
 				<LogOut className="h-4 w-4" />
 				Гарах
@@ -184,16 +184,16 @@ function UserProfileCard({ onNavigate }: { onNavigate?: () => void }) {
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 	return (
 		<>
-			<div className="border-border border-b p-6">
+			<div className="border-b border-border p-6">
 				<Link
 					href="/"
 					className="flex items-center gap-2.5"
 					onClick={onNavigate}
 				>
-					<div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary shadow-lg">
-						<Sparkles className="h-5 w-5 text-primary-foreground" />
+					<div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-sm">
+						<Sparkles className="h-4 w-4" />
 					</div>
-					<span className="font-bold text-foreground text-xl tracking-tight">
+					<span className="font-display text-xl font-bold tracking-tight text-foreground">
 						Ажил-GO
 					</span>
 				</Link>
@@ -211,7 +211,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 				</nav>
 			</div>
 
-			<div className="border-border border-t p-4">
+			<div className="border-t border-border p-4">
 				<UserProfileCard onNavigate={onNavigate} />
 			</div>
 		</>
@@ -220,7 +220,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
 export function ClientSidebar() {
 	return (
-		<aside className="hidden w-72 flex-col border-border border-r bg-card lg:flex">
+		<aside className="hidden w-72 flex-col border-r border-border bg-card lg:flex">
 			<SidebarContent />
 		</aside>
 	);
@@ -235,13 +235,13 @@ export function MobileHeader() {
 	);
 
 	return (
-		<header className="sticky top-0 z-40 flex h-16 items-center justify-between border-border border-b bg-background/80 px-4 backdrop-blur-lg lg:hidden">
+		<header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-border bg-background/80 px-4 backdrop-blur-lg lg:hidden">
 			<Sheet open={open} onOpenChange={setOpen}>
 				<SheetTrigger asChild>
 					<Button
 						variant="ghost"
 						size="icon"
-						className="shrink-0 rounded-xl hover:bg-muted"
+						className="shrink-0 rounded-sm hover:bg-muted"
 					>
 						<Menu className="h-5 w-5" />
 						<span className="sr-only">Цэс нээх</span>
@@ -249,7 +249,7 @@ export function MobileHeader() {
 				</SheetTrigger>
 				<SheetContent
 					side="left"
-					className="flex w-80 flex-col p-0 [&>button]:hidden"
+					className="flex w-80 flex-col border-r border-border p-0 [&>button]:hidden"
 				>
 					<SheetHeader className="sr-only">
 						<SheetTitle>Навигаци</SheetTitle>
@@ -261,10 +261,10 @@ export function MobileHeader() {
 			</Sheet>
 
 			<div className="flex items-center gap-2">
-				<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary shadow-lg">
-					<Sparkles className="h-4 w-4 text-primary-foreground" />
+				<div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-sm">
+					<Sparkles className="h-3.5 w-3.5" />
 				</div>
-				<span className="font-bold text-foreground text-lg tracking-tight">
+				<span className="font-display text-lg font-bold tracking-tight text-foreground">
 					{currentPage?.label || "Ажил-GO"}
 				</span>
 			</div>

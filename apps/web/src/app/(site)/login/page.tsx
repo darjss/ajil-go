@@ -1,12 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { Search } from "lucide-react";
 import { toast } from "sonner";
-import { AuthLayout } from "@/components/auth-layout";
 import Loader from "@/components/loader";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";
 
 export default function LoginPage() {
@@ -62,154 +65,134 @@ export default function LoginPage() {
 	}
 
 	return (
-		<AuthLayout>
-			<div className="grid items-center gap-12 md:grid-cols-2">
-				{/* Left side - Image and testimonial */}
-				<div className="hidden flex-col items-center md:flex">
-					<div className="mb-8">
-						<div className="mb-6 text-5xl">👨‍💼</div>
-					</div>
-					<div className="max-w-sm rounded-lg border border-border bg-card p-8 text-center">
-						<div className="mb-2 font-bold text-4xl text-primary">100K+</div>
-						<p className="mb-6 text-muted-foreground">
-							Эндээс ажилд орсон хүмүүс
-						</p>
-						<div className="border-border border-t pt-6">
-							<p className="mb-2 font-semibold text-foreground text-sm">
-								Adam Sandler
-							</p>
-							<p className="mb-4 text-muted-foreground text-xs">
-								Canva-ийн ахлах инженер
-							</p>
-							<blockquote className="text-foreground text-sm italic">
-								"Стартап сонирхдог, карьерийн дараагийн алхмаа хайж буй ажил
-								хайгчдад маш тохиромжтой платформ."
-							</blockquote>
-						</div>
-					</div>
+		<div className="grid min-h-screen w-full lg:grid-cols-2">
+			<div className="hidden flex-col justify-between border-r bg-muted/30 p-12 lg:flex">
+				<div className="font-display text-4xl font-bold uppercase tracking-tight">
+					Ajil-Go
 				</div>
-
-				{/* Right side - Login form */}
-				<div className="mx-auto w-full max-w-md">
-					<div className="mb-8">
-						<div className="mb-6 flex gap-4">
-							<button
-								type="button"
-								className="border-primary border-b-2 px-4 py-2 font-medium text-primary text-sm"
-							>
-								Ажил хайгч
-							</button>
-							<button
-								type="button"
-								className="px-4 py-2 font-medium text-muted-foreground text-sm"
-							>
-								Компани
-							</button>
-						</div>
-					</div>
-
-					<h1 className="mb-2 font-bold text-3xl text-foreground">
-						Дахин тавтай морил
+				<div className="max-w-xl">
+					<h1 className="font-display text-7xl font-bold leading-none tracking-tighter uppercase text-primary">
+						Ирээдүйгээ
+						<br />
+						Бүтээ
 					</h1>
-
-					{/* Google Login */}
-					<Button
-						type="button"
-						onClick={handleGoogleSignIn}
-						className="mb-6 h-12 w-full border border-border bg-card text-foreground hover:bg-muted"
-					>
-						<span className="mr-2">🔍</span>
-						Google-ээр нэвтрэх
-					</Button>
-
-					{/* Divider */}
-					<div className="relative mb-6">
-						<div className="absolute inset-0 flex items-center">
-							<div className="w-full border-border border-t" />
-						</div>
-						<div className="relative flex justify-center text-xs">
-							<span className="bg-background px-2 text-muted-foreground">
-								Эсвэл имэйлээр нэвтэр
-							</span>
-						</div>
-					</div>
-
-					{/* Form */}
-					<form onSubmit={handleSubmit} className="space-y-4">
-						<div>
-							<label
-								htmlFor="email"
-								className="mb-2 block font-medium text-foreground text-sm"
-							>
-								Имэйл хаяг
-							</label>
-							<input
-								type="email"
-								id="email"
-								name="email"
-								placeholder="Имэйл хаягаа оруулна уу"
-								value={formData.email}
-								onChange={handleChange}
-								className="w-full rounded-lg border border-border bg-card px-4 py-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-							/>
-						</div>
-
-						<div>
-							<label
-								htmlFor="password"
-								className="mb-2 block font-medium text-foreground text-sm"
-							>
-								Нууц үг
-							</label>
-							<input
-								type="password"
-								id="password"
-								name="password"
-								placeholder="Нууц үгээ оруулна уу"
-								value={formData.password}
-								onChange={handleChange}
-								className="w-full rounded-lg border border-border bg-card px-4 py-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-							/>
-						</div>
-
-						<div className="flex items-center">
-							<input
-								type="checkbox"
-								id="remember"
-								name="remember"
-								checked={formData.remember}
-								onChange={handleChange}
-								className="h-4 w-4 rounded border-border"
-							/>
-							<label
-								htmlFor="remember"
-								className="ml-2 text-foreground text-sm"
-							>
-								Намайг сана
-							</label>
-						</div>
-
-						<Button
-							type="submit"
-							disabled={isSubmitting}
-							className="h-12 w-full bg-primary text-primary-foreground hover:bg-primary/90"
-						>
-							{isSubmitting ? "Нэвтэрч байна..." : "Нэвтрэх"}
-						</Button>
-					</form>
-
-					{/* Sign Up Link */}
-					<p className="mt-6 text-center text-muted-foreground text-sm">
-						Бүртгэлгүй байна уу?{" "}
-						<Link
-							href="/signup"
-							className="font-medium text-primary hover:underline"
-						>
-							Бүртгүүлэх
-						</Link>
-					</p>
+				</div>
+				<div className="font-mono text-xs text-muted-foreground">
+					© 2025 AJIL GO INC.
 				</div>
 			</div>
-		</AuthLayout>
+
+			<div className="flex flex-col justify-center px-8 py-12 lg:px-24">
+				<div className="mx-auto w-full max-w-sm space-y-8">
+					<div className="space-y-2">
+						<h2 className="font-display text-4xl font-bold tracking-tight">
+							Нэвтрэх
+						</h2>
+						<p className="font-body text-muted-foreground text-lg">
+							Системд нэвтрэхийн тулд мэдээллээ оруулна уу.
+						</p>
+					</div>
+
+					<div className="space-y-6">
+						<Button
+							variant="outline"
+							onClick={handleGoogleSignIn}
+							className="w-full h-12 rounded-none border-2 border-border hover:bg-muted font-mono uppercase tracking-wider text-xs"
+						>
+							<Search className="mr-2 h-4 w-4" /> Google-ээр нэвтрэх
+						</Button>
+
+						<div className="relative">
+							<div className="absolute inset-0 flex items-center">
+								<span className="w-full border-t border-border" />
+							</div>
+							<div className="relative flex justify-center text-xs uppercase">
+								<span className="bg-background px-2 text-muted-foreground font-mono">
+									Эсвэл
+								</span>
+							</div>
+						</div>
+
+						<form onSubmit={handleSubmit} className="space-y-5">
+							<div className="space-y-2">
+								<Label
+									htmlFor="email"
+									className="font-mono text-xs uppercase tracking-wider text-muted-foreground"
+								>
+									Имэйл
+								</Label>
+								<Input
+									id="email"
+									name="email"
+									type="email"
+									placeholder="name@example.com"
+									value={formData.email}
+									onChange={handleChange}
+									required
+									className="h-12 rounded-none border-2 border-input bg-transparent focus-visible:ring-0 focus-visible:border-primary px-4"
+								/>
+							</div>
+							<div className="space-y-2">
+								<div className="flex items-center justify-between">
+									<Label
+										htmlFor="password"
+										className="font-mono text-xs uppercase tracking-wider text-muted-foreground"
+									>
+										Нууц үг
+									</Label>
+								</div>
+								<Input
+									id="password"
+									name="password"
+									type="password"
+									value={formData.password}
+									onChange={handleChange}
+									required
+									className="h-12 rounded-none border-2 border-input bg-transparent focus-visible:ring-0 focus-visible:border-primary px-4"
+								/>
+							</div>
+
+							<div className="flex items-center space-x-2 py-2">
+								<Checkbox
+									id="remember"
+									checked={formData.remember}
+									onCheckedChange={(checked) =>
+										setFormData((prev) => ({
+											...prev,
+											remember: checked === true,
+										}))
+									}
+									className="rounded-none border-2 border-muted-foreground data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+								/>
+								<Label
+									htmlFor="remember"
+									className="font-body text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+								>
+									Намайг сана
+								</Label>
+							</div>
+
+							<Button
+								type="submit"
+								disabled={isSubmitting}
+								className="h-14 w-full rounded-none font-mono uppercase tracking-widest text-sm font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-all"
+							>
+								{isSubmitting ? "Уншиж байна..." : "Нэвтрэх"}
+							</Button>
+						</form>
+
+						<div className="text-center font-body text-sm text-muted-foreground pt-4">
+							Бүртгэлгүй юу?{" "}
+							<Link
+								href="/signup"
+								className="font-bold text-primary underline decoration-2 underline-offset-4 hover:text-primary/80"
+							>
+								Бүртгүүлэх
+							</Link>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	);
 }

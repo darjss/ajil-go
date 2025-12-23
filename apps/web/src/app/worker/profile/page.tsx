@@ -1,10 +1,8 @@
 "use client";
 
-import type { ReviewApiResponse, UpdateUserBody } from "@ajil-go/contract";
+import type { UpdateUserBody } from "@ajil-go/contract";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-	Award,
-	Briefcase,
 	CheckCircle2,
 	Edit3,
 	MapPin,
@@ -18,116 +16,24 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import {
+	FormFieldSkeleton,
+	getUserInitials,
+	ProfileHeaderSkeleton,
+	ProfileStatsCards,
+	ReviewsSection,
+	SkillsDisplay,
+	StatsCardSkeleton,
+} from "@/components/users";
 import { reviewsApi, usersApi } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 import { userKeys, userQueries } from "@/lib/queries";
-
-function ProfileHeaderSkeleton() {
-	return (
-		<div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 p-8 shadow-xl">
-			<div className="relative z-10 flex flex-col items-center gap-6 sm:flex-row sm:items-start">
-				<Skeleton className="h-28 w-28 rounded-2xl bg-white/20" />
-				<div className="flex-1 space-y-3 text-center sm:text-left">
-					<Skeleton className="mx-auto h-8 w-48 bg-white/20 sm:mx-0" />
-					<Skeleton className="mx-auto h-4 w-32 bg-white/20 sm:mx-0" />
-					<div className="flex flex-wrap justify-center gap-4 sm:justify-start">
-						<Skeleton className="h-6 w-24 bg-white/20" />
-						<Skeleton className="h-6 w-24 bg-white/20" />
-					</div>
-				</div>
-			</div>
-		</div>
-	);
-}
-
-function StatsCardSkeleton() {
-	return (
-		<Card className="border-slate-100">
-			<CardContent className="p-6">
-				<div className="flex items-center justify-between">
-					<div className="space-y-2">
-						<Skeleton className="h-4 w-24" />
-						<Skeleton className="h-8 w-16" />
-					</div>
-					<Skeleton className="h-12 w-12 rounded-xl" />
-				</div>
-			</CardContent>
-		</Card>
-	);
-}
-
-function FormFieldSkeleton() {
-	return (
-		<div className="space-y-2">
-			<Skeleton className="h-4 w-20" />
-			<Skeleton className="h-9 w-full" />
-		</div>
-	);
-}
-
-function ReviewCardSkeleton() {
-	return (
-		<div className="rounded-xl bg-slate-50/50 p-4">
-			<div className="flex items-start gap-3">
-				<Skeleton className="h-10 w-10 rounded-full" />
-				<div className="flex-1 space-y-2">
-					<Skeleton className="h-4 w-32" />
-					<Skeleton className="h-3 w-24" />
-					<Skeleton className="mt-2 h-12 w-full" />
-				</div>
-			</div>
-		</div>
-	);
-}
-
-function StarRating({
-	rating,
-	size = "md",
-}: {
-	rating: number;
-	size?: "sm" | "md" | "lg";
-}) {
-	const sizeClasses = {
-		sm: "text-sm",
-		md: "text-base",
-		lg: "text-xl",
-	};
-
-	const fullStars = Math.floor(rating);
-	const hasHalfStar = rating % 1 >= 0.5;
-	const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-
-	return (
-		<span className={`inline-flex items-center gap-0.5 ${sizeClasses[size]}`}>
-			{Array.from({ length: fullStars }).map((_, i) => (
-				<span key={`full-${i.toString()}`} className="text-amber-400">
-					★
-				</span>
-			))}
-			{hasHalfStar && <span className="text-amber-400">★</span>}
-			{Array.from({ length: emptyStars }).map((_, i) => (
-				<span key={`empty-${i.toString()}`} className="text-slate-300">
-					☆
-				</span>
-			))}
-		</span>
-	);
-}
-
-function formatDate(date: Date): string {
-	return new Intl.DateTimeFormat("mn-MN", {
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-	}).format(new Date(date));
-}
 
 export default function WorkerProfilePage() {
 	const router = useRouter();
@@ -214,13 +120,7 @@ export default function WorkerProfilePage() {
 	};
 
 	const reviews = reviewsData?.data || [];
-	const userInitials =
-		userData?.name
-			?.split(" ")
-			.map((n) => n[0])
-			.join("")
-			.toUpperCase()
-			.slice(0, 2) || "??";
+	const userInitials = getUserInitials(userData?.name);
 
 	if (isSessionLoading || isUserLoading) {
 		return (
@@ -232,7 +132,7 @@ export default function WorkerProfilePage() {
 							<StatsCardSkeleton key={`stats-skeleton-${i.toString()}`} />
 						))}
 					</div>
-					<Card className="border-slate-100">
+					<Card className="border-border">
 						<CardHeader>
 							<Skeleton className="h-6 w-40" />
 						</CardHeader>
@@ -250,122 +150,20 @@ export default function WorkerProfilePage() {
 	return (
 		<div className="min-h-screen p-6 lg:p-8">
 			<div className="mx-auto max-w-4xl space-y-8">
-				<div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 p-8 shadow-xl">
-					<div className="pointer-events-none absolute inset-0 overflow-hidden">
-						<div className="-right-20 -top-20 absolute h-64 w-64 rounded-full bg-white/10 blur-3xl" />
-						<div className="-bottom-32 -left-20 absolute h-80 w-80 rounded-full bg-cyan-300/20 blur-3xl" />
-						<div className="absolute right-0 bottom-0 left-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-					</div>
+				<WorkerProfileHeader userData={userData} userInitials={userInitials} />
 
-					<div className="relative z-10 flex flex-col items-center gap-6 sm:flex-row sm:items-start">
-						<Avatar className="h-28 w-28 rounded-2xl border-4 border-white/30 shadow-2xl">
-							<AvatarImage
-								src={userData?.image || undefined}
-								alt={userData?.name}
-							/>
-							<AvatarFallback className="rounded-2xl bg-white/20 font-bold text-2xl text-white">
-								{userInitials}
-							</AvatarFallback>
-						</Avatar>
+				<ProfileStatsCards
+					stats={{
+						avgRatingAsWorker: userData?.avgRatingAsWorker ?? 0,
+						avgRatingAsClient: userData?.avgRatingAsClient ?? 0,
+						completedTasksAsWorker: userData?.completedTasksAsWorker ?? 0,
+					}}
+				/>
 
-						<div className="flex-1 text-center sm:text-left">
-							<h1 className="font-bold text-3xl text-white drop-shadow-sm">
-								{userData?.name || "Нэргүй хэрэглэгч"}
-							</h1>
-							{userData?.city && (
-								<p className="mt-1 flex items-center justify-center gap-1.5 text-white/80 sm:justify-start">
-									<MapPin className="h-4 w-4" />
-									{userData.city}
-								</p>
-							)}
-							<div className="mt-4 flex flex-wrap justify-center gap-3 sm:justify-start">
-								<div className="flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1.5 text-sm text-white backdrop-blur-sm">
-									<Star className="h-4 w-4 text-amber-300" />
-									<span className="font-semibold">
-										{userData?.avgRatingAsWorker?.toFixed(1) || "0.0"}
-									</span>
-									<span className="text-white/70">үнэлгээ</span>
-								</div>
-								<div className="flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1.5 text-sm text-white backdrop-blur-sm">
-									<CheckCircle2 className="h-4 w-4 text-emerald-300" />
-									<span className="font-semibold">
-										{userData?.completedTasksAsWorker || 0}
-									</span>
-									<span className="text-white/70">дууссан</span>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div className="grid gap-4 sm:grid-cols-3">
-					<Card className="group overflow-hidden border-amber-100 transition-all hover:border-amber-200 hover:shadow-lg">
-						<CardContent className="p-6">
-							<div className="flex items-center justify-between">
-								<div>
-									<p className="text-slate-500 text-sm">
-										Гүйцэтгэгчийн үнэлгээ
-									</p>
-									<div className="mt-1 flex items-center gap-2">
-										<p className="font-bold text-2xl text-amber-600">
-											{userData?.avgRatingAsWorker?.toFixed(1) || "0.0"}
-										</p>
-										<StarRating
-											rating={userData?.avgRatingAsWorker || 0}
-											size="sm"
-										/>
-									</div>
-								</div>
-								<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-100 to-amber-50 text-amber-600 transition-colors group-hover:from-amber-200 group-hover:to-amber-100">
-									<Star className="h-6 w-6" />
-								</div>
-							</div>
-						</CardContent>
-					</Card>
-
-					<Card className="group overflow-hidden border-emerald-100 transition-all hover:border-emerald-200 hover:shadow-lg">
-						<CardContent className="p-6">
-							<div className="flex items-center justify-between">
-								<div>
-									<p className="text-slate-500 text-sm">Дууссан даалгавар</p>
-									<p className="mt-1 font-bold text-2xl text-emerald-600">
-										{userData?.completedTasksAsWorker || 0}
-									</p>
-								</div>
-								<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-50 text-emerald-600 transition-colors group-hover:from-emerald-200 group-hover:to-emerald-100">
-									<Briefcase className="h-6 w-6" />
-								</div>
-							</div>
-						</CardContent>
-					</Card>
-
-					<Card className="group overflow-hidden border-cyan-100 transition-all hover:border-cyan-200 hover:shadow-lg">
-						<CardContent className="p-6">
-							<div className="flex items-center justify-between">
-								<div>
-									<p className="text-slate-500 text-sm">Захиалагчийн үнэлгээ</p>
-									<div className="mt-1 flex items-center gap-2">
-										<p className="font-bold text-2xl text-cyan-600">
-											{userData?.avgRatingAsClient?.toFixed(1) || "0.0"}
-										</p>
-										<StarRating
-											rating={userData?.avgRatingAsClient || 0}
-											size="sm"
-										/>
-									</div>
-								</div>
-								<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-100 to-cyan-50 text-cyan-600 transition-colors group-hover:from-cyan-200 group-hover:to-cyan-100">
-									<Award className="h-6 w-6" />
-								</div>
-							</div>
-						</CardContent>
-					</Card>
-				</div>
-
-				<Card className="border-slate-100">
+				<Card className="border-border">
 					<CardHeader className="flex flex-row items-center justify-between pb-2">
-						<CardTitle className="flex items-center gap-2 font-semibold text-lg text-slate-800">
-							<User className="h-5 w-5 text-emerald-600" />
+						<CardTitle className="flex items-center gap-2 font-semibold text-lg text-foreground">
+							<User className="h-5 w-5 text-primary" />
 							Хувийн мэдээлэл
 						</CardTitle>
 						{!isEditing ? (
@@ -374,7 +172,7 @@ export default function WorkerProfilePage() {
 								variant="outline"
 								size="sm"
 								onClick={() => setIsEditing(true)}
-								className="border-emerald-200 text-emerald-600 hover:bg-emerald-50"
+								className="border-primary/30 text-primary hover:bg-primary/10"
 							>
 								<Edit3 className="mr-1.5 h-4 w-4" />
 								Засах
@@ -386,7 +184,7 @@ export default function WorkerProfilePage() {
 									variant="outline"
 									size="sm"
 									onClick={handleCancel}
-									className="border-slate-200 text-slate-600 hover:bg-slate-50"
+									className="border-border text-muted-foreground hover:bg-muted"
 								>
 									<X className="mr-1.5 h-4 w-4" />
 									Цуцлах
@@ -396,7 +194,7 @@ export default function WorkerProfilePage() {
 									size="sm"
 									onClick={handleSave}
 									disabled={updateProfileMutation.isPending}
-									className="bg-gradient-to-r from-emerald-500 to-cyan-500 text-white shadow-emerald-500/20 shadow-lg hover:shadow-emerald-500/30"
+									className="bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
 								>
 									<Save className="mr-1.5 h-4 w-4" />
 									{updateProfileMutation.isPending
@@ -407,237 +205,222 @@ export default function WorkerProfilePage() {
 						)}
 					</CardHeader>
 					<CardContent className="space-y-6 pt-4">
-						<div className="grid gap-6 sm:grid-cols-2">
-							<div className="space-y-2">
-								<Label htmlFor="name" className="text-slate-700">
-									Нэр
-								</Label>
-								{isEditing ? (
-									<Input
-										id="name"
-										name="name"
-										value={formData.name}
-										onChange={handleInputChange}
-										placeholder="Таны нэр"
-										className="border-slate-200 focus-visible:border-emerald-400 focus-visible:ring-emerald-400/20"
-									/>
-								) : (
-									<p className="rounded-md bg-slate-50 px-3 py-2 text-slate-700">
-										{userData?.name || "—"}
-									</p>
-								)}
-							</div>
-
-							<div className="space-y-2">
-								<Label htmlFor="phone" className="text-slate-700">
-									<Phone className="mr-1.5 inline h-4 w-4 text-slate-400" />
-									Утас
-								</Label>
-								{isEditing ? (
-									<Input
-										id="phone"
-										name="phone"
-										value={formData.phone}
-										onChange={handleInputChange}
-										placeholder="Утасны дугаар"
-										className="border-slate-200 focus-visible:border-emerald-400 focus-visible:ring-emerald-400/20"
-									/>
-								) : (
-									<p className="rounded-md bg-slate-50 px-3 py-2 text-slate-700">
-										{userData?.phone || "—"}
-									</p>
-								)}
-							</div>
-
-							<div className="space-y-2">
-								<Label htmlFor="city" className="text-slate-700">
-									<MapPin className="mr-1.5 inline h-4 w-4 text-slate-400" />
-									Хот
-								</Label>
-								{isEditing ? (
-									<Input
-										id="city"
-										name="city"
-										value={formData.city}
-										onChange={handleInputChange}
-										placeholder="Хот/Аймаг"
-										className="border-slate-200 focus-visible:border-emerald-400 focus-visible:ring-emerald-400/20"
-									/>
-								) : (
-									<p className="rounded-md bg-slate-50 px-3 py-2 text-slate-700">
-										{userData?.city || "—"}
-									</p>
-								)}
-							</div>
-
-							<div className="space-y-2">
-								<Label htmlFor="address" className="text-slate-700">
-									Хаяг
-								</Label>
-								{isEditing ? (
-									<Input
-										id="address"
-										name="address"
-										value={formData.address}
-										onChange={handleInputChange}
-										placeholder="Дэлгэрэнгүй хаяг"
-										className="border-slate-200 focus-visible:border-emerald-400 focus-visible:ring-emerald-400/20"
-									/>
-								) : (
-									<p className="rounded-md bg-slate-50 px-3 py-2 text-slate-700">
-										{userData?.address || "—"}
-									</p>
-								)}
-							</div>
-						</div>
-
-						<div className="space-y-2">
-							<Label htmlFor="bio" className="text-slate-700">
-								Танилцуулга
-							</Label>
-							{isEditing ? (
-								<Textarea
-									id="bio"
-									name="bio"
-									value={formData.bio}
-									onChange={handleInputChange}
-									placeholder="Өөрийгөө танилцуулна уу..."
-									rows={4}
-									className="resize-none border-slate-200 focus-visible:border-emerald-400 focus-visible:ring-emerald-400/20"
-								/>
-							) : (
-								<p className="min-h-[80px] whitespace-pre-wrap rounded-md bg-slate-50 px-3 py-2 text-slate-700">
-									{userData?.bio || "Танилцуулга оруулаагүй байна"}
-								</p>
-							)}
-						</div>
+						<ProfileFormFields
+							formData={formData}
+							userData={userData}
+							isEditing={isEditing}
+							onInputChange={handleInputChange}
+						/>
 					</CardContent>
 				</Card>
 
-				<Card className="border-slate-100">
-					<CardHeader className="pb-4">
-						<CardTitle className="flex items-center gap-2 font-semibold text-lg text-slate-800">
-							<Award className="h-5 w-5 text-emerald-600" />
-							Ур чадварууд
-						</CardTitle>
-					</CardHeader>
-					<CardContent>
-						{userData?.skills && userData.skills.length > 0 ? (
-							<div className="flex flex-wrap gap-2">
-								{userData.skills.map((userSkill, index) => {
-									const skillName =
-										userSkill.skill?.name || userSkill.customSkill?.name;
-									if (!skillName) return null;
-									return (
-										<Badge
-											key={`skill-${index.toString()}`}
-											variant="outline"
-											className="border-emerald-200 bg-emerald-50/50 px-3 py-1.5 text-emerald-700 transition-colors hover:bg-emerald-100"
-										>
-											{skillName}
-										</Badge>
-									);
-								})}
-							</div>
-						) : (
-							<div className="flex flex-col items-center justify-center py-8 text-center">
-								<div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100">
-									<Award className="h-7 w-7 text-slate-400" />
-								</div>
-								<p className="font-medium text-slate-600">
-									Ур чадвар бүртгэгдээгүй байна
-								</p>
-								<p className="mt-1 text-slate-400 text-sm">
-									Админтай холбогдон ур чадвараа нэмүүлнэ үү
-								</p>
-							</div>
-						)}
-					</CardContent>
-				</Card>
+				<SkillsDisplay skills={userData?.skills} />
 
-				<Card className="border-slate-100">
-					<CardHeader className="pb-4">
-						<CardTitle className="flex items-center gap-2 font-semibold text-lg text-slate-800">
-							<Star className="h-5 w-5 text-amber-500" />
-							Үнэлгээнүүд
-							{reviews.length > 0 && (
-								<span className="rounded-full bg-slate-100 px-2 py-0.5 font-normal text-slate-500 text-sm">
-									{reviews.length}
-								</span>
-							)}
-						</CardTitle>
-					</CardHeader>
-					<CardContent>
-						{isReviewsLoading ? (
-							<div className="space-y-4">
-								{Array.from({ length: 3 }).map((_, i) => (
-									<ReviewCardSkeleton key={`review-skeleton-${i.toString()}`} />
-								))}
-							</div>
-						) : reviews.length > 0 ? (
-							<div className="space-y-4">
-								{reviews.map((review: ReviewApiResponse) => (
-									<div
-										key={review.id}
-										className="rounded-xl border border-slate-100 bg-gradient-to-br from-slate-50/50 to-white p-4 transition-all hover:border-slate-200 hover:shadow-sm"
-									>
-										<div className="flex items-start gap-3">
-											<Avatar className="h-10 w-10">
-												<AvatarImage
-													src={review.author?.image || undefined}
-													alt={review.author?.name}
-												/>
-												<AvatarFallback className="bg-gradient-to-br from-emerald-100 to-cyan-100 font-medium text-emerald-700 text-sm">
-													{review.author?.name
-														?.split(" ")
-														.map((n) => n[0])
-														.join("")
-														.toUpperCase()
-														.slice(0, 2) || "??"}
-												</AvatarFallback>
-											</Avatar>
-											<div className="flex-1">
-												<div className="flex flex-wrap items-center gap-2">
-													<span className="font-medium text-slate-800">
-														{review.author?.name || "Нэргүй"}
-													</span>
-													<StarRating rating={review.rating} size="sm" />
-												</div>
-												<p className="mt-0.5 text-slate-400 text-xs">
-													{formatDate(review.createdAt)}
-												</p>
-												{review.comment && (
-													<p className="mt-2 text-slate-600 text-sm leading-relaxed">
-														{review.comment}
-													</p>
-												)}
-												{review.task && (
-													<p className="mt-2 text-slate-400 text-xs">
-														Даалгавар: {review.task.title}
-													</p>
-												)}
-											</div>
-										</div>
-									</div>
-								))}
-							</div>
-						) : (
-							<div className="flex flex-col items-center justify-center py-12 text-center">
-								<div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-50">
-									<Star className="h-8 w-8 text-amber-300" />
-								</div>
-								<h3 className="font-semibold text-slate-700">
-									Үнэлгээ байхгүй байна
-								</h3>
-								<p className="mt-1 text-slate-500 text-sm">
-									Даалгавар гүйцэтгэсний дараа захиалагчаас үнэлгээ авах
-									боломжтой
-								</p>
-							</div>
-						)}
-					</CardContent>
-				</Card>
+				<ReviewsSection
+					reviews={reviews}
+					isLoading={isReviewsLoading}
+					showReviewType={false}
+					emptyMessage="Үнэлгээ байхгүй байна"
+					emptyDescription="Даалгавар гүйцэтгэсний дараа захиалагчаас үнэлгээ авах боломжтой"
+				/>
 			</div>
 		</div>
+	);
+}
+
+interface WorkerProfileHeaderProps {
+	userData?: {
+		name?: string;
+		image?: string | null;
+		city?: string | null;
+		avgRatingAsWorker?: number;
+		completedTasksAsWorker?: number;
+	};
+	userInitials: string;
+}
+
+function WorkerProfileHeader({
+	userData,
+	userInitials,
+}: WorkerProfileHeaderProps) {
+	return (
+		<div className="relative overflow-hidden rounded-none bg-primary p-8 shadow-lg">
+			<div className="pointer-events-none absolute inset-0 overflow-hidden">
+				<div className="-right-20 -top-20 absolute h-64 w-64 rounded-none bg-primary-foreground/10" />
+				<div className="-bottom-32 -left-20 absolute h-80 w-80 rounded-none bg-primary-foreground/5" />
+				<div className="absolute right-0 bottom-0 left-0 h-px bg-primary-foreground/20" />
+			</div>
+
+			<div className="relative z-10 flex flex-col items-center gap-6 sm:flex-row sm:items-start">
+				<Avatar className="h-28 w-28 rounded-none border-4 border-primary-foreground/30 shadow-2xl">
+					<AvatarImage
+						src={userData?.image || undefined}
+						alt={userData?.name}
+					/>
+					<AvatarFallback className="rounded-none bg-primary-foreground/20 font-bold text-2xl text-primary-foreground">
+						{userInitials}
+					</AvatarFallback>
+				</Avatar>
+
+				<div className="flex-1 text-center sm:text-left">
+					<h1 className="font-bold text-3xl text-primary-foreground drop-shadow-sm">
+						{userData?.name || "Нэргүй хэрэглэгч"}
+					</h1>
+					{userData?.city && (
+						<p className="mt-1 flex items-center justify-center gap-1.5 text-primary-foreground/80 sm:justify-start">
+							<MapPin className="h-4 w-4" />
+							{userData.city}
+						</p>
+					)}
+					<div className="mt-4 flex flex-wrap justify-center gap-3 sm:justify-start">
+						<div className="flex items-center gap-1.5 rounded-none bg-primary-foreground/20 px-3 py-1.5 text-sm text-primary-foreground backdrop-blur-sm">
+							<Star className="h-4 w-4 text-primary-foreground" />
+							<span className="font-semibold">
+								{userData?.avgRatingAsWorker?.toFixed(1) || "0.0"}
+							</span>
+							<span className="text-primary-foreground/70">үнэлгээ</span>
+						</div>
+						<div className="flex items-center gap-1.5 rounded-none bg-primary-foreground/20 px-3 py-1.5 text-sm text-primary-foreground backdrop-blur-sm">
+							<CheckCircle2 className="h-4 w-4 text-primary-foreground" />
+							<span className="font-semibold">
+								{userData?.completedTasksAsWorker || 0}
+							</span>
+							<span className="text-primary-foreground/70">дууссан</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+interface ProfileFormFieldsProps {
+	formData: UpdateUserBody;
+	userData?: {
+		name?: string;
+		phone?: string | null;
+		city?: string | null;
+		address?: string | null;
+		bio?: string | null;
+	};
+	isEditing: boolean;
+	onInputChange: (
+		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+	) => void;
+}
+
+function ProfileFormFields({
+	formData,
+	userData,
+	isEditing,
+	onInputChange,
+}: ProfileFormFieldsProps) {
+	return (
+		<>
+			<div className="grid gap-6 sm:grid-cols-2">
+				<div className="space-y-2">
+					<Label htmlFor="name" className="text-foreground">
+						Нэр
+					</Label>
+					{isEditing ? (
+						<Input
+							id="name"
+							name="name"
+							value={formData.name}
+							onChange={onInputChange}
+							placeholder="Таны нэр"
+							className="border-border focus-visible:border-primary focus-visible:ring-primary/20"
+						/>
+					) : (
+						<p className="rounded-sm bg-muted px-3 py-2 text-foreground">
+							{userData?.name || "—"}
+						</p>
+					)}
+				</div>
+
+				<div className="space-y-2">
+					<Label htmlFor="phone" className="text-foreground">
+						<Phone className="mr-1.5 inline h-4 w-4 text-muted-foreground" />
+						Утас
+					</Label>
+					{isEditing ? (
+						<Input
+							id="phone"
+							name="phone"
+							value={formData.phone}
+							onChange={onInputChange}
+							placeholder="Утасны дугаар"
+							className="border-border focus-visible:border-primary focus-visible:ring-primary/20"
+						/>
+					) : (
+						<p className="rounded-sm bg-muted px-3 py-2 text-foreground">
+							{userData?.phone || "—"}
+						</p>
+					)}
+				</div>
+
+				<div className="space-y-2">
+					<Label htmlFor="city" className="text-foreground">
+						<MapPin className="mr-1.5 inline h-4 w-4 text-muted-foreground" />
+						Хот
+					</Label>
+					{isEditing ? (
+						<Input
+							id="city"
+							name="city"
+							value={formData.city}
+							onChange={onInputChange}
+							placeholder="Хот/Аймаг"
+							className="border-border focus-visible:border-primary focus-visible:ring-primary/20"
+						/>
+					) : (
+						<p className="rounded-sm bg-muted px-3 py-2 text-foreground">
+							{userData?.city || "—"}
+						</p>
+					)}
+				</div>
+
+				<div className="space-y-2">
+					<Label htmlFor="address" className="text-foreground">
+						Хаяг
+					</Label>
+					{isEditing ? (
+						<Input
+							id="address"
+							name="address"
+							value={formData.address}
+							onChange={onInputChange}
+							placeholder="Дэлгэрэнгүй хаяг"
+							className="border-border focus-visible:border-primary focus-visible:ring-primary/20"
+						/>
+					) : (
+						<p className="rounded-sm bg-muted px-3 py-2 text-foreground">
+							{userData?.address || "—"}
+						</p>
+					)}
+				</div>
+			</div>
+
+			<div className="space-y-2">
+				<Label htmlFor="bio" className="text-foreground">
+					Танилцуулга
+				</Label>
+				{isEditing ? (
+					<Textarea
+						id="bio"
+						name="bio"
+						value={formData.bio}
+						onChange={onInputChange}
+						placeholder="Өөрийгөө танилцуулна уу..."
+						rows={4}
+						className="resize-none border-border focus-visible:border-primary focus-visible:ring-primary/20"
+					/>
+				) : (
+					<p className="min-h-[80px] whitespace-pre-wrap rounded-sm bg-muted px-3 py-2 text-foreground">
+						{userData?.bio || "Танилцуулга оруулаагүй байна"}
+					</p>
+				)}
+			</div>
+		</>
 	);
 }
