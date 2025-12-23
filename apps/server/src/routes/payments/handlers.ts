@@ -79,9 +79,15 @@ export async function getPaymentById(
 export async function createPayment(
 	fastify: FastifyInstance,
 	body: CreatePaymentBody,
+	userId: string,
 ) {
+	const { payerId: _ignoredPayerId, ...paymentData } = body;
+
 	const payment = await fastify.prisma.payment.create({
-		data: body,
+		data: {
+			...paymentData,
+			payerId: userId,
+		},
 		include: {
 			task: {
 				select: { id: true, title: true },

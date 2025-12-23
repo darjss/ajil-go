@@ -12,7 +12,7 @@ import {
 	User,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -74,11 +74,7 @@ export default function WorkerSettingsPage() {
 	const [language, setLanguage] = useState("mn");
 	const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-	useEffect(() => {
-		if (!isSessionLoading && !session?.user) {
-			router.push("/login");
-		}
-	}, [session, isSessionLoading, router]);
+	// Auth is handled by server-side layout
 
 	const handleLogout = async () => {
 		setIsLoggingOut(true);

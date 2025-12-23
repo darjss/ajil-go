@@ -13,8 +13,7 @@ import {
 	X,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -71,18 +70,12 @@ function BidCardSkeleton() {
 }
 
 export default function WorkerBidsPage() {
-	const router = useRouter();
 	const queryClient = useQueryClient();
 	const { data: session, isPending: isSessionLoading } =
 		authClient.useSession();
 	const [activeTab, setActiveTab] = useState<BidStatus>("ALL");
 
-	useEffect(() => {
-		if (!isSessionLoading && !session?.user) {
-			router.push("/login");
-		}
-	}, [session, isSessionLoading, router]);
-
+	// Auth is handled by server-side layout
 	const userId = session?.user?.id;
 
 	const { data: bidsData, isLoading: isBidsLoading } = useQuery({

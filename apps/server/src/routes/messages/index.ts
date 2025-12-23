@@ -53,9 +53,17 @@ export default async function messagesRoutes(fastify: FastifyInstance) {
 			schema: {
 				body: CreateMessageBodySchema,
 			},
+			preHandler: fastify.authenticate,
 		},
 		async (request, reply) => {
-			const message = await handlers.createMessage(fastify, request.body);
+			if (!request.user) {
+				return reply.status(401).send({ error: "Unauthorized" });
+			}
+			const message = await handlers.createMessage(
+				fastify,
+				request.body,
+				request.user.id,
+			);
 			return reply.status(201).send(message);
 		},
 	);
@@ -67,6 +75,7 @@ export default async function messagesRoutes(fastify: FastifyInstance) {
 			schema: {
 				body: MarkMessagesReadBodySchema,
 			},
+			preHandler: fastify.authenticate,
 		},
 		async (request) => {
 			return handlers.markMessagesAsRead(fastify, request.body);
@@ -81,19 +90,33 @@ export default async function messagesRoutes(fastify: FastifyInstance) {
 				params: IdParamsSchema,
 				body: UpdateMessageBodySchema,
 			},
+			preHandler: fastify.authenticate,
 		},
 		async (request, reply) => {
-			try {
-				return await handlers.updateMessage(
-					fastify,
-					request.params,
-					request.body,
-				);
-			} catch {
+			// Check ownership
+			const existingMessage = await fastify.prisma.message.findUnique({
+				where: { id: request.params.id },
+				select: { senderId: true },
+			});
+
+			if (!existingMessage) {
 				return reply
 					.status(404)
 					.send({ error: "Message not found", code: "MESSAGE_NOT_FOUND" });
 			}
+
+			if (!request.user || existingMessage.senderId !== request.user.id) {
+				return reply
+					.status(403)
+					.send({ error: "Forbidden", code: "FORBIDDEN" });
+			}
+
+			const message = await handlers.updateMessage(
+				fastify,
+				request.params,
+				request.body,
+			);
+			return message;
 		},
 	);
 
@@ -104,16 +127,29 @@ export default async function messagesRoutes(fastify: FastifyInstance) {
 			schema: {
 				params: IdParamsSchema,
 			},
+			preHandler: fastify.authenticate,
 		},
 		async (request, reply) => {
-			try {
-				await handlers.deleteMessage(fastify, request.params);
-				return reply.status(204).send();
-			} catch {
+			// Check ownership
+			const existingMessage = await fastify.prisma.message.findUnique({
+				where: { id: request.params.id },
+				select: { senderId: true },
+			});
+
+			if (!existingMessage) {
 				return reply
 					.status(404)
 					.send({ error: "Message not found", code: "MESSAGE_NOT_FOUND" });
 			}
+
+			if (!request.user || existingMessage.senderId !== request.user.id) {
+				return reply
+					.status(403)
+					.send({ error: "Forbidden", code: "FORBIDDEN" });
+			}
+
+			await handlers.deleteMessage(fastify, request.params);
+			return reply.status(204).send();
 		},
 	);
 }
