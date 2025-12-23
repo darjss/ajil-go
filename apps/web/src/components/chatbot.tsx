@@ -33,9 +33,9 @@ import { cn } from "@/lib/utils";
 // Types
 interface Message {
 	id: string;
-	role: "user" | "ai";
+	role: "user" | "assistant";
 	content: string;
-	timestamp: number;
+	isStreaming?: boolean; // Flag to indicate if message is still being streamed
 }
 
 interface TaskData {
@@ -323,7 +323,16 @@ function ChatMessage({ message }: { message: Message }) {
 		);
 	}
 
-	const parsed = parseAIResponse(message.content);
+	// Assistant message
+	// Only parse special blocks if streaming is complete
+	const parsed = message.isStreaming
+		? {
+				// During streaming: hide code blocks, show only text
+				text: message.content
+					.replace(/```(tasks|quickactions|action)\n[\s\S]*?```/g, "")
+					.trim(),
+		  }
+		: parseAIResponse(message.content); // After streaming: parse special blocks
 
 	return (
 		<div className="flex gap-2.5">
@@ -408,7 +417,7 @@ export function Chatbot() {
 	const [isOpen, setIsOpen] = useState(false);
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [input, setInput] = useState("");
-	const [loading, setLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 	const [sessionId] = useState(() => {
 		if (typeof window !== "undefined") {
 			const stored = sessionStorage.getItem("chatbot-session-id");
@@ -434,7 +443,7 @@ export function Chatbot() {
 
 	useEffect(() => {
 		scrollToBottom();
-	}, [scrollToBottom]);
+	}, [messages, scrollToBottom]);
 
 	useEffect(() => {
 		if (isOpen) {
@@ -454,9 +463,9 @@ export function Chatbot() {
 								m: { role: string; content: string; timestamp: number },
 								idx: number,
 							) => ({
-								...m,
 								id: `hist-${idx}`,
-								role: m.role as "user" | "ai",
+								role: m.role === "ai" ? "assistant" : (m.role as "user" | "assistant"),
+								content: m.content,
 							}),
 						),
 					);
@@ -475,16 +484,15 @@ export function Chatbot() {
 
 	const sendMessage = async (text?: string) => {
 		const messageText = text || input.trim();
-		if (!messageText || loading) return;
+		if (!messageText || isLoading) return;
 
 		setInput("");
-		setLoading(true);
+		setIsLoading(true);
 
 		const userMessage: Message = {
 			id: `user-${Date.now()}`,
 			role: "user",
 			content: messageText,
-			timestamp: Date.now(),
 		};
 		setMessages((prev) => [...prev, userMessage]);
 
@@ -506,29 +514,94 @@ export function Chatbot() {
 				}),
 			});
 
-			if (response.ok) {
-				const data = await response.json();
-				const aiMessage: Message = {
-					id: `ai-${Date.now()}`,
-					role: "ai",
-					content: data.message,
-					timestamp: Date.now(),
-				};
-				setMessages((prev) => [...prev, aiMessage]);
-			} else {
+			if (!response.ok) {
 				throw new Error("Failed to get response");
 			}
+
+			const reader = response.body?.getReader();
+			if (!reader) {
+				throw new Error("No response body");
+			}
+
+			const assistantMessage: Message = {
+				id: `assistant-${Date.now()}`,
+				role: "assistant",
+				content: "",
+				isStreaming: true, // Mark as streaming
+			};
+			setMessages((prev) => [...prev, assistantMessage]);
+
+			const decoder = new TextDecoder();
+			let done = false;
+			let buffer = "";
+			let fullContent = "";
+
+			while (!done) {
+				const { value, done: streamDone } = await reader.read();
+				done = streamDone;
+
+				if (value) {
+					const chunk = decoder.decode(value, { stream: !streamDone });
+					buffer += chunk;
+
+					// Process complete lines
+					const lines = buffer.split("\n");
+					// Keep the last incomplete line in the buffer
+					buffer = lines.pop() || "";
+
+					for (const line of lines) {
+						if (line.trim().startsWith("0:")) {
+							try {
+								// Parse the JSON string after "0:"
+								const jsonStr = line.slice(2).trim();
+								const content = JSON.parse(jsonStr);
+								if (content) {
+									fullContent += content;
+									// Update with raw content during streaming - create new object for React
+									setMessages((prev) => {
+										const updated = [...prev];
+										const lastIndex = updated.length - 1;
+										if (updated[lastIndex]?.role === "assistant") {
+											// Create a new message object to trigger React re-render
+											updated[lastIndex] = {
+												...updated[lastIndex],
+												content: fullContent,
+											};
+										}
+										return updated;
+									});
+								}
+							} catch (e) {
+								console.error("Failed to parse stream chunk:", line, e);
+							}
+						}
+					}
+				}
+			}
+
+			// After streaming completes, mark as no longer streaming
+			// This triggers parseAIResponse to render special blocks
+			setMessages((prev) => {
+				const updated = [...prev];
+				const lastIndex = updated.length - 1;
+				if (updated[lastIndex]?.role === "assistant") {
+					updated[lastIndex] = {
+						...updated[lastIndex],
+						isStreaming: false,
+					};
+				}
+				return updated;
+			});
 		} catch (error) {
 			console.error("Chat error:", error);
 			const errorMessage: Message = {
 				id: `error-${Date.now()}`,
-				role: "ai",
+				role: "assistant",
 				content: "Sorry, I couldn't process your message. Please try again.",
-				timestamp: Date.now(),
 			};
 			setMessages((prev) => [...prev, errorMessage]);
 		} finally {
-			setLoading(false);
+			setIsLoading(false);
 		}
 	};
 
@@ -588,7 +661,7 @@ export function Chatbot() {
 				{/* Messages */}
 				<div className="flex-1 overflow-y-auto p-4">
 					<div className="space-y-4">
-						{messages.length === 0 && !loading && (
+						{messages.length === 0 && !isLoading && (
 							<div className="py-8 text-center">
 								<div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900/30 dark:to-purple-900/30">
 									<Sparkles className="h-8 w-8 text-violet-600 dark:text-violet-400" />
@@ -623,7 +696,7 @@ export function Chatbot() {
 							<ChatMessage key={msg.id} message={msg} />
 						))}
 
-						{loading && <TypingIndicator />}
+						{isLoading && <TypingIndicator />}
 
 						<div ref={messagesEndRef} />
 					</div>
@@ -640,11 +713,11 @@ export function Chatbot() {
 							onKeyDown={handleKeyDown}
 							placeholder="Асуултаа бичнэ үү... / Ask anything..."
 							className="flex-1 rounded-full border bg-background px-4 py-2.5 text-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
-							disabled={loading}
+							disabled={isLoading}
 						/>
 						<Button
 							onClick={() => sendMessage()}
-							disabled={!input.trim() || loading}
+							disabled={!input.trim() || isLoading}
 							size="icon"
 							className="h-10 w-10 shrink-0 rounded-full bg-gradient-to-br from-violet-600 to-purple-700 hover:from-violet-500 hover:to-purple-600"
 						>

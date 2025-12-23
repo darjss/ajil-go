@@ -1,10 +1,11 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { streamText } from "ai";
 import { type NextRequest, NextResponse } from "next/server";
 import type { RedisClientType } from "redis";
 import { createClient } from "redis";
 
-const genAI = process.env.GEMINI_API_KEY
-	? new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
+const google = process.env.GEMINI_API_KEY
+	? createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY })
 	: null;
 
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001";
@@ -555,44 +556,63 @@ As your Ajil-Go assistant, I can help you:
 Could you tell me more about what you need?`;
 		};
 
-		// Try Gemini API, fall back to mock if it fails
-		if (genAI) {
+		// Try Gemini API with streaming, fall back to mock if it fails
+		if (google) {
 			try {
-				// Build messages for Gemini
+				// Build messages for AI SDK
 				const messages = [
-					{ role: "user", parts: [{ text: systemPrompt }] },
 					{
-						role: "model",
-						parts: [
-							{
-								text: "I understand. I'm Ajil, your intelligent assistant for Ajil-Go. I'll help users navigate the platform, find tasks, and accomplish their goals. I'll use rich responses with navigation and quick actions when helpful (and I will not output `tasks` blocks).",
-							},
-						],
+						role: "system" as const,
+						content: systemPrompt,
 					},
 					...history.map((h) => ({
-						role: h.role === "ai" ? "model" : "user",
-						parts: [{ text: h.content }],
+						role: h.role === "ai" ? ("assistant" as const) : ("user" as const),
+						content: h.content,
 					})),
-					{ role: "user", parts: [{ text: message }] },
+					{
+						role: "user" as const,
+						content: message,
+					},
 				];
 
-				const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-				const result = await model.generateContent({
-					contents: messages,
+				const result = streamText({
+					model: google("gemini-2.0-flash"),
+					messages,
+					maxRetries: 1, // Reduce retries to fail faster
+					onFinish: async ({ text }) => {
+						// Save to history if Redis is available
+						if (redisClient) {
+							const cleanedText = stripTasksBlocks(text);
+							const newHistory = [
+								...history,
+								{ role: "user", content: message, timestamp: Date.now() },
+								{ role: "ai", content: cleanedText, timestamp: Date.now() },
+							].slice(-30);
+
+							try {
+								await redisClient.set(historyKey, JSON.stringify(newHistory));
+							} catch (error) {
+								console.error("Failed to save chat history:", error);
+							}
+						}
+					},
 				});
-				const response = result.response;
-				aiMessage = response.text();
+
+				return result.toTextStreamResponse();
 			} catch (geminiError) {
 				console.error(
-					"Gemini API error, falling back to mock:",
+					"Gemini API error, falling back to mock response:",
 					geminiError instanceof Error ? geminiError.message : geminiError,
 				);
+				// Fall through to mock response below
 				aiMessage = generateMockResponse(message);
 			}
 		} else {
+			console.warn("Gemini API not configured, using mock response");
 			aiMessage = generateMockResponse(message);
 		}
 
+		// Fallback: Stream the mock response to match expected format
 		// Ensure we never emit `tasks` blocks (client may render these as task cards)
 		aiMessage = stripTasksBlocks(aiMessage);
 
@@ -611,7 +631,28 @@ Could you tell me more about what you need?`;
 			}
 		}
 
-		return NextResponse.json({ message: aiMessage });
+		// Create a streaming response for the mock message
+		const encoder = new TextEncoder();
+		const stream = new ReadableStream({
+			async start(controller) {
+				// Split message into words for streaming effect
+				const words = aiMessage.split(" ");
+				for (let i = 0; i < words.length; i++) {
+					const word = words[i] + (i < words.length - 1 ? " " : "");
+					controller.enqueue(encoder.encode(`0:"${word}"\n`));
+					// Small delay for streaming effect
+					await new Promise((resolve) => setTimeout(resolve, 20));
+				}
+				controller.close();
+			},
+		});
+
+		return new Response(stream, {
+			headers: {
+				"Content-Type": "text/plain; charset=utf-8",
+				"Transfer-Encoding": "chunked",
+			},
+		});
 	} catch (error) {
 		console.error(
 			"Chat API error:",
