@@ -166,7 +166,7 @@ export default function WorkerDashboardPage() {
 									description="Даалгавруудаас сонгон санал илгээнэ үү"
 									action={{
 										label: "Даалгавар хайх",
-										onClick: () => router.push("/tasks"),
+										href: "/tasks" as Route,
 									}}
 								/>
 							) : (

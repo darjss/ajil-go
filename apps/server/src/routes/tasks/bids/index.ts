@@ -58,7 +58,7 @@ export default async function bidsRoutes(fastify: FastifyInstance) {
 				const bid = await handlers.createBid(
 					fastify,
 					request.body,
-					request.user?.id,
+					request.user!.id,
 				);
 				return reply.status(201).send(bid);
 			} catch (error: unknown) {

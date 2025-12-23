@@ -58,7 +58,7 @@ export default async function paymentsRoutes(fastify: FastifyInstance) {
 				const payment = await handlers.createPayment(
 					fastify,
 					request.body,
-					request.user?.id,
+					request.user!.id,
 				);
 				return reply.status(201).send(payment);
 			} catch (error: unknown) {

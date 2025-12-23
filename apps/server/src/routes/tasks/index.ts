@@ -57,7 +57,7 @@ export default async function tasksRoutes(fastify: FastifyInstance) {
 			const task = await handlers.createTask(
 				fastify,
 				request.body,
-				request.user?.id,
+				request.user!.id,
 			);
 			return reply.status(201).send(task);
 		},
