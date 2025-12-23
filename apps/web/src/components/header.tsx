@@ -11,6 +11,7 @@ import {
 	Search,
 	Settings,
 } from "lucide-react";
+import type { Route } from "next";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -38,40 +39,48 @@ import { UserAvatar } from "@/components/user-avatar";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 
-const navLinks = [
+const navLinks: { href: Route; label: string; icon: typeof Search }[] = [
 	{
 		href: "/tasks",
 		label: "Даалгавар хайх",
 		icon: Search,
 	},
 	{
-		href: "/how-it-works",
+		href: "/how-it-works" as Route,
 		label: "Хэрхэн ажилладаг",
 		icon: HelpCircle,
 	},
 ];
 
-const workerDashboardLinks = [
+const workerDashboardLinks: {
+	href: Route;
+	label: string;
+	icon: typeof Briefcase;
+}[] = [
 	{
-		href: "/user/dashboard",
+		href: "/worker/dashboard",
 		label: "Гүйцэтгэгчийн хэсэг",
 		icon: Briefcase,
 	},
 	{
-		href: "/user/applications",
+		href: "/worker/bids",
 		label: "Миний өргөдлүүд",
 		icon: ClipboardList,
 	},
 ];
 
-const clientDashboardLinks = [
+const clientDashboardLinks: {
+	href: Route;
+	label: string;
+	icon: typeof ClipboardList;
+}[] = [
 	{
-		href: "/employer/dashboard",
+		href: "/client/dashboard",
 		label: "Захиалагчийн хэсэг",
 		icon: ClipboardList,
 	},
 	{
-		href: "/employer/job-listing",
+		href: "/client/tasks",
 		label: "Миний даалгаврууд",
 		icon: Briefcase,
 	},
@@ -96,7 +105,7 @@ function Header() {
 	const isActiveLink = (href: string) => pathname === href;
 
 	return (
-		<header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-lg supports-[backdrop-filter]:bg-background/60">
+		<header className="sticky top-0 z-50 w-full border-border border-b bg-background/80 backdrop-blur-lg supports-[backdrop-filter]:bg-background/60">
 			<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 				<div className="flex h-16 items-center justify-between">
 					<Link
@@ -145,7 +154,7 @@ function Header() {
 						) : session ? (
 							<>
 								<Button asChild className="gap-2 shadow-sm">
-									<Link href="/employer/post-job">
+									<Link href="/client/post-task">
 										<Plus className="size-4" />
 										Даалгавар нийтлэх
 									</Link>
@@ -219,7 +228,7 @@ function Header() {
 
 										<DropdownMenuItem asChild>
 											<Link
-												href="/user/settings"
+												href="/worker/settings"
 												className="cursor-pointer gap-2"
 											>
 												<Settings className="size-4" />
@@ -259,7 +268,7 @@ function Header() {
 							</Button>
 						</SheetTrigger>
 						<SheetContent side="right" className="w-full max-w-sm">
-							<SheetHeader className="border-b border-border pb-4">
+							<SheetHeader className="border-border border-b pb-4">
 								<SheetTitle className="flex items-center gap-2.5">
 									<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
 										<span className="font-bold text-primary-foreground text-sm">
@@ -297,7 +306,7 @@ function Header() {
 									</div>
 								) : session ? (
 									<>
-										<div className="border-t border-border pt-4">
+										<div className="border-border border-t pt-4">
 											<div className="mb-4 flex items-center gap-3 px-3">
 												<UserAvatar
 													name={session.user.name}
@@ -315,7 +324,7 @@ function Header() {
 											</div>
 
 											<SheetClose asChild>
-												<Link href="/employer/post-job" className="block px-3">
+												<Link href="/client/post-task" className="block px-3">
 													<Button className="w-full gap-2">
 														<Plus className="size-4" />
 														Даалгавар нийтлэх
@@ -324,7 +333,7 @@ function Header() {
 											</SheetClose>
 										</div>
 
-										<div className="border-t border-border pt-4">
+										<div className="border-border border-t pt-4">
 											<p className="mb-2 px-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">
 												Гүйцэтгэгч
 											</p>
@@ -343,7 +352,7 @@ function Header() {
 											</nav>
 										</div>
 
-										<div className="border-t border-border pt-4">
+										<div className="border-border border-t pt-4">
 											<p className="mb-2 px-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">
 												Захиалагч
 											</p>
@@ -362,11 +371,11 @@ function Header() {
 											</nav>
 										</div>
 
-										<div className="border-t border-border pt-4">
+										<div className="border-border border-t pt-4">
 											<nav className="flex flex-col gap-1">
 												<SheetClose asChild>
 													<Link
-														href="/user/settings"
+														href="/worker/settings"
 														className="flex items-center gap-3 rounded-lg px-3 py-2.5 font-medium text-muted-foreground text-sm transition-colors hover:bg-accent/50 hover:text-foreground"
 													>
 														<Settings className="size-5" />
@@ -387,7 +396,7 @@ function Header() {
 										</div>
 									</>
 								) : (
-									<div className="flex flex-col gap-2 border-t border-border px-3 pt-4">
+									<div className="flex flex-col gap-2 border-border border-t px-3 pt-4">
 										<SheetClose asChild>
 											<Link href="/login">
 												<Button variant="outline" className="w-full">

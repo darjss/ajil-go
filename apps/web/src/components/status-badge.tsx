@@ -56,7 +56,7 @@ export function StatusBadge({
 		<Badge
 			variant={config.variant}
 			className={cn(
-				"rounded-none font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 border shadow-sm",
+				"rounded-none border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider shadow-sm",
 				className,
 			)}
 		>

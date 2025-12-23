@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Search } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 import Loader from "@/components/loader";
 import { Button } from "@/components/ui/button";
@@ -67,17 +67,17 @@ export default function LoginPage() {
 	return (
 		<div className="grid min-h-screen w-full lg:grid-cols-2">
 			<div className="hidden flex-col justify-between border-r bg-muted/30 p-12 lg:flex">
-				<div className="font-display text-4xl font-bold uppercase tracking-tight">
+				<div className="font-bold font-display text-4xl uppercase tracking-tight">
 					Ajil-Go
 				</div>
 				<div className="max-w-xl">
-					<h1 className="font-display text-7xl font-bold leading-none tracking-tighter uppercase text-primary">
+					<h1 className="font-bold font-display text-7xl text-primary uppercase leading-none tracking-tighter">
 						Ирээдүйгээ
 						<br />
 						Бүтээ
 					</h1>
 				</div>
-				<div className="font-mono text-xs text-muted-foreground">
+				<div className="font-mono text-muted-foreground text-xs">
 					© 2025 AJIL GO INC.
 				</div>
 			</div>
@@ -85,10 +85,10 @@ export default function LoginPage() {
 			<div className="flex flex-col justify-center px-8 py-12 lg:px-24">
 				<div className="mx-auto w-full max-w-sm space-y-8">
 					<div className="space-y-2">
-						<h2 className="font-display text-4xl font-bold tracking-tight">
+						<h2 className="font-bold font-display text-4xl tracking-tight">
 							Нэвтрэх
 						</h2>
-						<p className="font-body text-muted-foreground text-lg">
+						<p className="font-body text-lg text-muted-foreground">
 							Системд нэвтрэхийн тулд мэдээллээ оруулна уу.
 						</p>
 					</div>
@@ -97,17 +97,17 @@ export default function LoginPage() {
 						<Button
 							variant="outline"
 							onClick={handleGoogleSignIn}
-							className="w-full h-12 rounded-none border-2 border-border hover:bg-muted font-mono uppercase tracking-wider text-xs"
+							className="h-12 w-full rounded-none border-2 border-border font-mono text-xs uppercase tracking-wider hover:bg-muted"
 						>
 							<Search className="mr-2 h-4 w-4" /> Google-ээр нэвтрэх
 						</Button>
 
 						<div className="relative">
 							<div className="absolute inset-0 flex items-center">
-								<span className="w-full border-t border-border" />
+								<span className="w-full border-border border-t" />
 							</div>
 							<div className="relative flex justify-center text-xs uppercase">
-								<span className="bg-background px-2 text-muted-foreground font-mono">
+								<span className="bg-background px-2 font-mono text-muted-foreground">
 									Эсвэл
 								</span>
 							</div>
@@ -117,7 +117,7 @@ export default function LoginPage() {
 							<div className="space-y-2">
 								<Label
 									htmlFor="email"
-									className="font-mono text-xs uppercase tracking-wider text-muted-foreground"
+									className="font-mono text-muted-foreground text-xs uppercase tracking-wider"
 								>
 									Имэйл
 								</Label>
@@ -129,14 +129,14 @@ export default function LoginPage() {
 									value={formData.email}
 									onChange={handleChange}
 									required
-									className="h-12 rounded-none border-2 border-input bg-transparent focus-visible:ring-0 focus-visible:border-primary px-4"
+									className="h-12 rounded-none border-2 border-input bg-transparent px-4 focus-visible:border-primary focus-visible:ring-0"
 								/>
 							</div>
 							<div className="space-y-2">
 								<div className="flex items-center justify-between">
 									<Label
 										htmlFor="password"
-										className="font-mono text-xs uppercase tracking-wider text-muted-foreground"
+										className="font-mono text-muted-foreground text-xs uppercase tracking-wider"
 									>
 										Нууц үг
 									</Label>
@@ -148,7 +148,7 @@ export default function LoginPage() {
 									value={formData.password}
 									onChange={handleChange}
 									required
-									className="h-12 rounded-none border-2 border-input bg-transparent focus-visible:ring-0 focus-visible:border-primary px-4"
+									className="h-12 rounded-none border-2 border-input bg-transparent px-4 focus-visible:border-primary focus-visible:ring-0"
 								/>
 							</div>
 
@@ -162,11 +162,11 @@ export default function LoginPage() {
 											remember: checked === true,
 										}))
 									}
-									className="rounded-none border-2 border-muted-foreground data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+									className="rounded-none border-2 border-muted-foreground data-[state=checked]:border-primary data-[state=checked]:bg-primary"
 								/>
 								<Label
 									htmlFor="remember"
-									className="font-body text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+									className="font-body font-normal text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 								>
 									Намайг сана
 								</Label>
@@ -175,13 +175,13 @@ export default function LoginPage() {
 							<Button
 								type="submit"
 								disabled={isSubmitting}
-								className="h-14 w-full rounded-none font-mono uppercase tracking-widest text-sm font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-all"
+								className="h-14 w-full rounded-none bg-primary font-bold font-mono text-primary-foreground text-sm uppercase tracking-widest transition-all hover:bg-primary/90"
 							>
 								{isSubmitting ? "Уншиж байна..." : "Нэвтрэх"}
 							</Button>
 						</form>
 
-						<div className="text-center font-body text-sm text-muted-foreground pt-4">
+						<div className="pt-4 text-center font-body text-muted-foreground text-sm">
 							Бүртгэлгүй юу?{" "}
 							<Link
 								href="/signup"

@@ -32,7 +32,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { tasksApi } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
-import { bidQueries, taskKeys } from "@/lib/queries";
+import { bidKeys, bidQueries, taskKeys } from "@/lib/queries";
 import { formatCurrency, formatDateShort } from "@/lib/utils";
 
 const taskStatusColors: Record<string, string> = {
@@ -103,6 +103,11 @@ export default function WorkerTasksPage() {
 			}),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: taskKeys.lists() });
+			if (userId) {
+				queryClient.invalidateQueries({
+					queryKey: bidKeys.list({ bidderId: userId }),
+				});
+			}
 		},
 	});
 
@@ -140,7 +145,7 @@ export default function WorkerTasksPage() {
 		<div className="min-h-screen p-6 lg:p-8">
 			<div className="mx-auto max-w-4xl space-y-8">
 				<header>
-					<h1 className="font-display font-bold text-2xl text-foreground lg:text-3xl">
+					<h1 className="font-bold font-display text-2xl text-foreground lg:text-3xl">
 						Идэвхтэй даалгаврууд
 					</h1>
 					<p className="mt-1 text-muted-foreground">
@@ -207,7 +212,7 @@ export default function WorkerTasksPage() {
 																		href={`/task/${task.id}`}
 																		className="group/link flex items-center gap-2"
 																	>
-																		<h3 className="font-semibold text-lg text-foreground transition-colors group-hover/link:text-primary">
+																		<h3 className="font-semibold text-foreground text-lg transition-colors group-hover/link:text-primary">
 																			{task.title}
 																		</h3>
 																		<ExternalLink className="h-4 w-4 text-muted-foreground opacity-0 transition-all group-hover/link:opacity-100" />

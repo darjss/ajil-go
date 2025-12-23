@@ -192,7 +192,7 @@ export default function TaskBidsPage() {
 			<div className="p-6 lg:p-8">
 				<div className="flex flex-col items-center justify-center rounded-none border border-destructive/30 border-dashed py-16">
 					<XCircle className="mb-4 h-12 w-12 text-destructive" />
-					<h3 className="mb-2 font-display text-lg text-foreground">
+					<h3 className="mb-2 font-display text-foreground text-lg">
 						Алдаа гарлаа
 					</h3>
 					<p className="text-muted-foreground">
@@ -253,13 +253,13 @@ export default function TaskBidsPage() {
 							)}
 						</div>
 
-						<h2 className="mb-2 font-display text-xl text-foreground">
+						<h2 className="mb-2 font-display text-foreground text-xl">
 							{task.title}
 						</h2>
 						<p className="mb-4 text-muted-foreground">{task.description}</p>
 
 						<div className="flex flex-wrap items-center gap-4 text-muted-foreground text-sm">
-							<span className="font-mono font-semibold text-primary text-lg">
+							<span className="font-mono font-semibold text-lg text-primary">
 								{formatCurrency(task.budgetMin)}₮
 								{task.budgetMax && task.budgetMax !== task.budgetMin
 									? ` - ${formatCurrency(task.budgetMax)}₮`
@@ -310,7 +310,7 @@ export default function TaskBidsPage() {
 				<Card className="border-border border-dashed">
 					<CardContent className="flex flex-col items-center justify-center py-16">
 						<Users className="mb-4 h-12 w-12 text-muted-foreground" />
-						<h3 className="mb-2 font-display text-lg text-foreground">
+						<h3 className="mb-2 font-display text-foreground text-lg">
 							Одоогоор санал ирээгүй байна
 						</h3>
 						<p className="max-w-sm text-center text-muted-foreground">
@@ -367,7 +367,7 @@ export default function TaskBidsPage() {
 											</div>
 
 											<div className="mb-3 flex flex-wrap items-center gap-4">
-												<span className="font-mono font-bold text-primary text-lg">
+												<span className="font-bold font-mono text-lg text-primary">
 													{formatCurrency(bid.amount)}₮
 												</span>
 												{bid.estimatedHours && (

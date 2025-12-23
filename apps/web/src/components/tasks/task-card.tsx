@@ -83,26 +83,26 @@ function DefaultTaskCard({ task }: { task: TaskApiResponse }) {
 				</div>
 
 				<Link href={`/task/${task.id}`} className="group/link mb-2 block">
-					<h3 className="line-clamp-2 font-display text-xl font-bold tracking-tight text-foreground transition-colors group-hover/link:text-primary">
+					<h3 className="line-clamp-2 font-bold font-display text-foreground text-xl tracking-tight transition-colors group-hover/link:text-primary">
 						{task.title}
 					</h3>
 				</Link>
-				<p className="mb-4 line-clamp-2 flex-1 text-sm text-muted-foreground leading-relaxed">
+				<p className="mb-4 line-clamp-2 flex-1 text-muted-foreground text-sm leading-relaxed">
 					{task.description}
 				</p>
 
-				<div className="mb-4 border-l-2 border-primary bg-muted/30 p-4">
+				<div className="mb-4 border-primary border-l-2 bg-muted/30 p-4">
 					<div className="flex items-center justify-between">
-						<span className="text-sm text-muted-foreground font-medium">
+						<span className="font-medium text-muted-foreground text-sm">
 							Төсөв
 						</span>
-						<span className="font-mono text-lg font-bold text-primary">
+						<span className="font-bold font-mono text-lg text-primary">
 							{formatBudget(task.budgetMin, task.budgetMax)}
 						</span>
 					</div>
 				</div>
 
-				<div className="flex items-center justify-between border-t border-border pt-4">
+				<div className="flex items-center justify-between border-border border-t pt-4">
 					<div className="flex items-center gap-3">
 						<Avatar className="h-9 w-9 rounded-sm ring-1 ring-border">
 							<AvatarImage src={task.poster?.image || undefined} />
@@ -111,10 +111,10 @@ function DefaultTaskCard({ task }: { task: TaskApiResponse }) {
 							</AvatarFallback>
 						</Avatar>
 						<div className="min-w-0">
-							<p className="truncate text-sm font-medium text-foreground">
+							<p className="truncate font-medium text-foreground text-sm">
 								{task.poster?.name || "Захиалагч"}
 							</p>
-							<div className="flex items-center gap-2 text-xs text-muted-foreground font-mono">
+							<div className="flex items-center gap-2 font-mono text-muted-foreground text-xs">
 								<span>{formatTimeAgo(task.createdAt)}</span>
 								<span className="text-border">•</span>
 								<span className="flex items-center gap-1">
@@ -173,7 +173,7 @@ function ClientTaskCard({ task }: { task: TaskApiResponse }) {
 								<Button
 									variant="ghost"
 									size="icon"
-									className="h-8 w-8 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity"
+									className="h-8 w-8 rounded-sm opacity-0 transition-opacity group-hover:opacity-100"
 								>
 									<MoreVertical className="h-4 w-4" />
 								</Button>
@@ -194,13 +194,13 @@ function ClientTaskCard({ task }: { task: TaskApiResponse }) {
 											<Edit2 className="h-4 w-4" />
 											Засах
 										</DropdownMenuItem>
-										<DropdownMenuItem className="flex items-center gap-2 text-destructive focus:text-destructive rounded-sm">
+										<DropdownMenuItem className="flex items-center gap-2 rounded-sm text-destructive focus:text-destructive">
 											<XCircle className="h-4 w-4" />
 											Цуцлах
 										</DropdownMenuItem>
 									</>
 								)}
-								<DropdownMenuItem className="flex items-center gap-2 text-destructive focus:text-destructive rounded-sm">
+								<DropdownMenuItem className="flex items-center gap-2 rounded-sm text-destructive focus:text-destructive">
 									<Trash2 className="h-4 w-4" />
 									Устгах
 								</DropdownMenuItem>
@@ -210,16 +210,16 @@ function ClientTaskCard({ task }: { task: TaskApiResponse }) {
 
 					<Link
 						href={`/client/tasks/${task.id}/bids`}
-						className="mb-2 block font-display text-lg font-bold tracking-tight text-foreground transition-colors hover:text-primary"
+						className="mb-2 block font-bold font-display text-foreground text-lg tracking-tight transition-colors hover:text-primary"
 					>
 						{task.title}
 					</Link>
-					<p className="mb-4 line-clamp-2 text-sm text-muted-foreground">
+					<p className="mb-4 line-clamp-2 text-muted-foreground text-sm">
 						{task.description}
 					</p>
 
-					<div className="mb-4 flex items-center gap-4 text-sm text-muted-foreground">
-						<span className="font-mono font-medium text-foreground">
+					<div className="mb-4 flex items-center gap-4 text-muted-foreground text-sm">
+						<span className="font-medium font-mono text-foreground">
 							{formatBudget(task.budgetMin, task.budgetMax)}
 						</span>
 						{task.deadline && (
@@ -231,14 +231,14 @@ function ClientTaskCard({ task }: { task: TaskApiResponse }) {
 					</div>
 				</div>
 
-				<div className="flex items-center justify-between border-t border-border bg-muted/30 px-5 py-3">
-					<div className="flex items-center gap-1.5 text-xs font-mono text-muted-foreground">
+				<div className="flex items-center justify-between border-border border-t bg-muted/30 px-5 py-3">
+					<div className="flex items-center gap-1.5 font-mono text-muted-foreground text-xs">
 						<Calendar className="h-4 w-4" />
 						<span>Нийтэлсэн: {formatDateShort(task.createdAt)}</span>
 					</div>
 					<Link
 						href={`/client/tasks/${task.id}/bids`}
-						className="flex items-center gap-1.5 rounded-sm bg-primary/10 px-3 py-1.5 font-mono text-xs font-medium text-primary transition-colors hover:bg-primary/20"
+						className="flex items-center gap-1.5 rounded-sm bg-primary/10 px-3 py-1.5 font-medium font-mono text-primary text-xs transition-colors hover:bg-primary/20"
 					>
 						<Users className="h-4 w-4" />
 						{bidCount} санал

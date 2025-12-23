@@ -39,15 +39,15 @@ import { categoryQueries, taskQueries } from "@/lib/queries";
 
 function HeroSection() {
 	return (
-		<section className="relative border-b border-border bg-muted/30 py-16 md:py-24">
+		<section className="relative border-border border-b bg-muted/30 py-16 md:py-24">
 			<div className="container px-4 md:px-6">
 				<div className="flex flex-col gap-4">
-					<div className="inline-flex items-center gap-2 font-mono text-sm text-primary uppercase tracking-wider">
+					<div className="inline-flex items-center gap-2 font-mono text-primary text-sm uppercase tracking-wider">
 						<Sparkles className="h-4 w-4" />
 						<span>Мянга мянган боломж</span>
 					</div>
 
-					<h1 className="max-w-3xl font-display text-4xl font-bold text-foreground leading-tight tracking-tighter uppercase sm:text-5xl md:text-6xl">
+					<h1 className="max-w-3xl font-bold font-display text-4xl text-foreground uppercase leading-tight tracking-tighter sm:text-5xl md:text-6xl">
 						Нээлттэй <span className="text-primary">даалгаврууд</span>
 					</h1>
 
@@ -146,7 +146,7 @@ function FilterSidebar({
 			<div className="h-px bg-border" />
 
 			<div className="space-y-3">
-				<h4 className="font-mono text-sm font-medium text-foreground uppercase tracking-wide">
+				<h4 className="font-medium font-mono text-foreground text-sm uppercase tracking-wide">
 					Ажлын байршил
 				</h4>
 				<Select
@@ -185,7 +185,7 @@ function FilterSidebar({
 			<div className="h-px bg-border" />
 
 			<div className="space-y-3">
-				<h4 className="font-mono text-sm font-medium text-foreground uppercase tracking-wide">
+				<h4 className="font-medium font-mono text-foreground text-sm uppercase tracking-wide">
 					Ангилал
 				</h4>
 				<div className="space-y-2">
@@ -204,7 +204,7 @@ function FilterSidebar({
 								/>
 								<Label
 									htmlFor={checkboxId}
-									className="flex flex-1 cursor-pointer items-center justify-between text-sm group"
+									className="group flex flex-1 cursor-pointer items-center justify-between text-sm"
 								>
 									<span
 										className={`transition-colors ${isChecked ? "font-medium text-primary" : "text-muted-foreground group-hover:text-foreground"}`}
@@ -212,7 +212,7 @@ function FilterSidebar({
 										{category.name}
 									</span>
 									{category._count && (
-										<span className="font-mono text-xs text-muted-foreground">
+										<span className="font-mono text-muted-foreground text-xs">
 											{category._count.tasks}
 										</span>
 									)}
@@ -226,7 +226,7 @@ function FilterSidebar({
 			<div className="h-px bg-border" />
 
 			<div className="space-y-3">
-				<h4 className="font-mono text-sm font-medium text-foreground uppercase tracking-wide">
+				<h4 className="font-medium font-mono text-foreground text-sm uppercase tracking-wide">
 					Төсөв (₮)
 				</h4>
 				<div className="flex items-center gap-2">
@@ -240,7 +240,7 @@ function FilterSidebar({
 								minBudget: e.target.value ? Number(e.target.value) : undefined,
 							})
 						}
-						className="h-10 rounded-none border-border bg-background transition-colors hover:border-primary/50 focus-visible:ring-0 focus-visible:border-primary"
+						className="h-10 rounded-none border-border bg-background transition-colors hover:border-primary/50 focus-visible:border-primary focus-visible:ring-0"
 					/>
 					<span className="text-muted-foreground">-</span>
 					<Input
@@ -253,7 +253,7 @@ function FilterSidebar({
 								maxBudget: e.target.value ? Number(e.target.value) : undefined,
 							})
 						}
-						className="h-10 rounded-none border-border bg-background transition-colors hover:border-primary/50 focus-visible:ring-0 focus-visible:border-primary"
+						className="h-10 rounded-none border-border bg-background transition-colors hover:border-primary/50 focus-visible:border-primary focus-visible:ring-0"
 					/>
 				</div>
 			</div>
@@ -261,7 +261,7 @@ function FilterSidebar({
 			<div className="h-px bg-border" />
 
 			<div className="space-y-3">
-				<h4 className="font-mono text-sm font-medium text-foreground uppercase tracking-wide">
+				<h4 className="font-medium font-mono text-foreground text-sm uppercase tracking-wide">
 					Хот/Дүүрэг
 				</h4>
 				<Input
@@ -274,14 +274,14 @@ function FilterSidebar({
 							city: e.target.value || undefined,
 						})
 					}
-					className="rounded-none border-border bg-background transition-colors hover:border-primary/50 focus-visible:ring-0 focus-visible:border-primary"
+					className="rounded-none border-border bg-background transition-colors hover:border-primary/50 focus-visible:border-primary focus-visible:ring-0"
 				/>
 			</div>
 
 			{activeFilterCount > 0 && (
 				<Button
 					variant="outline"
-					className="w-full rounded-none border-border hover:bg-destructive hover:text-destructive-foreground hover:border-destructive uppercase tracking-wide font-mono text-xs h-10"
+					className="h-10 w-full rounded-none border-border font-mono text-xs uppercase tracking-wide hover:border-destructive hover:bg-destructive hover:text-destructive-foreground"
 					onClick={() => onFilterChange({ status: "OPEN" })}
 				>
 					<X className="mr-2 h-3 w-3" />
@@ -312,14 +312,14 @@ function TaskList({
 
 	if (!data?.data.length) {
 		return (
-			<div className="flex flex-col items-center justify-center border border-dashed border-border py-24 text-center">
+			<div className="flex flex-col items-center justify-center border border-border border-dashed py-24 text-center">
 				<div className="mb-4 flex h-16 w-16 items-center justify-center rounded-none bg-muted">
 					<Briefcase className="h-8 w-8 text-muted-foreground" />
 				</div>
-				<h3 className="font-display text-lg font-semibold text-foreground uppercase tracking-wide">
+				<h3 className="font-display font-semibold text-foreground text-lg uppercase tracking-wide">
 					Даалгавар олдсонгүй
 				</h3>
-				<p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+				<p className="mx-auto mt-2 max-w-sm text-muted-foreground text-sm">
 					Шүүлтүүрээ өөрчилж дахин хайна уу. Эсвэл бүх даалгавруудыг харахын
 					тулд шүүлтүүрээ цэвэрлэнэ үү.
 				</p>
@@ -352,12 +352,12 @@ function TaskListHeader({
 	onViewModeChange: (mode: "grid" | "list") => void;
 }) {
 	return (
-		<div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-4">
+		<div className="mb-6 flex flex-col gap-4 border-border border-b pb-4 sm:flex-row sm:items-center sm:justify-between">
 			<div>
-				<h2 className="font-display text-2xl font-bold uppercase tracking-tight text-foreground">
+				<h2 className="font-bold font-display text-2xl text-foreground uppercase tracking-tight">
 					Нээлттэй <span className="text-primary">даалгаврууд</span>
 				</h2>
-				<p className="mt-1 font-mono text-sm text-muted-foreground">
+				<p className="mt-1 font-mono text-muted-foreground text-sm">
 					Нийт {total.toLocaleString("mn-MN")} даалгавар олдлоо
 				</p>
 			</div>
@@ -435,14 +435,14 @@ function TasksContent() {
 		<>
 			<HeroSection />
 
-			<div className="border-b border-border bg-background">
+			<div className="border-border border-b bg-background">
 				<div className="container px-4 py-4 sm:px-6 lg:px-8">
-					<div className="flex items-center text-sm text-muted-foreground font-mono">
+					<div className="flex items-center font-mono text-muted-foreground text-sm">
 						<Link href="/" className="hover:text-foreground hover:underline">
 							Нүүр
 						</Link>
 						<span className="mx-2">/</span>
-						<span className="text-foreground font-medium uppercase tracking-wide">
+						<span className="font-medium text-foreground uppercase tracking-wide">
 							Даалгаврууд
 						</span>
 					</div>
@@ -454,11 +454,11 @@ function TasksContent() {
 					<form onSubmit={handleSearch} className="mb-12">
 						<div className="flex gap-0 border border-border bg-background p-1 focus-within:ring-1 focus-within:ring-primary">
 							<div className="relative flex-1">
-								<Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+								<Search className="-translate-y-1/2 absolute top-1/2 left-4 h-5 w-5 text-muted-foreground" />
 								<Input
 									type="text"
 									placeholder="Даалгаврын нэр, тайлбараар хайх..."
-									className="h-12 border-0 bg-transparent pl-12 text-base shadow-none focus-visible:ring-0 rounded-none"
+									className="h-12 rounded-none border-0 bg-transparent pl-12 text-base shadow-none focus-visible:ring-0"
 									value={searchTerm}
 									onChange={(e) => setSearchTerm(e.target.value)}
 								/>
@@ -510,7 +510,7 @@ function TasksContent() {
 function TasksLoadingFallback() {
 	return (
 		<>
-			<section className="relative border-b border-border bg-muted/30 py-16 md:py-24">
+			<section className="relative border-border border-b bg-muted/30 py-16 md:py-24">
 				<div className="container px-4 md:px-6">
 					<div className="flex flex-col gap-4">
 						<Skeleton className="h-6 w-48 rounded-none" />
@@ -520,7 +520,7 @@ function TasksLoadingFallback() {
 				</div>
 			</section>
 
-			<div className="border-b border-border bg-background">
+			<div className="border-border border-b bg-background">
 				<div className="container px-4 py-4 sm:px-6 lg:px-8">
 					<Skeleton className="h-4 w-32 rounded-none" />
 				</div>
@@ -534,7 +534,7 @@ function TasksLoadingFallback() {
 							<FilterSidebarSkeleton />
 						</div>
 						<div className="lg:col-span-3">
-							<div className="mb-6 flex items-center justify-between border-b border-border pb-4">
+							<div className="mb-6 flex items-center justify-between border-border border-b pb-4">
 								<div>
 									<Skeleton className="mb-2 h-8 w-40 rounded-none" />
 									<Skeleton className="h-4 w-28 rounded-none" />

@@ -45,7 +45,7 @@ export function StarRating({
 				);
 			})}
 			{showValue && (
-				<span className="ml-1 text-sm font-medium text-foreground">
+				<span className="ml-1 font-medium text-foreground text-sm">
 					{rating.toFixed(1)}
 				</span>
 			)}

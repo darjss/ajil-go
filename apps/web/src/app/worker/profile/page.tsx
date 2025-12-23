@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
+import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -80,6 +80,12 @@ export default function WorkerProfilePage() {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: userKeys.me() });
 			setIsEditing(false);
+		},
+		onError: (error) => {
+			toast.error("Профайл шинэчлэхэд алдаа гарлаа", {
+				description:
+					error instanceof Error ? error.message : "Дахин оролдоно уу",
+			});
 		},
 	});
 
@@ -162,7 +168,7 @@ export default function WorkerProfilePage() {
 
 				<Card className="border-border">
 					<CardHeader className="flex flex-row items-center justify-between pb-2">
-						<CardTitle className="flex items-center gap-2 font-semibold text-lg text-foreground">
+						<CardTitle className="flex items-center gap-2 font-semibold text-foreground text-lg">
 							<User className="h-5 w-5 text-primary" />
 							Хувийн мэдээлэл
 						</CardTitle>
@@ -273,14 +279,14 @@ function WorkerProfileHeader({
 						</p>
 					)}
 					<div className="mt-4 flex flex-wrap justify-center gap-3 sm:justify-start">
-						<div className="flex items-center gap-1.5 rounded-none bg-primary-foreground/20 px-3 py-1.5 text-sm text-primary-foreground backdrop-blur-sm">
+						<div className="flex items-center gap-1.5 rounded-none bg-primary-foreground/20 px-3 py-1.5 text-primary-foreground text-sm backdrop-blur-sm">
 							<Star className="h-4 w-4 text-primary-foreground" />
 							<span className="font-semibold">
 								{userData?.avgRatingAsWorker?.toFixed(1) || "0.0"}
 							</span>
 							<span className="text-primary-foreground/70">үнэлгээ</span>
 						</div>
-						<div className="flex items-center gap-1.5 rounded-none bg-primary-foreground/20 px-3 py-1.5 text-sm text-primary-foreground backdrop-blur-sm">
+						<div className="flex items-center gap-1.5 rounded-none bg-primary-foreground/20 px-3 py-1.5 text-primary-foreground text-sm backdrop-blur-sm">
 							<CheckCircle2 className="h-4 w-4 text-primary-foreground" />
 							<span className="font-semibold">
 								{userData?.completedTasksAsWorker || 0}

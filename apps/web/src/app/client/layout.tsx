@@ -12,8 +12,8 @@ import { userQueries } from "@/lib/queries";
 function LoadingState() {
 	return (
 		<div className="flex min-h-screen bg-background">
-			<aside className="hidden w-72 flex-col border-r border-border bg-card lg:flex">
-				<div className="border-b border-border p-6">
+			<aside className="hidden w-72 flex-col border-border border-r bg-card lg:flex">
+				<div className="border-border border-b p-6">
 					<Skeleton className="h-9 w-32" />
 				</div>
 				<div className="flex-1 p-4">
@@ -25,12 +25,12 @@ function LoadingState() {
 						<Skeleton className="h-10 w-full" />
 					</div>
 				</div>
-				<div className="border-t border-border p-4">
+				<div className="border-border border-t p-4">
 					<Skeleton className="h-16 w-full" />
 				</div>
 			</aside>
 			<div className="flex flex-1 flex-col">
-				<div className="flex h-16 items-center border-b border-border px-4 lg:hidden">
+				<div className="flex h-16 items-center border-border border-b px-4 lg:hidden">
 					<Skeleton className="h-8 w-8 rounded-lg" />
 					<Skeleton className="ml-3 h-6 w-32" />
 				</div>

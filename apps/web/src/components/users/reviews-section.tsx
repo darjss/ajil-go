@@ -24,7 +24,7 @@ export function ReviewsSection({
 	return (
 		<Card className="border-border">
 			<CardHeader className="pb-4">
-				<CardTitle className="flex items-center gap-2 font-display text-lg text-foreground">
+				<CardTitle className="flex items-center gap-2 font-display text-foreground text-lg">
 					<Star className="h-5 w-5 text-accent-foreground" />
 					Үнэлгээнүүд
 					{reviews.length > 0 && (

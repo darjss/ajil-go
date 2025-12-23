@@ -144,7 +144,7 @@ function PostTaskForm() {
 							<FileText className="h-5 w-5 text-primary-foreground" />
 						</div>
 						<div>
-							<CardTitle className="font-semibold text-lg text-foreground dark:text-foreground">
+							<CardTitle className="font-semibold text-foreground text-lg dark:text-foreground">
 								Үндсэн мэдээлэл
 							</CardTitle>
 							<p className="text-muted-foreground text-sm dark:text-muted-foreground">
@@ -236,7 +236,7 @@ function PostTaskForm() {
 							<DollarSign className="h-5 w-5 text-accent-foreground" />
 						</div>
 						<div>
-							<CardTitle className="font-semibold text-lg text-foreground dark:text-foreground">
+							<CardTitle className="font-semibold text-foreground text-lg dark:text-foreground">
 								Төсөв
 							</CardTitle>
 							<p className="text-muted-foreground text-sm dark:text-muted-foreground">
@@ -331,7 +331,7 @@ function PostTaskForm() {
 							<MapPin className="h-5 w-5 text-secondary-foreground" />
 						</div>
 						<div>
-							<CardTitle className="font-semibold text-lg text-foreground dark:text-foreground">
+							<CardTitle className="font-semibold text-foreground text-lg dark:text-foreground">
 								Байршил
 							</CardTitle>
 							<p className="text-muted-foreground text-sm dark:text-muted-foreground">
@@ -412,7 +412,7 @@ function PostTaskForm() {
 								<Tag className="h-5 w-5 text-muted-foreground" />
 							</div>
 							<div>
-								<CardTitle className="font-semibold text-lg text-foreground dark:text-foreground">
+								<CardTitle className="font-semibold text-foreground text-lg dark:text-foreground">
 									Шаардлагатай чадвар
 								</CardTitle>
 								<p className="text-muted-foreground text-sm dark:text-muted-foreground">
@@ -497,7 +497,7 @@ export default function PostTaskPage() {
 						<ArrowLeft className="h-4 w-4" />
 						Хяналтын самбар
 					</Link>
-					<h1 className="font-display font-bold text-2xl text-foreground tracking-tight lg:text-3xl dark:text-foreground">
+					<h1 className="font-bold font-display text-2xl text-foreground tracking-tight lg:text-3xl dark:text-foreground">
 						Шинэ даалгавар <span className="text-primary">нийтлэх</span>
 					</h1>
 					<p className="mt-1 text-muted-foreground dark:text-muted-foreground">

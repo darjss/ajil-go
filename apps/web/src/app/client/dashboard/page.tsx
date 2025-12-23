@@ -53,7 +53,7 @@ function TaskRow({ task }: { task: TaskApiResponse }) {
 			<div className="flex items-center gap-3">
 				<Link
 					href={`/client/tasks/${task.id}/bids`}
-					className="flex items-center gap-1.5 rounded-sm bg-muted px-3 py-1.5 font-mono text-sm text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+					className="flex items-center gap-1.5 rounded-sm bg-muted px-3 py-1.5 font-mono text-muted-foreground text-sm transition-colors hover:bg-primary/10 hover:text-primary"
 				>
 					<Users className="h-4 w-4" />
 					{bidCount} санал
@@ -87,12 +87,10 @@ function DashboardSkeleton() {
 	);
 }
 
-function DashboardContent() {
-	const { data: user } = useQuery(userQueries.me());
-
+function DashboardContent({ userId }: { userId: string }) {
 	const { data: openTasks } = useSuspenseQuery(
 		taskQueries.list({
-			posterId: user?.id,
+			posterId: userId,
 			status: "OPEN",
 			limit: 100,
 		}),
@@ -100,7 +98,7 @@ function DashboardContent() {
 
 	const { data: inProgressTasks } = useSuspenseQuery(
 		taskQueries.list({
-			posterId: user?.id,
+			posterId: userId,
 			status: "IN_PROGRESS",
 			limit: 100,
 		}),
@@ -108,7 +106,7 @@ function DashboardContent() {
 
 	const { data: completedTasks } = useSuspenseQuery(
 		taskQueries.list({
-			posterId: user?.id,
+			posterId: userId,
 			status: "COMPLETED",
 			limit: 100,
 		}),
@@ -116,7 +114,7 @@ function DashboardContent() {
 
 	const { data: recentTasks } = useSuspenseQuery(
 		taskQueries.list({
-			posterId: user?.id,
+			posterId: userId,
 			limit: 5,
 		}),
 	);
@@ -154,7 +152,7 @@ function DashboardContent() {
 			<div className="grid gap-6 lg:grid-cols-3">
 				<Card className="rounded-none lg:col-span-2">
 					<CardHeader className="flex flex-row items-center justify-between">
-						<CardTitle className="font-display text-lg font-medium text-foreground">
+						<CardTitle className="font-display font-medium text-foreground text-lg">
 							Сүүлийн даалгаврууд
 						</CardTitle>
 						<Link href="/client/tasks">
@@ -192,7 +190,7 @@ function DashboardContent() {
 
 				<Card className="rounded-none">
 					<CardHeader>
-						<CardTitle className="font-display text-lg font-medium text-foreground">
+						<CardTitle className="font-display font-medium text-foreground text-lg">
 							Хурдан үйлдлүүд
 						</CardTitle>
 					</CardHeader>
@@ -253,7 +251,7 @@ export default function ClientDashboardPage() {
 			</div>
 
 			<Suspense fallback={<DashboardSkeleton />}>
-				{user ? <DashboardContent /> : <LoadingState />}
+				{user?.id ? <DashboardContent userId={user.id} /> : <LoadingState />}
 			</Suspense>
 		</div>
 	);

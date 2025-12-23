@@ -34,16 +34,16 @@ function TaskListContent({
 	activeTab,
 	page,
 	setPage,
+	userId,
 }: {
 	activeTab: TabFilter;
 	page: number;
 	setPage: (page: number) => void;
+	userId: string;
 }) {
-	const { data: user } = useQuery(userQueries.me());
-
 	const { data: tasksData } = useSuspenseQuery(
 		taskQueries.list({
-			posterId: user?.id,
+			posterId: userId,
 			status: activeTab === "all" ? undefined : activeTab,
 			page,
 			limit: 10,
@@ -54,7 +54,7 @@ function TaskListContent({
 		return (
 			<div className="flex flex-col items-center justify-center rounded-none border border-border border-dashed py-16 dark:border-border">
 				<ListTodo className="mb-4 h-12 w-12 text-muted-foreground dark:text-muted-foreground" />
-				<h3 className="mb-2 font-semibold text-lg text-foreground dark:text-foreground">
+				<h3 className="mb-2 font-semibold text-foreground text-lg dark:text-foreground">
 					Даалгавар олдсонгүй
 				</h3>
 				<p className="mb-6 max-w-sm text-center text-muted-foreground dark:text-muted-foreground">
@@ -102,7 +102,7 @@ export default function ClientTasksPage() {
 		<div className="p-6 lg:p-8">
 			<div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 				<div>
-					<h1 className="font-display font-bold text-2xl text-foreground tracking-tight lg:text-3xl dark:text-foreground">
+					<h1 className="font-bold font-display text-2xl text-foreground tracking-tight lg:text-3xl dark:text-foreground">
 						Миний даалгаврууд
 					</h1>
 					<p className="mt-1 text-muted-foreground dark:text-muted-foreground">
@@ -137,11 +137,12 @@ export default function ClientTasksPage() {
 			</div>
 
 			<Suspense fallback={<TaskListSkeleton />}>
-				{user ? (
+				{user?.id ? (
 					<TaskListContent
 						activeTab={activeTab}
 						page={page}
 						setPage={setPage}
+						userId={user.id}
 					/>
 				) : (
 					<div className="flex items-center justify-center py-20">

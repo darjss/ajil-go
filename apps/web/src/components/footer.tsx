@@ -1,40 +1,44 @@
 import { Facebook, Instagram, Mail, Send, Twitter } from "lucide-react";
+import type { Route } from "next";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-const footerLinks = {
+const footerLinks: Record<
+	string,
+	{ title: string; links: { label: string; href: Route }[] }
+> = {
 	tasks: {
 		title: "Даалгавар",
 		links: [
 			{ label: "Бүх даалгавар", href: "/tasks" },
-			{ label: "Ангилалууд", href: "/categories" },
-			{ label: "Шинээр нэмэгдсэн", href: "/tasks?sort=newest" },
+			{ label: "Ангилалууд", href: "/categories" as Route },
+			{ label: "Шинээр нэмэгдсэн", href: "/tasks?sort=newest" as Route },
 		],
 	},
 	workers: {
 		title: "Гүйцэтгэгчид",
 		links: [
-			{ label: "Хэрхэн эхлэх", href: "/how-it-works" },
-			{ label: "Орлого олох", href: "/earn" },
-			{ label: "Гүйцэтгэгч болох", href: "/become-worker" },
+			{ label: "Хэрхэн эхлэх", href: "/how-it-works" as Route },
+			{ label: "Орлого олох", href: "/earn" as Route },
+			{ label: "Гүйцэтгэгч болох", href: "/become-worker" as Route },
 		],
 	},
 	clients: {
 		title: "Захиалагчид",
 		links: [
-			{ label: "Даалгавар нийтлэх", href: "/post-task" },
-			{ label: "Үнэ тариф", href: "/pricing" },
-			{ label: "Баталгаа", href: "/guarantee" },
+			{ label: "Даалгавар нийтлэх", href: "/post-task" as Route },
+			{ label: "Үнэ тариф", href: "/pricing" as Route },
+			{ label: "Баталгаа", href: "/guarantee" as Route },
 		],
 	},
 	about: {
 		title: "Тухай",
 		links: [
-			{ label: "Бидний тухай", href: "/about" },
-			{ label: "Холбоо барих", href: "/contact" },
-			{ label: "Түгээмэл асуулт", href: "/faq" },
+			{ label: "Бидний тухай", href: "/about" as Route },
+			{ label: "Холбоо барих", href: "/contact" as Route },
+			{ label: "Түгээмэл асуулт", href: "/faq" as Route },
 		],
 	},
 };
@@ -47,7 +51,7 @@ const socialLinks = [
 
 function Footer() {
 	return (
-		<footer className="relative mt-20 border-t border-border bg-muted">
+		<footer className="relative mt-20 border-border border-t bg-muted">
 			<div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
 				<div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8">
 					<div className="lg:col-span-4">
@@ -132,19 +136,19 @@ function Footer() {
 					</div>
 				</div>
 
-				<div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 sm:flex-row">
+				<div className="mt-12 flex flex-col items-center justify-between gap-4 border-border border-t pt-8 sm:flex-row">
 					<p className="text-muted-foreground text-sm">
 						2024 © Ажил-GO. Бүх эрх хуулиар хамгаалагдсан.
 					</p>
 					<div className="flex flex-wrap items-center justify-center gap-6">
 						<Link
-							href="/privacy"
+							href={"/privacy" as Route}
 							className="text-muted-foreground text-sm transition-colors duration-200 hover:text-primary"
 						>
 							Нууцлалын бодлого
 						</Link>
 						<Link
-							href="/terms"
+							href={"/terms" as Route}
 							className="text-muted-foreground text-sm transition-colors duration-200 hover:text-primary"
 						>
 							Үйлчилгээний нөхцөл

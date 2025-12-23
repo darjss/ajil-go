@@ -1,7 +1,5 @@
 "use client";
 
-import { type ReactNode, useState } from "react";
-
 import {
 	Briefcase,
 	ChevronRight,
@@ -17,6 +15,7 @@ import {
 import type { Route } from "next";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { type ReactNode, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -120,7 +119,7 @@ function NavBlock({
 						</span>
 						<span className="flex-1">{item.label}</span>
 						{item.badge && (
-							<span className="flex h-5 min-w-5 items-center justify-center rounded-sm bg-primary px-1.5 font-mono text-[10px] font-semibold text-primary-foreground">
+							<span className="flex h-5 min-w-5 items-center justify-center rounded-sm bg-primary px-1.5 font-mono font-semibold text-[10px] text-primary-foreground">
 								{item.badge}
 							</span>
 						)}

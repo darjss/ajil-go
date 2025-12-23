@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight, Briefcase, ClipboardList, Loader2 } from "lucide-react";
+import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -33,21 +34,21 @@ export default function DashboardPage() {
 		);
 	}
 
-	const handleNavigate = (path: string) => {
+	const handleNavigate = (path: Route) => {
 		setIsNavigating(true);
 		router.push(path);
 	};
 
 	return (
 		<div className="min-h-screen bg-muted">
-			<div className="border-b border-border bg-background/80 backdrop-blur-sm">
+			<div className="border-border border-b bg-background/80 backdrop-blur-sm">
 				<div className="mx-auto max-w-4xl px-6 py-4">
 					<div className="flex items-center gap-3">
 						<div className="flex h-10 w-10 items-center justify-center rounded-none bg-primary">
 							<span className="font-bold text-primary-foreground">А</span>
 						</div>
 						<div>
-							<h1 className="font-display text-xl text-foreground">Ажил-GO</h1>
+							<h1 className="font-display text-foreground text-xl">Ажил-GO</h1>
 							<p className="text-muted-foreground text-sm">
 								Даалгаврын платформ
 							</p>

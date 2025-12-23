@@ -3,6 +3,7 @@
 import type { ReviewApiResponse } from "@ajil-go/contract";
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2, Edit3, MapPin, Star, User, UserX } from "lucide-react";
+import type { Route } from "next";
 import Link from "next/link";
 import { use } from "react";
 
@@ -127,7 +128,7 @@ function UserProfileContent({ userId }: { userId: string }) {
 
 				<Card className="border-border">
 					<CardHeader className="pb-4">
-						<CardTitle className="flex items-center gap-2 font-display text-lg text-foreground">
+						<CardTitle className="flex items-center gap-2 font-display text-foreground text-lg">
 							<User className="h-5 w-5 text-primary" />
 							Тухай
 						</CardTitle>
@@ -206,7 +207,11 @@ function ProfileHeader({
 						</div>
 						{isOwnProfile && (
 							<Link
-								href={session?.user ? "/worker/profile" : "/client/profile"}
+								href={
+									(session?.user
+										? "/worker/profile"
+										: "/client/profile") as Route
+								}
 							>
 								<Button
 									variant="secondary"
@@ -220,14 +225,14 @@ function ProfileHeader({
 						)}
 					</div>
 					<div className="mt-4 flex flex-wrap justify-center gap-3 sm:justify-start">
-						<div className="flex items-center gap-1.5 rounded-none bg-primary-foreground/20 px-3 py-1.5 text-sm text-primary-foreground backdrop-blur-sm">
+						<div className="flex items-center gap-1.5 rounded-none bg-primary-foreground/20 px-3 py-1.5 text-primary-foreground text-sm backdrop-blur-sm">
 							<Star className="h-4 w-4 text-accent" />
 							<span className="font-mono font-semibold">
 								{userData?.avgRatingAsWorker?.toFixed(1) || "0.0"}
 							</span>
 							<span className="text-primary-foreground/70">үнэлгээ</span>
 						</div>
-						<div className="flex items-center gap-1.5 rounded-none bg-primary-foreground/20 px-3 py-1.5 text-sm text-primary-foreground backdrop-blur-sm">
+						<div className="flex items-center gap-1.5 rounded-none bg-primary-foreground/20 px-3 py-1.5 text-primary-foreground text-sm backdrop-blur-sm">
 							<CheckCircle2 className="h-4 w-4 text-accent" />
 							<span className="font-mono font-semibold">
 								{userData?.completedTasksAsWorker || 0}

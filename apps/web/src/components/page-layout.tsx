@@ -18,16 +18,16 @@ export function PageHeader({
 	return (
 		<div
 			className={cn(
-				"flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border/40 pb-6 mb-6",
+				"mb-6 flex flex-col gap-4 border-border/40 border-b pb-6 sm:flex-row sm:items-center sm:justify-between",
 				className,
 			)}
 		>
 			<div className="space-y-1">
-				<h1 className="font-display text-3xl font-bold tracking-tight text-foreground lg:text-4xl">
+				<h1 className="font-bold font-display text-3xl text-foreground tracking-tight lg:text-4xl">
 					{title}
 				</h1>
 				{description && (
-					<p className="font-body text-lg text-muted-foreground/80 max-w-2xl">
+					<p className="max-w-2xl font-body text-lg text-muted-foreground/80">
 						{description}
 					</p>
 				)}
@@ -55,15 +55,15 @@ export function PageSection({
 	return (
 		<Card className={cn("rounded-none border-border shadow-sm", className)}>
 			{(title || actions) && (
-				<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6 border-b border-border/40">
+				<CardHeader className="flex flex-row items-center justify-between space-y-0 border-border/40 border-b pb-6">
 					<div className="space-y-1">
 						{title && (
-							<CardTitle className="font-display text-xl font-bold tracking-tight">
+							<CardTitle className="font-bold font-display text-xl tracking-tight">
 								{title}
 							</CardTitle>
 						)}
 						{description && (
-							<p className="font-body text-sm text-muted-foreground">
+							<p className="font-body text-muted-foreground text-sm">
 								{description}
 							</p>
 						)}
@@ -81,7 +81,7 @@ export function PageSection({
 export function PageSkeleton() {
 	return (
 		<div className="space-y-8">
-			<div className="space-y-3 border-b border-border/40 pb-6">
+			<div className="space-y-3 border-border/40 border-b pb-6">
 				<Skeleton className="h-10 w-64 rounded-none" />
 				<Skeleton className="h-5 w-96 rounded-none" />
 			</div>

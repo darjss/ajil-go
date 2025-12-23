@@ -126,7 +126,7 @@ export default function WorkerSettingsPage() {
 
 				<Card className="overflow-hidden rounded-none border-border transition-all hover:shadow-sm">
 					<CardHeader className="border-border border-b bg-muted">
-						<CardTitle className="flex items-center gap-2 font-display text-lg text-foreground">
+						<CardTitle className="flex items-center gap-2 font-display text-foreground text-lg">
 							<User className="h-5 w-5 text-primary" />
 							Бүртгэлийн мэдээлэл
 						</CardTitle>
@@ -154,7 +154,7 @@ export default function WorkerSettingsPage() {
 
 				<Card className="overflow-hidden rounded-none border-border transition-all hover:shadow-sm">
 					<CardHeader className="border-border border-b bg-muted">
-						<CardTitle className="flex items-center gap-2 font-display text-lg text-foreground">
+						<CardTitle className="flex items-center gap-2 font-display text-foreground text-lg">
 							<Bell className="h-5 w-5 text-primary" />
 							Мэдэгдэл
 						</CardTitle>
@@ -266,7 +266,7 @@ export default function WorkerSettingsPage() {
 
 				<Card className="overflow-hidden rounded-none border-border transition-all hover:shadow-sm">
 					<CardHeader className="border-border border-b bg-muted">
-						<CardTitle className="flex items-center gap-2 font-display text-lg text-foreground">
+						<CardTitle className="flex items-center gap-2 font-display text-foreground text-lg">
 							<Globe className="h-5 w-5 text-primary" />
 							Хэл
 						</CardTitle>
@@ -316,7 +316,7 @@ export default function WorkerSettingsPage() {
 
 				<Card className="overflow-hidden rounded-none border-destructive/50 bg-destructive/5 transition-all hover:shadow-sm">
 					<CardHeader className="border-destructive/30 border-b">
-						<CardTitle className="flex items-center gap-2 font-display text-lg text-destructive">
+						<CardTitle className="flex items-center gap-2 font-display text-destructive text-lg">
 							<AlertTriangle className="h-5 w-5" />
 							Аюултай бүс
 						</CardTitle>

@@ -153,12 +153,12 @@ export default function WorkerDashboardPage() {
 				<div className="grid gap-6 lg:grid-cols-3">
 					<Card className="lg:col-span-2">
 						<CardHeader className="flex flex-row items-center justify-between pb-2">
-							<CardTitle className="text-lg font-semibold">
+							<CardTitle className="font-semibold text-lg">
 								Сүүлийн саналууд
 							</CardTitle>
 							<Link
 								href={"/worker/bids" as Route}
-								className="group flex items-center gap-1 text-sm text-primary transition-colors hover:text-primary/80"
+								className="group flex items-center gap-1 text-primary text-sm transition-colors hover:text-primary/80"
 							>
 								Бүгдийг харах
 								<ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -189,10 +189,10 @@ export default function WorkerDashboardPage() {
 												<Briefcase className="h-5 w-5 text-primary" />
 											</div>
 											<div className="min-w-0 flex-1">
-												<p className="truncate text-sm font-medium text-foreground transition-colors group-hover:text-primary">
+												<p className="truncate font-medium text-foreground text-sm transition-colors group-hover:text-primary">
 													{bid.task?.title || "Даалгавар"}
 												</p>
-												<div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+												<div className="mt-1 flex items-center gap-2 text-muted-foreground text-xs">
 													<span>{formatCurrency(bid.amount)}₮</span>
 													<span>•</span>
 													<span>{formatTimeAgo(bid.createdAt)}</span>
@@ -213,7 +213,7 @@ export default function WorkerDashboardPage() {
 					<div className="space-y-6">
 						<Card>
 							<CardHeader className="bg-primary pb-4">
-								<CardTitle className="flex items-center gap-2 text-lg font-semibold text-primary-foreground">
+								<CardTitle className="flex items-center gap-2 font-semibold text-lg text-primary-foreground">
 									<TrendingUp className="h-5 w-5" />
 									Орлогын мэдээлэл
 								</CardTitle>
@@ -221,7 +221,7 @@ export default function WorkerDashboardPage() {
 							<CardContent className="p-6">
 								<div className="space-y-4">
 									<div className="flex items-center justify-between">
-										<span className="text-sm text-muted-foreground">
+										<span className="text-muted-foreground text-sm">
 											Дууссан даалгавар
 										</span>
 										<span className="font-semibold text-foreground">
@@ -236,10 +236,10 @@ export default function WorkerDashboardPage() {
 									</div>
 									<div className="h-px bg-border" />
 									<div className="flex items-center justify-between">
-										<span className="text-sm text-muted-foreground">
+										<span className="text-muted-foreground text-sm">
 											Нийт орлого
 										</span>
-										<span className="text-lg font-bold text-primary">
+										<span className="font-bold text-lg text-primary">
 											{formatCurrency(
 												bids
 													.filter(
@@ -264,7 +264,7 @@ export default function WorkerDashboardPage() {
 								<h3 className="font-semibold text-foreground">
 									Шинэ боломж хайж байна уу?
 								</h3>
-								<p className="mt-2 text-sm text-muted-foreground">
+								<p className="mt-2 text-muted-foreground text-sm">
 									Олон зуун даалгавраас сонгон өөрийн чадварт тохирохыг олоорой.
 								</p>
 								<Link href="/tasks" className="mt-4 block">

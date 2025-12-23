@@ -12,22 +12,44 @@
 	--animate-fade-up: fade-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 	--animate-scale-in: scale-in 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 	--animate-marquee: marquee 30s linear infinite;
-	
+
 	@keyframes reveal {
-		0% { opacity: 0; transform: translateY(100%) skewY(5deg); }
-		100% { opacity: 1; transform: translateY(0) skewY(0); }
+		0% {
+			opacity: 0;
+			transform: translateY(100%) skewY(5deg);
+		}
+		100% {
+			opacity: 1;
+			transform: translateY(0) skewY(0);
+		}
 	}
 	@keyframes fade-up {
-		0% { opacity: 0; transform: translateY(40px); }
-		100% { opacity: 1; transform: translateY(0); }
+		0% {
+			opacity: 0;
+			transform: translateY(40px);
+		}
+		100% {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 	@keyframes scale-in {
-		0% { opacity: 0; transform: scale(0.9); }
-		100% { opacity: 1; transform: scale(1); }
+		0% {
+			opacity: 0;
+			transform: scale(0.9);
+		}
+		100% {
+			opacity: 1;
+			transform: scale(1);
+		}
 	}
 	@keyframes marquee {
-		from { transform: translateX(0); }
-		to { transform: translateX(-50%); }
+		from {
+			transform: translateX(0);
+		}
+		to {
+			transform: translateX(-50%);
+		}
 	}
 }
 
@@ -72,6 +94,18 @@
 	/* Destructive */
 	--destructive: oklch(0.7 0.15 20);
 	--destructive-foreground: oklch(0.98 0.01 90);
+
+	/* Success */
+	--success: oklch(0.75 0.15 145);
+	--success-foreground: oklch(0.98 0.01 90);
+
+	/* Warning */
+	--warning: oklch(0.8 0.15 85);
+	--warning-foreground: oklch(0.25 0.02 280);
+
+	/* Info */
+	--info: oklch(0.7 0.12 230);
+	--info-foreground: oklch(0.98 0.01 90);
 
 	/* Borders */
 	--border: oklch(0.9 0.02 90);
@@ -126,6 +160,18 @@
 	/* Destructive */
 	--destructive: oklch(0.6 0.15 20);
 	--destructive-foreground: oklch(0.96 0.01 90);
+
+	/* Success */
+	--success: oklch(0.6 0.15 145);
+	--success-foreground: oklch(0.96 0.01 90);
+
+	/* Warning */
+	--warning: oklch(0.7 0.15 85);
+	--warning-foreground: oklch(0.2 0.02 280);
+
+	/* Info */
+	--info: oklch(0.6 0.12 230);
+	--info-foreground: oklch(0.96 0.01 90);
 
 	/* Borders */
 	--border: oklch(0.3 0.02 280);
@@ -201,14 +247,29 @@
 	body {
 		@apply bg-background text-foreground antialiased font-body;
 	}
-	h1, h2, h3, h4, h5, h6 {
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
 		@apply font-display font-medium tracking-tight;
 	}
 }
 
 /* Utilities for staggered animations */
-.delay-100 { animation-delay: 100ms; }
-.delay-200 { animation-delay: 200ms; }
-.delay-300 { animation-delay: 300ms; }
-.delay-400 { animation-delay: 400ms; }
-.delay-500 { animation-delay: 500ms; }
+.delay-100 {
+	animation-delay: 100ms;
+}
+.delay-200 {
+	animation-delay: 200ms;
+}
+.delay-300 {
+	animation-delay: 300ms;
+}
+.delay-400 {
+	animation-delay: 400ms;
+}
+.delay-500 {
+	animation-delay: 500ms;
+}

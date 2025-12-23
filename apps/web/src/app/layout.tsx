@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Source_Serif_4, JetBrains_Mono } from "next/font/google";
+import {
+	JetBrains_Mono,
+	Playfair_Display,
+	Source_Serif_4,
+} from "next/font/google";
 import "../index.css";
 import Providers from "@/components/providers";
 
@@ -31,7 +35,7 @@ export default function RootLayout({
 	return (
 		<html lang="mn" suppressHydrationWarning>
 			<body
-				className={`${playfair.variable} ${sourceSerif.variable} ${jetbrainsMono.variable} bg-background text-foreground antialiased font-body`}
+				className={`${playfair.variable} ${sourceSerif.variable} ${jetbrainsMono.variable} bg-background font-body text-foreground antialiased`}
 			>
 				<Providers>{children}</Providers>
 			</body>

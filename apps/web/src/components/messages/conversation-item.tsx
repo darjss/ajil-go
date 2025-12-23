@@ -37,7 +37,7 @@ export function ConversationItem({
 					</AvatarFallback>
 				</Avatar>
 				{conversation.unreadCount > 0 && (
-					<span className="-right-1 -top-1 absolute flex h-5 min-w-5 items-center justify-center rounded-none bg-primary px-1.5 font-mono font-bold text-[10px] text-primary-foreground shadow-lg">
+					<span className="-right-1 -top-1 absolute flex h-5 min-w-5 items-center justify-center rounded-none bg-primary px-1.5 font-bold font-mono text-[10px] text-primary-foreground shadow-lg">
 						{conversation.unreadCount > 9 ? "9+" : conversation.unreadCount}
 					</span>
 				)}

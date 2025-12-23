@@ -23,18 +23,18 @@ export function StatCard({
 	return (
 		<Card
 			className={cn(
-				"transition-all duration-300 hover:translate-y-[-2px] hover:shadow-md rounded-none border-border bg-card",
+				"rounded-none border-border bg-card transition-all duration-300 hover:translate-y-[-2px] hover:shadow-md",
 				className,
 			)}
 		>
 			<CardContent className="p-6">
 				<div className="flex items-start justify-between">
 					<div className="space-y-2">
-						<p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+						<p className="font-mono text-muted-foreground text-xs uppercase tracking-wider">
 							{label}
 						</p>
 						<div className="flex items-baseline gap-2">
-							<p className="font-display text-3xl font-bold tracking-tight text-foreground lg:text-4xl">
+							<p className="font-bold font-display text-3xl text-foreground tracking-tight lg:text-4xl">
 								{value}
 							</p>
 						</div>
@@ -42,7 +42,7 @@ export function StatCard({
 							<div className="flex items-center gap-1.5">
 								<span
 									className={cn(
-										"inline-flex items-center justify-center rounded-none px-1.5 py-0.5 text-xs font-mono font-medium",
+										"inline-flex items-center justify-center rounded-none px-1.5 py-0.5 font-medium font-mono text-xs",
 										trend.isPositive
 											? "bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary"
 											: "bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive",
@@ -50,7 +50,7 @@ export function StatCard({
 								>
 									{trend.isPositive ? "↑" : "↓"} {trend.value}%
 								</span>
-								<span className="text-xs text-muted-foreground">
+								<span className="text-muted-foreground text-xs">
 									өнгөрсөн сараас
 								</span>
 							</div>

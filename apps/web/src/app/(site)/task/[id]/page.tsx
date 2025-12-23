@@ -316,7 +316,7 @@ function UserBidCard({
 				<Separator />
 				<div>
 					<span className="text-muted-foreground text-sm">Танилцуулга</span>
-					<p className="mt-1 text-foreground text-sm font-body">
+					<p className="mt-1 font-body text-foreground text-sm">
 						{bid.message}
 					</p>
 				</div>
@@ -415,7 +415,7 @@ function BidsList({ taskId }: { taskId: string }) {
 						</div>
 					</div>
 
-					<p className="mt-4 line-clamp-3 text-muted-foreground text-sm font-body">
+					<p className="mt-4 line-clamp-3 font-body text-muted-foreground text-sm">
 						{bid.message}
 					</p>
 
@@ -499,10 +499,10 @@ function TaskDetailContent({ taskId }: { taskId: string }) {
 
 			<div className="grid gap-8 lg:grid-cols-3">
 				<div className="space-y-6 lg:col-span-2">
-					<Card className="overflow-hidden border-t-4 border-primary shadow-sm">
+					<Card className="overflow-hidden border-primary border-t-4 shadow-sm">
 						<CardContent className="p-6 pt-6">
 							<div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-								<h1 className="font-display font-bold text-3xl text-foreground leading-tight md:text-4xl">
+								<h1 className="font-bold font-display text-3xl text-foreground leading-tight md:text-4xl">
 									{task.title}
 								</h1>
 								<Badge
@@ -557,13 +557,13 @@ function TaskDetailContent({ taskId }: { taskId: string }) {
 								</p>
 							</div>
 
-							<div className="mb-6 bg-primary/5 p-6 border-l-4 border-primary/20">
+							<div className="mb-6 border-primary/20 border-l-4 bg-primary/5 p-6">
 								<div className="mb-2 flex items-center gap-2 text-muted-foreground text-sm">
 									<span className="font-mono text-xs uppercase tracking-wider">
 										Төсөв
 									</span>
 								</div>
-								<div className="font-mono font-bold text-3xl text-foreground md:text-4xl">
+								<div className="font-bold font-mono text-3xl text-foreground md:text-4xl">
 									{formatBudget(task.budgetMin, task.budgetMax)}
 								</div>
 							</div>
@@ -578,7 +578,7 @@ function TaskDetailContent({ taskId }: { taskId: string }) {
 											<p className="text-muted-foreground text-xs uppercase tracking-wider">
 												Эцсийн хугацаа
 											</p>
-											<p className="font-medium text-foreground font-mono">
+											<p className="font-medium font-mono text-foreground">
 												{formatDate(task.deadline)}
 											</p>
 										</div>
@@ -593,7 +593,7 @@ function TaskDetailContent({ taskId }: { taskId: string }) {
 											<p className="text-muted-foreground text-xs uppercase tracking-wider">
 												Тооцоолсон хугацаа
 											</p>
-											<p className="font-medium text-foreground font-mono">
+											<p className="font-medium font-mono text-foreground">
 												{task.estimatedHours} цаг
 											</p>
 										</div>
@@ -651,7 +651,7 @@ function TaskDetailContent({ taskId }: { taskId: string }) {
 							<div className="flex items-center gap-4">
 								<Avatar className="h-16 w-16 ring-1 ring-border">
 									<AvatarImage src={task.poster?.image || undefined} />
-									<AvatarFallback className="bg-primary text-primary-foreground font-semibold text-lg">
+									<AvatarFallback className="bg-primary font-semibold text-lg text-primary-foreground">
 										{task.poster?.name?.charAt(0) || "?"}
 									</AvatarFallback>
 								</Avatar>

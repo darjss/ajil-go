@@ -133,7 +133,7 @@ export default function WorkerBidsPage() {
 		<div className="min-h-screen p-6 lg:p-8">
 			<div className="mx-auto max-w-4xl space-y-6">
 				<header>
-					<h1 className="font-display font-bold text-2xl text-foreground lg:text-3xl">
+					<h1 className="font-bold font-display text-2xl text-foreground lg:text-3xl">
 						Миний саналууд
 					</h1>
 					<p className="mt-1 text-muted-foreground">
@@ -155,7 +155,7 @@ export default function WorkerBidsPage() {
 							>
 								{tab.label}
 								{counts[tab.value] > 0 && (
-									<span className="ml-1.5 rounded-sm bg-muted px-1.5 py-0.5 font-mono text-[10px] font-semibold data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+									<span className="ml-1.5 rounded-sm bg-muted px-1.5 py-0.5 font-mono font-semibold text-[10px] data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
 										{counts[tab.value]}
 									</span>
 								)}

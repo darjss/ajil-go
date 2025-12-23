@@ -24,14 +24,14 @@ export function EmptyState({
 	return (
 		<div
 			className={cn(
-				"flex flex-col items-center justify-center py-16 text-center border border-dashed border-border/60 bg-muted/5 rounded-none",
+				"flex flex-col items-center justify-center rounded-none border border-border/60 border-dashed bg-muted/5 py-16 text-center",
 				className,
 			)}
 		>
 			<div className="mb-6 flex h-16 w-16 items-center justify-center rounded-none bg-muted ring-1 ring-border">
 				{icon ?? <FileQuestion className="h-8 w-8 text-muted-foreground" />}
 			</div>
-			<h3 className="font-display text-xl font-bold tracking-tight text-foreground">
+			<h3 className="font-bold font-display text-foreground text-xl tracking-tight">
 				{title}
 			</h3>
 			{description && (
@@ -69,7 +69,7 @@ export function LoadingState({
 			)}
 		>
 			<Loader2 className="h-10 w-10 animate-spin text-primary" />
-			<p className="mt-4 font-mono text-xs uppercase tracking-wider text-muted-foreground animate-pulse">
+			<p className="mt-4 animate-pulse font-mono text-muted-foreground text-xs uppercase tracking-wider">
 				{message}
 			</p>
 		</div>
@@ -92,14 +92,14 @@ export function ErrorState({
 	return (
 		<div
 			className={cn(
-				"flex flex-col items-center justify-center py-16 text-center border border-destructive/20 bg-destructive/5 rounded-none",
+				"flex flex-col items-center justify-center rounded-none border border-destructive/20 bg-destructive/5 py-16 text-center",
 				className,
 			)}
 		>
 			<div className="mb-6 flex h-16 w-16 items-center justify-center rounded-none bg-destructive/10 ring-1 ring-destructive/20">
 				<AlertTriangle className="h-8 w-8 text-destructive" />
 			</div>
-			<h3 className="font-display text-xl font-bold tracking-tight text-foreground">
+			<h3 className="font-bold font-display text-foreground text-xl tracking-tight">
 				{title}
 			</h3>
 			<p className="mt-2 max-w-sm font-body text-muted-foreground">{message}</p>
