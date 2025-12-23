@@ -8,6 +8,7 @@ import {
 	Users,
 } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { PageHeader } from "@/components/page-layout";
 import { StatCard } from "@/components/stat-card";
@@ -63,7 +64,12 @@ function TaskRow({ task }: { task: TaskApiResponse }) {
 export default async function ClientDashboardPage() {
 	// SSR: Fetch user first, then tasks filtered by user ID
 	const user = await serverApi.getMe();
-	const userId = user?.id;
+	
+	if (!user) {
+		redirect("/login");
+	}
+
+	const userId = user.id;
 
 	// Fetch all task data in parallel, filtered by posterId
 	const [openTasks, inProgressTasks, completedTasks, recentTasks] =
@@ -87,7 +93,7 @@ export default async function ClientDashboardPage() {
 		<div className="p-6 lg:p-8">
 			<div className="mb-8">
 				<PageHeader
-					title={`Сайн байна уу, ${user?.name?.split(" ")[0] || "Хэрэглэгч"}`}
+					title={`Сайн байна уу, ${user.name?.split(" ")[0] || "Хэрэглэгч"}`}
 					description="Таны даалгаврын хяналтын самбар"
 				/>
 			</div>
