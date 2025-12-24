@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ReactQueryStreamedHydration } from "@tanstack/react-query-next-experimental";
+import Snowfall from "react-snowfall";
 import { Chatbot } from "./chatbot";
 import { ThemeProvider } from "./theme-provider";
 import { Toaster } from "./ui/sonner";
@@ -36,6 +37,17 @@ function getQueryClient() {
 	return browserQueryClient;
 }
 
+export function SnowfallEffect() {
+	return (
+		<Snowfall
+			// Changes the snowflake color
+			color="orange"
+			// Controls the number of snowflakes that are created (default 150)
+			snowflakeCount={100}
+		/>
+	);
+}
+
 export default function Providers({ children }: { children: React.ReactNode }) {
 	// NOTE: Avoid useState when initializing the query client if you don't
 	// have a suspense boundary between this and the code that may
@@ -52,6 +64,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 					enableSystem
 					disableTransitionOnChange
 				>
+					<SnowfallEffect />
 					{children}
 					<Chatbot />
 					<Toaster richColors />
