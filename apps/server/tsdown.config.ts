@@ -5,5 +5,6 @@ export default defineConfig({
 	format: "esm",
 	outDir: "./dist",
 	clean: true,
-	noExternal: [/@ajil-go\/.*/],
+	// Bundle all dependencies into a single file for Docker deployment
+	noExternal: [/.*/],
 });
