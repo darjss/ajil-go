@@ -89,10 +89,10 @@ export default async function paymentsRoutes(fastify: FastifyInstance) {
 			preHandler: fastify.authenticate,
 		},
 		async (request, reply) => {
-			// Check ownership
+			// Check ownership - allow both payer and payee
 			const existingPayment = await fastify.prisma.payment.findUnique({
 				where: { id: request.params.id },
-				select: { payerId: true },
+				select: { payerId: true, payeeId: true },
 			});
 
 			if (!existingPayment) {
@@ -101,7 +101,10 @@ export default async function paymentsRoutes(fastify: FastifyInstance) {
 					.send({ error: "Payment not found", code: "PAYMENT_NOT_FOUND" });
 			}
 
-			if (existingPayment.payerId !== request.user?.id) {
+			const isPayer = existingPayment.payerId === request.user?.id;
+			const isPayee = existingPayment.payeeId === request.user?.id;
+
+			if (!isPayer && !isPayee) {
 				return reply
 					.status(403)
 					.send({ error: "Forbidden", code: "FORBIDDEN" });

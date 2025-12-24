@@ -17,9 +17,10 @@
 		"typescript": "^5"
 	},
 	"dependencies": {
+		"@ajil-go/db": "workspace:*",
+		"@upstash/redis": "catalog:",
 		"better-auth": "catalog:",
 		"dotenv": "catalog:",
-		"zod": "^4.1.11",
-		"@ajil-go/db": "workspace:*"
+		"zod": "^4.1.11"
 	}
 }
