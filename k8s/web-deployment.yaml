@@ -31,6 +31,12 @@ spec:
               value: "production"
             - name: NEXT_PUBLIC_API_URL
               value: "https://api.ajil-go.online"
+            # NEXT_PUBLIC_SERVER_URL is required for better-auth client to send auth requests
+            - name: NEXT_PUBLIC_SERVER_URL
+              valueFrom:
+                secretKeyRef:
+                  name: ajil-go-secrets
+                  key: NEXT_PUBLIC_SERVER_URL
             # Internal K8s service URL for server-side requests (SSR)
             # This avoids DNS resolution issues when fetching from within the cluster
             - name: INTERNAL_API_URL
