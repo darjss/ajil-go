@@ -7,7 +7,12 @@ export const auth = betterAuth<BetterAuthOptions>({
 	database: prismaAdapter(prisma, {
 		provider: "postgresql",
 	}),
-	trustedOrigins: [process.env.CORS_ORIGIN || "http://localhost:3000"],
+	trustedOrigins: [
+		process.env.CORS_ORIGIN || "http://localhost:3000",
+		...(process.env.NODE_ENV === "production"
+			? ["https://www.ajil-go.online", "https://ajil-go.online"]
+			: []),
+	],
 	emailAndPassword: {
 		enabled: true,
 	},
@@ -80,6 +85,8 @@ export const auth = betterAuth<BetterAuthOptions>({
 			sameSite: "lax",
 			secure: process.env.NODE_ENV === "production",
 			httpOnly: true,
+			domain:
+				process.env.NODE_ENV === "production" ? ".ajil-go.online" : undefined,
 		},
 	},
 });
