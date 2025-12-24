@@ -31,6 +31,10 @@ spec:
               value: "production"
             - name: NEXT_PUBLIC_API_URL
               value: "https://api.ajil-go.online"
+            # Internal K8s service URL for server-side requests (SSR)
+            # This avoids DNS resolution issues when fetching from within the cluster
+            - name: INTERNAL_API_URL
+              value: "http://server.ajil-go.svc.cluster.local:3001"
           resources:
             requests:
               cpu: 100m

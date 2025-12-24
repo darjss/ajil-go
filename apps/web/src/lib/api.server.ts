@@ -6,7 +6,12 @@ import type {
 } from "@ajil-go/contract";
 import { cookies } from "next/headers";
 
-const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001";
+// For server-side requests (SSR), use internal K8s service URL if available
+// This avoids DNS resolution issues when making requests from within the cluster
+const API_URL =
+	process.env.INTERNAL_API_URL ||
+	process.env.NEXT_PUBLIC_SERVER_URL ||
+	"http://localhost:3001";
 
 // ============================================
 // Server-side API fetch with cookie forwarding
