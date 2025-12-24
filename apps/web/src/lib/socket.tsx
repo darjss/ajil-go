@@ -64,7 +64,7 @@ interface SocketContextType {
 const SocketContext = createContext<SocketContextType | null>(null);
 
 const SOCKET_URL =
-	process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001";
+	process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001";
 
 export function SocketProvider({ children }: { children: ReactNode }) {
 	const [socket, setSocket] = useState<Socket | null>(null);

@@ -27,7 +27,7 @@ import type {
 	UserApiResponse,
 } from "@ajil-go/contract";
 
-const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001";
 
 // ============================================
 // Error Type

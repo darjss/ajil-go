@@ -8,7 +8,7 @@ const google = process.env.GEMINI_API_KEY
 	? createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY })
 	: null;
 
-const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001";
 
 // Redis client - optional, chat works without it (no history persistence)
 let redis: RedisClientType | null = null;
