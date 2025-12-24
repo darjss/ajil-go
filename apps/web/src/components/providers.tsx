@@ -7,10 +7,10 @@ import {
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ReactQueryStreamedHydration } from "@tanstack/react-query-next-experimental";
+import Snowfall from "react-snowfall";
 import { Chatbot } from "./chatbot";
 import { ThemeProvider } from "./theme-provider";
 import { Toaster } from "./ui/sonner";
-import Snowfall from "react-snowfall";
 
 function makeQueryClient() {
 	return new QueryClient({
@@ -38,13 +38,14 @@ function getQueryClient() {
 }
 
 export function SnowfallEffect() {
-	return <Snowfall
-  // Changes the snowflake color
-  color="orange"
-
-  // Controls the number of snowflakes that are created (default 150)
-  snowflakeCount={100}
-/>;
+	return (
+		<Snowfall
+			// Changes the snowflake color
+			color="orange"
+			// Controls the number of snowflakes that are created (default 150)
+			snowflakeCount={100}
+		/>
+	);
 }
 
 export default function Providers({ children }: { children: React.ReactNode }) {
