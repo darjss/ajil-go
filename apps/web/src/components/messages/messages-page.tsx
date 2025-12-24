@@ -615,7 +615,7 @@ export function MessagesPage({ userType }: MessagesPageProps) {
 				<main
 					className={`${
 						selectedConversationId ? "flex" : "hidden lg:flex"
-					} flex-1 flex-col bg-muted`}
+					} flex-1 flex-col overflow-hidden bg-muted`}
 				>
 					{!selectedConversation ? (
 						isLoadingConversation ? (
@@ -656,7 +656,7 @@ export function MessagesPage({ userType }: MessagesPageProps) {
 								}
 							/>
 
-							<ScrollArea className="flex-1 p-4">
+							<div className="flex-1 overflow-y-auto p-4">
 								{selectedConversation.messages.length === 0 ? (
 									<EmptyState
 										icon={MessageSquare}
@@ -688,7 +688,7 @@ export function MessagesPage({ userType }: MessagesPageProps) {
 										{typingUserName} бичиж байна...
 									</div>
 								)}
-							</ScrollArea>
+							</div>
 
 							<MessageInput
 								value={newMessage}
