@@ -1,8 +1,7 @@
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { Redis } from "@upstash/redis";
 import { streamText } from "ai";
 import { type NextRequest, NextResponse } from "next/server";
-import type { RedisClientType } from "redis";
-import { createClient } from "redis";
 
 const google = process.env.GEMINI_API_KEY
 	? createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY })
@@ -10,50 +9,14 @@ const google = process.env.GEMINI_API_KEY
 
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001";
 
-// Redis client - optional, chat works without it (no history persistence)
-let redis: RedisClientType | null = null;
-let redisConnectionFailed = false;
-let redisConnecting = false;
-
-async function getRedisClient(): Promise<RedisClientType | null> {
-	// If we already know Redis is unavailable, skip
-	if (redisConnectionFailed) return null;
-
-	// If no URL configured, skip
-	if (!process.env.REDIS_URL) {
-		redisConnectionFailed = true;
-		return null;
-	}
-
-	// If already connected, return client
-	if (redis?.isOpen) return redis;
-
-	// Prevent multiple concurrent connection attempts
-	if (redisConnecting) return null;
-
-	// Try to connect
-	redisConnecting = true;
-	try {
-		if (!redis) {
-			redis = createClient({ url: process.env.REDIS_URL }) as RedisClientType;
-			redis.on("error", (err) => {
-				console.error("Redis Client Error:", err.message);
-				redisConnectionFailed = true;
-			});
-		}
-		await redis.connect();
-		redisConnecting = false;
-		return redis;
-	} catch (error) {
-		console.error(
-			"Failed to connect to Redis:",
-			error instanceof Error ? error.message : error,
-		);
-		redisConnectionFailed = true;
-		redisConnecting = false;
-		return null;
-	}
-}
+// Upstash Redis client - connectionless, no need for connection management
+const redis =
+	process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+		? new Redis({
+				url: process.env.UPSTASH_REDIS_REST_URL,
+				token: process.env.UPSTASH_REDIS_REST_TOKEN,
+			})
+		: null;
 
 // Enhanced system prompt with navigation and quick action capabilities
 const SYSTEM_PROMPT = `You are Ajil, an intelligent AI assistant for Ajil-Go - a professional micro task marketplace platform in Mongolia.
@@ -285,22 +248,16 @@ export async function GET(request: NextRequest) {
 			return NextResponse.json({ error: "Missing sessionId" }, { status: 400 });
 		}
 
-		// Try to get Redis client (optional)
-		const redisClient = await getRedisClient();
-
 		const historyKey = `chat:session:${sessionId}`;
 		let history: ChatMessage[] = [];
 
-		if (redisClient) {
+		if (redis) {
 			try {
-				const historyData = await redisClient.get(historyKey);
-				if (historyData) {
-					const parsedHistory: unknown = JSON.parse(historyData);
-					if (Array.isArray(parsedHistory)) {
-						history = parsedHistory
-							.filter(isChatMessage)
-							.map((h) => ({ ...h, content: stripTasksBlocks(h.content) }));
-					}
+				const historyData = await redis.get<ChatMessage[]>(historyKey);
+				if (historyData && Array.isArray(historyData)) {
+					history = historyData
+						.filter(isChatMessage)
+						.map((h) => ({ ...h, content: stripTasksBlocks(h.content) }));
 				}
 			} catch (error) {
 				console.error("Error loading chat history:", error);
@@ -328,9 +285,6 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Try to get Redis client (optional)
-		const redisClient = await getRedisClient();
-
 		// Enrich user context with real data if authenticated
 		let enrichedContext: UserContext = userContext as UserContext;
 		if (userContext.isAuthenticated && userContext.userId) {
@@ -353,18 +307,13 @@ export async function POST(request: NextRequest) {
 		const historyKey = `chat:session:${sessionId}`;
 		let history: ChatMessage[] = [];
 
-		if (redisClient) {
+		if (redis) {
 			try {
-				const historyData = await redisClient.get(historyKey);
-				if (historyData) {
-					const parsedHistory: unknown = JSON.parse(historyData);
-					if (Array.isArray(parsedHistory)) {
-						history = parsedHistory
-							.filter(isChatMessage)
-							.map((h) => ({ ...h, content: stripTasksBlocks(h.content) }));
-					} else {
-						history = [];
-					}
+				const historyData = await redis.get<ChatMessage[]>(historyKey);
+				if (historyData && Array.isArray(historyData)) {
+					history = historyData
+						.filter(isChatMessage)
+						.map((h) => ({ ...h, content: stripTasksBlocks(h.content) }));
 				}
 			} catch (error) {
 				console.error("Error loading chat history:", error);
@@ -581,7 +530,7 @@ Could you tell me more about what you need?`;
 					maxRetries: 1, // Reduce retries to fail faster
 					onFinish: async ({ text }) => {
 						// Save to history if Redis is available
-						if (redisClient) {
+						if (redis) {
 							const cleanedText = stripTasksBlocks(text);
 							const newHistory = [
 								...history,
@@ -590,7 +539,7 @@ Could you tell me more about what you need?`;
 							].slice(-30);
 
 							try {
-								await redisClient.set(historyKey, JSON.stringify(newHistory));
+								await redis.set(historyKey, newHistory);
 							} catch (error) {
 								console.error("Failed to save chat history:", error);
 							}
@@ -617,7 +566,7 @@ Could you tell me more about what you need?`;
 		aiMessage = stripTasksBlocks(aiMessage);
 
 		// Save to history if Redis is available
-		if (redisClient) {
+		if (redis) {
 			const newHistory = [
 				...history,
 				{ role: "user", content: message, timestamp: Date.now() },
@@ -625,7 +574,7 @@ Could you tell me more about what you need?`;
 			].slice(-30);
 
 			try {
-				await redisClient.set(historyKey, JSON.stringify(newHistory));
+				await redis.set(historyKey, newHistory);
 			} catch (error) {
 				console.error("Failed to save chat history:", error);
 			}
