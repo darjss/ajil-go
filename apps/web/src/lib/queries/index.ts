@@ -2,8 +2,10 @@ export type {
 	BidApiResponse,
 	BidStatus,
 	CategoryApiResponse,
+	ConversationApiResponse,
 	GetBidsQuery,
 	GetCategoriesQuery,
+	GetConversationsQuery,
 	GetMessagesQuery,
 	GetSkillsQuery,
 	GetTasksQuery,
@@ -18,6 +20,7 @@ export type {
 
 export { bidKeys, bidQueries } from "./bids";
 export { categoryKeys, categoryQueries } from "./categories";
+export { conversationKeys, conversationQueries } from "./conversations";
 export { messageKeys, messageQueries } from "./messages";
 export { skillKeys, skillQueries } from "./skills";
 export { taskKeys, taskQueries } from "./tasks";

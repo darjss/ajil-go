@@ -1,4 +1,4 @@
-import { Check, CheckCheck } from "lucide-react";
+import { Check, CheckCheck, Pin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatMessageTime } from "@/lib/utils";
 import type { Conversation } from "./types";
@@ -44,11 +44,14 @@ export function ConversationItem({
 			</div>
 			<div className="min-w-0 flex-1">
 				<div className="mb-0.5 flex items-center justify-between gap-2">
-					<p
-						className={`truncate font-semibold text-sm ${isActive ? "text-primary" : "text-foreground"}`}
-					>
-						{otherUser?.name || defaultOtherUserLabel}
-					</p>
+					<div className="flex items-center gap-1.5">
+						{conversation.isPinned && <Pin className="h-3 w-3 text-primary" />}
+						<p
+							className={`truncate font-semibold text-sm ${isActive ? "text-primary" : "text-foreground"}`}
+						>
+							{otherUser?.name || defaultOtherUserLabel}
+						</p>
+					</div>
 					<span className="shrink-0 font-mono text-[11px] text-muted-foreground">
 						{conversation.lastMessage
 							? formatMessageTime(conversation.lastMessage.createdAt)
@@ -56,7 +59,7 @@ export function ConversationItem({
 					</span>
 				</div>
 				<p className="mb-1 truncate text-muted-foreground text-xs">
-					{conversation.task.title}
+					{conversation.task?.title}
 				</p>
 				{conversation.lastMessage && (
 					<div className="flex items-center gap-1.5">

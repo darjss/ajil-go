@@ -30,6 +30,10 @@ model User {
   reviewsGiven      Review[]        @relation("ReviewAuthor")
   reviewsReceived   Review[]        @relation("ReviewTarget")
   messagesSent      Message[]
+  
+  // Conversation relations
+  clientConversations  Conversation[]  @relation("ClientConversations")
+  workerConversations  Conversation[]  @relation("WorkerConversations")
 
   @@unique([email])
   @@map("user")

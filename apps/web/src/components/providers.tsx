@@ -8,6 +8,7 @@ import {
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ReactQueryStreamedHydration } from "@tanstack/react-query-next-experimental";
 import Snowfall from "react-snowfall";
+import { SocketProvider } from "@/lib/socket";
 import { Chatbot } from "./chatbot";
 import { ThemeProvider } from "./theme-provider";
 import { Toaster } from "./ui/sonner";
@@ -64,10 +65,12 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 					enableSystem
 					disableTransitionOnChange
 				>
-					<SnowfallEffect />
-					{children}
-					<Chatbot />
-					<Toaster richColors />
+					<SocketProvider>
+						<SnowfallEffect />
+						{children}
+						<Chatbot />
+						<Toaster richColors />
+					</SocketProvider>
 				</ThemeProvider>
 			</ReactQueryStreamedHydration>
 			<ReactQueryDevtools initialIsOpen={false} />

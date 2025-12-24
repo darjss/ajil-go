@@ -6,15 +6,17 @@ import type {
 	UpdateMessageBody,
 } from "@ajil-go/contract";
 import type { FastifyInstance } from "fastify";
+import { emitNewMessage, emitToUser } from "../../plugins/socket.js";
 
 export async function getMessages(
 	fastify: FastifyInstance,
 	query: GetMessagesQuery,
 ) {
-	const { page, limit, taskId, senderId, isRead } = query;
+	const { page, limit, conversationId, taskId, senderId, isRead } = query;
 	const skip = (page - 1) * limit;
 
 	const where = {
+		...(conversationId && { conversationId }),
 		...(taskId && { taskId }),
 		...(senderId && { senderId }),
 		...(isRead !== undefined && { isRead }),
@@ -29,8 +31,8 @@ export async function getMessages(
 				sender: {
 					select: { id: true, name: true, image: true },
 				},
-				task: {
-					select: { id: true, title: true },
+				conversation: {
+					select: { id: true, taskId: true, clientId: true, workerId: true },
 				},
 			},
 			orderBy: { createdAt: "desc" },
@@ -59,8 +61,8 @@ export async function getMessageById(
 			sender: {
 				select: { id: true, name: true, image: true },
 			},
-			task: {
-				select: { id: true, title: true },
+			conversation: {
+				select: { id: true, taskId: true, clientId: true, workerId: true },
 			},
 		},
 	});
@@ -73,18 +75,53 @@ export async function createMessage(
 	body: CreateMessageBody,
 	userId: string,
 ) {
-	const { senderId: _ignoredSenderId, ...messageData } = body;
+	const { conversationId, content } = body;
 
+	// Get conversation to update lastMessageAt and get participants
+	const conversation = await fastify.prisma.conversation.findUnique({
+		where: { id: conversationId },
+		select: { clientId: true, workerId: true, taskId: true },
+	});
+
+	if (!conversation) {
+		throw new Error("Conversation not found");
+	}
+
+	// Create message
 	const message = await fastify.prisma.message.create({
 		data: {
-			...messageData,
+			conversationId,
 			senderId: userId,
+			content,
+			taskId: conversation.taskId,
 		},
 		include: {
 			sender: {
 				select: { id: true, name: true, image: true },
 			},
 		},
+	});
+
+	// Update conversation's lastMessageAt
+	await fastify.prisma.conversation.update({
+		where: { id: conversationId },
+		data: { lastMessageAt: new Date() },
+	});
+
+	// Emit to the conversation room (for users viewing the chat)
+	emitNewMessage(fastify.io, conversationId, message);
+
+	// Emit conversation update to user rooms (for chat list notification)
+	// Using different event name to avoid duplicate messages
+	emitToUser(fastify.io, conversation.clientId, "conversation:newMessage", {
+		conversationId,
+		lastMessage: message,
+		senderId: userId,
+	});
+	emitToUser(fastify.io, conversation.workerId, "conversation:newMessage", {
+		conversationId,
+		lastMessage: message,
+		senderId: userId,
 	});
 
 	return message;
@@ -115,11 +152,28 @@ export async function deleteMessage(
 export async function markMessagesAsRead(
 	fastify: FastifyInstance,
 	body: MarkMessagesReadBody,
+	userId: string,
 ) {
+	// Get the messages to find conversation info
+	const messages = await fastify.prisma.message.findMany({
+		where: { id: { in: body.messageIds } },
+		select: { conversationId: true, senderId: true },
+	});
+
 	const result = await fastify.prisma.message.updateMany({
 		where: { id: { in: body.messageIds } },
 		data: { isRead: true },
 	});
+
+	// Emit read receipts to senders
+	const conversationIds = [...new Set(messages.map((m) => m.conversationId))];
+	for (const convId of conversationIds) {
+		fastify.io.to(`conversation:${convId}`).emit("message:read", {
+			conversationId: convId,
+			messageIds: body.messageIds,
+			readBy: userId,
+		});
+	}
 
 	return { updated: result.count };
 }

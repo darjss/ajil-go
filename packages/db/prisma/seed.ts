@@ -1343,13 +1343,43 @@ async function main() {
 	console.log(`✅ Created ${reviews.length} demo reviews\n`);
 
 	// ============================================
-	// MESSAGES
+	// CONVERSATIONS & MESSAGES
 	// ============================================
-	console.log("💬 Creating demo messages...");
+	console.log("💬 Creating demo conversations and messages...");
+
+	// Create conversations first
+	const conversation1 = await prisma.conversation.create({
+		data: {
+			taskId: "demo-task-1",
+			clientId: "demo-user-carol", // Task poster
+			workerId: "demo-user-bob", // Worker messaging
+			lastMessageAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000 + 3600000),
+		},
+	});
+
+	const conversation2 = await prisma.conversation.create({
+		data: {
+			taskId: "demo-task-3",
+			clientId: "demo-user-bob", // Task poster
+			workerId: "demo-user-emma", // Worker messaging
+			lastMessageAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000 + 1800000),
+		},
+	});
+
+	const conversation3 = await prisma.conversation.create({
+		data: {
+			taskId: "demo-task-4",
+			clientId: "demo-user-carol", // Task poster
+			workerId: "demo-user-david", // Worker messaging
+			lastMessageAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000 + 7200000),
+		},
+	});
+
 	const messages = await Promise.all([
 		// Messages for Task 1 (furniture assembly)
 		prisma.message.create({
 			data: {
+				conversationId: conversation1.id,
 				taskId: "demo-task-1",
 				senderId: "demo-user-bob",
 				content:
@@ -1360,6 +1390,7 @@ async function main() {
 		}),
 		prisma.message.create({
 			data: {
+				conversationId: conversation1.id,
 				taskId: "demo-task-1",
 				senderId: "demo-user-carol",
 				content:
@@ -1372,6 +1403,7 @@ async function main() {
 		// Messages for Task 3 (dog walking)
 		prisma.message.create({
 			data: {
+				conversationId: conversation2.id,
 				taskId: "demo-task-3",
 				senderId: "demo-user-emma",
 				content:
@@ -1382,6 +1414,7 @@ async function main() {
 		}),
 		prisma.message.create({
 			data: {
+				conversationId: conversation2.id,
 				taskId: "demo-task-3",
 				senderId: "demo-user-bob",
 				content:
@@ -1394,6 +1427,7 @@ async function main() {
 		// Messages for Task 4 (tutoring)
 		prisma.message.create({
 			data: {
+				conversationId: conversation3.id,
 				taskId: "demo-task-4",
 				senderId: "demo-user-david",
 				content:
@@ -1404,6 +1438,7 @@ async function main() {
 		}),
 		prisma.message.create({
 			data: {
+				conversationId: conversation3.id,
 				taskId: "demo-task-4",
 				senderId: "demo-user-carol",
 				content:
@@ -1413,7 +1448,9 @@ async function main() {
 			},
 		}),
 	]);
-	console.log(`✅ Created ${messages.length} demo messages\n`);
+	console.log(
+		`✅ Created 3 conversations and ${messages.length} demo messages\n`,
+	);
 
 	// ============================================
 	// PAYMENTS

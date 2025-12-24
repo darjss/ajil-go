@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import authRoutes from "./auth/index.js";
 import categoriesRoutes from "./categories/index.js";
+import conversationsRoutes from "./conversations/index.js";
 import healthRoutes from "./health/index.js";
 import messagesRoutes from "./messages/index.js";
 import paymentsRoutes from "./payments/index.js";
@@ -28,5 +29,6 @@ export default async function routes(fastify: FastifyInstance) {
 	await fastify.register(skillsRoutes, { prefix: "/skills" });
 	await fastify.register(reviewsRoutes, { prefix: "/reviews" });
 	await fastify.register(messagesRoutes, { prefix: "/messages" });
+	await fastify.register(conversationsRoutes, { prefix: "/conversations" });
 	await fastify.register(paymentsRoutes, { prefix: "/payments" });
 }

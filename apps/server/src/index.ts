@@ -8,6 +8,7 @@ import {
 } from "fastify-type-provider-zod";
 import authPlugin from "./plugins/auth";
 import prisma from "./plugins/prisma";
+import socketPlugin from "./plugins/socket";
 import routes from "./routes";
 
 const baseCorsConfig = {
@@ -31,6 +32,7 @@ fastify.setSerializerCompiler(serializerCompiler);
 fastify.register(fastifyCors, baseCorsConfig);
 fastify.register(prisma);
 fastify.register(authPlugin);
+fastify.register(socketPlugin);
 
 // Register all routes under /api prefix
 fastify.register(routes, { prefix: "/api" });

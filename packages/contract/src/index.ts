@@ -398,12 +398,49 @@ export const UpdateReviewBodySchema = z.object({
 export type UpdateReviewBody = z.infer<typeof UpdateReviewBodySchema>;
 
 // ============================================
+// CONVERSATION SCHEMAS
+// ============================================
+
+export const ConversationSchema = z.object({
+	id: z.string(),
+	taskId: z.string(),
+	clientId: z.string(),
+	workerId: z.string(),
+	clientPinned: z.boolean().default(false),
+	workerPinned: z.boolean().default(false),
+	lastMessageAt: z.date(),
+	createdAt: z.date(),
+	updatedAt: z.date(),
+});
+export type Conversation = z.infer<typeof ConversationSchema>;
+
+// Conversation API Schemas
+export const GetConversationsQuerySchema = PaginationQuerySchema.extend({
+	limit: z.coerce.number().int().positive().max(100).default(50),
+});
+export type GetConversationsQuery = z.infer<typeof GetConversationsQuerySchema>;
+
+export const StartConversationBodySchema = z.object({
+	taskId: z.string(),
+	recipientId: z.string(),
+	initialMessage: z.string().min(1).max(2000).optional(),
+});
+export type StartConversationBody = z.infer<typeof StartConversationBodySchema>;
+
+export const TogglePinBodySchema = z.object({
+	conversationId: z.string(),
+	pinned: z.boolean(),
+});
+export type TogglePinBody = z.infer<typeof TogglePinBodySchema>;
+
+// ============================================
 // MESSAGE SCHEMAS
 // ============================================
 
 export const MessageSchema = z.object({
 	id: z.string(),
-	taskId: z.string(),
+	conversationId: z.string(),
+	taskId: z.string().nullable().optional(),
 	senderId: z.string(),
 	content: z.string(),
 	isRead: z.boolean().default(false),
@@ -414,6 +451,7 @@ export type Message = z.infer<typeof MessageSchema>;
 // Message API Schemas
 export const GetMessagesQuerySchema = PaginationQuerySchema.extend({
 	limit: z.coerce.number().int().positive().max(100).default(50),
+	conversationId: z.string().optional(),
 	taskId: z.string().optional(),
 	senderId: z.string().optional(),
 	isRead: z.coerce.boolean().optional(),
@@ -421,8 +459,7 @@ export const GetMessagesQuerySchema = PaginationQuerySchema.extend({
 export type GetMessagesQuery = z.infer<typeof GetMessagesQuerySchema>;
 
 export const CreateMessageBodySchema = z.object({
-	taskId: z.string(),
-	senderId: z.string(),
+	conversationId: z.string(),
 	content: z.string().min(1).max(2000),
 });
 export type CreateMessageBody = z.infer<typeof CreateMessageBodySchema>;
@@ -637,8 +674,21 @@ export const BidApiResponseSchema = TaskBidSchema.extend({
 });
 export type BidApiResponse = z.infer<typeof BidApiResponseSchema>;
 
-// Message API Response (includes task, sender)
+// Conversation API Response (includes task, client, worker, last message)
+export const ConversationApiResponseSchema = ConversationSchema.extend({
+	task: TaskSchema.optional(),
+	client: UserSchema.optional(),
+	worker: UserSchema.optional(),
+	lastMessage: MessageSchema.nullable().optional(),
+	unreadCount: z.number().optional(),
+});
+export type ConversationApiResponse = z.infer<
+	typeof ConversationApiResponseSchema
+>;
+
+// Message API Response (includes conversation, task, sender)
 export const MessageApiResponseSchema = MessageSchema.extend({
+	conversation: ConversationSchema.optional(),
 	task: TaskSchema.optional(),
 	sender: UserSchema.optional(),
 });

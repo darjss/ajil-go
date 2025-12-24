@@ -8,6 +8,7 @@ import {
 	FileText,
 	Loader2,
 	MapPin,
+	MessageSquare,
 	Send,
 	Star,
 	Tag,
@@ -16,6 +17,7 @@ import {
 	Wifi,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { use, useState } from "react";
 import { toast } from "sonner";
 import { getTaskStatusConfig, SkillBadges } from "@/components/tasks";
@@ -34,7 +36,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
-import { bidsApi } from "@/lib/api";
+import { bidsApi, conversationsApi } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 import { bidQueries, taskQueries } from "@/lib/queries";
 import { formatBudget, formatDate, formatTimeAgo } from "@/lib/utils";
@@ -441,6 +443,58 @@ function BidsList({ taskId }: { taskId: string }) {
 	);
 }
 
+function MessagePosterButton({
+	taskId,
+	posterId,
+	posterName,
+}: {
+	taskId: string;
+	posterId: string;
+	posterName: string;
+}) {
+	const router = useRouter();
+	const [isLoading, setIsLoading] = useState(false);
+
+	const handleClick = async () => {
+		setIsLoading(true);
+		try {
+			// Start or get existing conversation
+			const conversation = await conversationsApi.start({
+				taskId,
+				recipientId: posterId,
+			});
+
+			// Redirect to worker messages page with conversation ID
+			router.push(`/worker/messages?conversation=${conversation.id}`);
+		} catch (error) {
+			toast.error("Чатлах боломжгүй байна. Дахин оролдоно уу.");
+			console.error("Failed to start conversation:", error);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	return (
+		<Button
+			onClick={handleClick}
+			disabled={isLoading}
+			className="mt-4 w-full bg-primary text-primary-foreground hover:bg-primary/90"
+		>
+			{isLoading ? (
+				<>
+					<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+					Холбогдож байна...
+				</>
+			) : (
+				<>
+					<MessageSquare className="mr-2 h-4 w-4" />
+					{posterName}-тай холбогдох
+				</>
+			)}
+		</Button>
+	);
+}
+
 function TaskDetailContent({ taskId }: { taskId: string }) {
 	const queryClient = useQueryClient();
 	const { data: session } = authClient.useSession();
@@ -680,6 +734,14 @@ function TaskDetailContent({ taskId }: { taskId: string }) {
 										)}
 								</div>
 							</div>
+							{/* Message button - only show for logged in non-poster users */}
+							{isLoggedIn && !isPoster && task.poster?.id && (
+								<MessagePosterButton
+									taskId={taskId}
+									posterId={task.poster.id}
+									posterName={task.poster.name || "Захиалагч"}
+								/>
+							)}
 						</CardContent>
 					</Card>
 
