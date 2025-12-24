@@ -81,7 +81,11 @@ export default async function messagesRoutes(fastify: FastifyInstance) {
 			if (!request.user) {
 				return reply.status(401).send({ error: "Unauthorized" });
 			}
-			return handlers.markMessagesAsRead(fastify, request.body, request.user.id);
+			return handlers.markMessagesAsRead(
+				fastify,
+				request.body,
+				request.user.id,
+			);
 		},
 	);
 

@@ -185,7 +185,8 @@ export const conversationsApi = {
 			`/conversations${buildQueryString(query)}`,
 		),
 
-	get: (id: string) => apiFetch<ConversationApiResponse>(`/conversations/${id}`),
+	get: (id: string) =>
+		apiFetch<ConversationApiResponse>(`/conversations/${id}`),
 
 	start: (body: StartConversationBody) =>
 		apiFetch<ConversationApiResponse>("/conversations", {

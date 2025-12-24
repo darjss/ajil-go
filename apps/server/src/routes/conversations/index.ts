@@ -9,7 +9,15 @@ import {
 	TogglePinBodySchema,
 } from "@ajil-go/contract";
 import type { FastifyInstance } from "fastify";
+import { z } from "zod";
 import * as handlers from "./handlers.js";
+
+// Schema for by-task route params
+const ByTaskParamsSchema = z.object({
+	taskId: z.string().min(1, "taskId is required"),
+	recipientId: z.string().min(1, "recipientId is required"),
+});
+type ByTaskParams = z.infer<typeof ByTaskParamsSchema>;
 
 export default async function conversationsRoutes(fastify: FastifyInstance) {
 	// GET /api/conversations - List user's conversations
@@ -79,7 +87,9 @@ export default async function conversationsRoutes(fastify: FastifyInstance) {
 				return reply.status(201).send(conversation);
 			} catch (error) {
 				const message =
-					error instanceof Error ? error.message : "Failed to start conversation";
+					error instanceof Error
+						? error.message
+						: "Failed to start conversation";
 				return reply.status(400).send({ error: message });
 			}
 		},
@@ -114,9 +124,12 @@ export default async function conversationsRoutes(fastify: FastifyInstance) {
 	);
 
 	// GET /api/conversations/by-task/:taskId/:recipientId - Get or create conversation by task
-	fastify.get<{ Params: { taskId: string; recipientId: string } }>(
+	fastify.get<{ Params: ByTaskParams }>(
 		"/by-task/:taskId/:recipientId",
 		{
+			schema: {
+				params: ByTaskParamsSchema,
+			},
 			preHandler: fastify.authenticate,
 		},
 		async (request, reply) => {

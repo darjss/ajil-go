@@ -45,9 +45,7 @@ export function ConversationItem({
 			<div className="min-w-0 flex-1">
 				<div className="mb-0.5 flex items-center justify-between gap-2">
 					<div className="flex items-center gap-1.5">
-						{conversation.isPinned && (
-							<Pin className="h-3 w-3 text-primary" />
-						)}
+						{conversation.isPinned && <Pin className="h-3 w-3 text-primary" />}
 						<p
 							className={`truncate font-semibold text-sm ${isActive ? "text-primary" : "text-foreground"}`}
 						>

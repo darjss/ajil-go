@@ -1448,7 +1448,9 @@ async function main() {
 			},
 		}),
 	]);
-	console.log(`✅ Created 3 conversations and ${messages.length} demo messages\n`);
+	console.log(
+		`✅ Created 3 conversations and ${messages.length} demo messages\n`,
+	);
 
 	// ============================================
 	// PAYMENTS

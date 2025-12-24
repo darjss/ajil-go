@@ -13,9 +13,10 @@ export async function getConversations(
 	userId: string,
 ) {
 	const { page, limit } = query;
-	const skip = (page - 1) * limit;
 
-	const [conversations, total] = await Promise.all([
+	// First, fetch ALL conversations for proper sorting (pinned first)
+	// This is necessary because pinned status depends on user role
+	const [allConversations, total] = await Promise.all([
 		fastify.prisma.conversation.findMany({
 			where: {
 				OR: [{ clientId: userId }, { workerId: userId }],
@@ -57,12 +58,10 @@ export async function getConversations(
 				},
 			},
 			orderBy: [
-				// Pinned first (based on user role)
-				// Then by last message
+				// Sort by last message initially (we'll re-sort for pinned in JS)
 				{ lastMessageAt: "desc" },
 			],
-			skip,
-			take: limit,
+			// Don't use skip/take here - we need all for proper pinned sorting
 		}),
 		fastify.prisma.conversation.count({
 			where: {
@@ -72,7 +71,7 @@ export async function getConversations(
 	]);
 
 	// Transform to include pinned status and unread count
-	const transformedConversations = conversations.map((conv) => {
+	const transformedConversations = allConversations.map((conv) => {
 		const isPinned =
 			conv.clientId === userId ? conv.clientPinned : conv.workerPinned;
 		return {
@@ -90,13 +89,19 @@ export async function getConversations(
 		if (a.isPinned && !b.isPinned) return -1;
 		if (!a.isPinned && b.isPinned) return 1;
 		return (
-			new Date(b.lastMessageAt).getTime() -
-			new Date(a.lastMessageAt).getTime()
+			new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime()
 		);
 	});
 
+	// Apply pagination after sorting
+	const skip = (page - 1) * limit;
+	const paginatedConversations = transformedConversations.slice(
+		skip,
+		skip + limit,
+	);
+
 	return {
-		data: transformedConversations,
+		data: paginatedConversations,
 		meta: {
 			total,
 			page,

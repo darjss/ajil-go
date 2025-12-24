@@ -682,7 +682,9 @@ export const ConversationApiResponseSchema = ConversationSchema.extend({
 	lastMessage: MessageSchema.nullable().optional(),
 	unreadCount: z.number().optional(),
 });
-export type ConversationApiResponse = z.infer<typeof ConversationApiResponseSchema>;
+export type ConversationApiResponse = z.infer<
+	typeof ConversationApiResponseSchema
+>;
 
 // Message API Response (includes conversation, task, sender)
 export const MessageApiResponseSchema = MessageSchema.extend({

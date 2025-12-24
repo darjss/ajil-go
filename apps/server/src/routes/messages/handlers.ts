@@ -108,17 +108,20 @@ export async function createMessage(
 		data: { lastMessageAt: new Date() },
 	});
 
-	// Emit to the conversation room
+	// Emit to the conversation room (for users viewing the chat)
 	emitNewMessage(fastify.io, conversationId, message);
 
-	// Also emit to both users' personal rooms for notification
-	emitToUser(fastify.io, conversation.clientId, "message:new", {
-		...message,
+	// Emit conversation update to user rooms (for chat list notification)
+	// Using different event name to avoid duplicate messages
+	emitToUser(fastify.io, conversation.clientId, "conversation:newMessage", {
 		conversationId,
+		lastMessage: message,
+		senderId: userId,
 	});
-	emitToUser(fastify.io, conversation.workerId, "message:new", {
-		...message,
+	emitToUser(fastify.io, conversation.workerId, "conversation:newMessage", {
 		conversationId,
+		lastMessage: message,
+		senderId: userId,
 	});
 
 	return message;

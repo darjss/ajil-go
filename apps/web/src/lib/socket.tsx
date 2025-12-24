@@ -1,14 +1,17 @@
 "use client";
 
-import type { ConversationApiResponse, MessageApiResponse } from "@ajil-go/contract";
+import type {
+	ConversationApiResponse,
+	MessageApiResponse,
+} from "@ajil-go/contract";
 import {
 	createContext,
+	type ReactNode,
 	useCallback,
 	useContext,
 	useEffect,
 	useRef,
 	useState,
-	type ReactNode,
 } from "react";
 import { io, type Socket } from "socket.io-client";
 import { authClient } from "@/lib/auth-client";
@@ -18,33 +21,70 @@ interface SocketContextType {
 	isConnected: boolean;
 	joinConversation: (conversationId: string) => void;
 	leaveConversation: (conversationId: string) => void;
-	sendMessage: (conversationId: string, content: string) => Promise<{ success?: boolean; message?: unknown; error?: string }>;
+	sendMessage: (
+		conversationId: string,
+		content: string,
+	) => Promise<{ success?: boolean; message?: unknown; error?: string }>;
 	startTyping: (conversationId: string) => void;
 	stopTyping: (conversationId: string) => void;
-	onNewMessage: (callback: (message: MessageApiResponse & { conversationId: string }) => void) => () => void;
-	onNewConversationMessage: (callback: (data: { conversationId: string; lastMessage: unknown; senderId: string }) => void) => () => void;
-	onMessageRead: (callback: (data: { conversationId: string; messageIds: string[]; readBy: string }) => void) => () => void;
-	onTypingStart: (callback: (data: { conversationId: string; userId: string; userName: string }) => void) => () => void;
-	onTypingStop: (callback: (data: { conversationId: string; userId: string }) => void) => () => void;
-	onConversationUpdate: (callback: (conversation: ConversationApiResponse) => void) => () => void;
+	onNewMessage: (
+		callback: (
+			message: MessageApiResponse & { conversationId: string },
+		) => void,
+	) => () => void;
+	onNewConversationMessage: (
+		callback: (data: {
+			conversationId: string;
+			lastMessage: unknown;
+			senderId: string;
+		}) => void,
+	) => () => void;
+	onMessageRead: (
+		callback: (data: {
+			conversationId: string;
+			messageIds: string[];
+			readBy: string;
+		}) => void,
+	) => () => void;
+	onTypingStart: (
+		callback: (data: {
+			conversationId: string;
+			userId: string;
+			userName: string;
+		}) => void,
+	) => () => void;
+	onTypingStop: (
+		callback: (data: { conversationId: string; userId: string }) => void,
+	) => () => void;
+	onConversationUpdate: (
+		callback: (conversation: ConversationApiResponse) => void,
+	) => () => void;
 }
 
 const SocketContext = createContext<SocketContextType | null>(null);
 
-const SOCKET_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001";
+const SOCKET_URL =
+	process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001";
 
 export function SocketProvider({ children }: { children: ReactNode }) {
 	const [socket, setSocket] = useState<Socket | null>(null);
 	const [isConnected, setIsConnected] = useState(false);
+	const socketRef = useRef<Socket | null>(null);
 	const { data: session } = authClient.useSession();
 
 	useEffect(() => {
 		if (!session?.user?.id) {
-			if (socket) {
-				socket.disconnect();
+			if (socketRef.current) {
+				socketRef.current.disconnect();
+				socketRef.current = null;
 				setSocket(null);
 				setIsConnected(false);
 			}
+			return;
+		}
+
+		// Don't reconnect if already connected with same user
+		if (socketRef.current?.connected) {
 			return;
 		}
 
@@ -71,10 +111,12 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 			console.error("Socket connection error:", error);
 		});
 
+		socketRef.current = newSocket;
 		setSocket(newSocket);
 
 		return () => {
 			newSocket.disconnect();
+			socketRef.current = null;
 		};
 	}, [session?.user?.id, session?.user?.name]);
 
@@ -93,15 +135,26 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 	);
 
 	const sendMessage = useCallback(
-		(conversationId: string, content: string): Promise<{ success?: boolean; message?: unknown; error?: string }> => {
+		(
+			conversationId: string,
+			content: string,
+		): Promise<{ success?: boolean; message?: unknown; error?: string }> => {
 			return new Promise((resolve) => {
 				if (!socket || !socket.connected) {
 					resolve({ error: "Socket not connected" });
 					return;
 				}
-				socket.emit("message:send", { conversationId, content }, (response: { success?: boolean; message?: unknown; error?: string }) => {
-					resolve(response || { success: true });
-				});
+				socket.emit(
+					"message:send",
+					{ conversationId, content },
+					(response: {
+						success?: boolean;
+						message?: unknown;
+						error?: string;
+					}) => {
+						resolve(response || { success: true });
+					},
+				);
 			});
 		},
 		[socket],
@@ -122,7 +175,11 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 	);
 
 	const onNewMessage = useCallback(
-		(callback: (message: MessageApiResponse & { conversationId: string }) => void) => {
+		(
+			callback: (
+				message: MessageApiResponse & { conversationId: string },
+			) => void,
+		) => {
 			if (!socket) return () => {};
 			socket.on("message:new", callback);
 			return () => {
@@ -133,7 +190,13 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 	);
 
 	const onNewConversationMessage = useCallback(
-		(callback: (data: { conversationId: string; lastMessage: unknown; senderId: string }) => void) => {
+		(
+			callback: (data: {
+				conversationId: string;
+				lastMessage: unknown;
+				senderId: string;
+			}) => void,
+		) => {
 			if (!socket) return () => {};
 			socket.on("conversation:newMessage", callback);
 			return () => {
@@ -144,7 +207,13 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 	);
 
 	const onMessageRead = useCallback(
-		(callback: (data: { conversationId: string; messageIds: string[]; readBy: string }) => void) => {
+		(
+			callback: (data: {
+				conversationId: string;
+				messageIds: string[];
+				readBy: string;
+			}) => void,
+		) => {
 			if (!socket) return () => {};
 			socket.on("message:read", callback);
 			return () => {
@@ -155,7 +224,13 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 	);
 
 	const onTypingStart = useCallback(
-		(callback: (data: { conversationId: string; userId: string; userName: string }) => void) => {
+		(
+			callback: (data: {
+				conversationId: string;
+				userId: string;
+				userName: string;
+			}) => void,
+		) => {
 			if (!socket) return () => {};
 			socket.on("typing:start", callback);
 			return () => {

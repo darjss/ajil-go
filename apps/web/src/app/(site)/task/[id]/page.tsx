@@ -463,7 +463,7 @@ function MessagePosterButton({
 				taskId,
 				recipientId: posterId,
 			});
-			
+
 			// Redirect to worker messages page with conversation ID
 			router.push(`/worker/messages?conversation=${conversation.id}`);
 		} catch (error) {
@@ -736,8 +736,8 @@ function TaskDetailContent({ taskId }: { taskId: string }) {
 							</div>
 							{/* Message button - only show for logged in non-poster users */}
 							{isLoggedIn && !isPoster && task.poster?.id && (
-								<MessagePosterButton 
-									taskId={taskId} 
+								<MessagePosterButton
+									taskId={taskId}
 									posterId={task.poster.id}
 									posterName={task.poster.name || "Захиалагч"}
 								/>

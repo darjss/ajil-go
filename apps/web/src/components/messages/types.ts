@@ -1,4 +1,4 @@
-import type { ConversationApiResponse, MessageApiResponse, TaskApiResponse } from "@ajil-go/contract";
+import type { MessageApiResponse, TaskApiResponse } from "@ajil-go/contract";
 
 export interface Conversation {
 	id: string;
