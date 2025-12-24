@@ -1,0 +1,15 @@
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Effect": "Allow",
+			"Action": ["eks:DescribeCluster", "eks:ListClusters"],
+			"Resource": "*"
+		},
+		{
+			"Effect": "Allow",
+			"Action": ["eks:AccessKubernetesApi"],
+			"Resource": "arn:aws:eks:ap-southeast-1:804257878061:cluster/ajil-go-cluster"
+		}
+	]
+}
