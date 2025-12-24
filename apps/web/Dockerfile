@@ -29,6 +29,10 @@ RUN pnpm --filter @ajil-go/db exec prisma generate
 # Set build-time environment variables
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Build-time arg for public env vars (baked into the build)
+ARG NEXT_PUBLIC_SERVER_URL=https://api.ajil-go.online
+ENV NEXT_PUBLIC_SERVER_URL=$NEXT_PUBLIC_SERVER_URL
+
 # Build Next.js application
 RUN pnpm --filter web build
 
