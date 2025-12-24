@@ -23,8 +23,8 @@ COPY --from=deps /app/packages/contract/node_modules ./packages/contract/node_mo
 COPY --from=deps /app/apps/server/node_modules ./apps/server/node_modules
 COPY . .
 
-# Generate Prisma client
-RUN pnpm --filter @ajil-go/db exec prisma generate
+# Generate Prisma client (uses dummy DATABASE_URL since generate only creates types)
+RUN DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy" pnpm --filter @ajil-go/db exec prisma generate
 
 # Build the server (tsdown bundles all dependencies)
 RUN pnpm --filter server build

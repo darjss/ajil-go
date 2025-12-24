@@ -23,8 +23,8 @@ COPY --from=deps /app/packages/contract/node_modules ./packages/contract/node_mo
 COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
 COPY . .
 
-# Generate Prisma client (needed for web if it uses it)
-RUN pnpm --filter @ajil-go/db exec prisma generate
+# Generate Prisma client (uses dummy DATABASE_URL since generate only creates types)
+RUN DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy" pnpm --filter @ajil-go/db exec prisma generate
 
 # Set build-time environment variables
 ENV NEXT_TELEMETRY_DISABLED=1
