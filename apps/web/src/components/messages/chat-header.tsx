@@ -1,4 +1,5 @@
 import { ChevronLeft, Clock } from "lucide-react";
+import type { ReactNode } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,12 +9,14 @@ interface ChatHeaderProps {
 	conversation: Conversation;
 	defaultOtherUserLabel?: string;
 	onBack: () => void;
+	extraActions?: ReactNode;
 }
 
 export function ChatHeader({
 	conversation,
 	defaultOtherUserLabel = "Хэрэглэгч",
 	onBack,
+	extraActions,
 }: ChatHeaderProps) {
 	const otherUser = conversation.otherUser;
 	const task = conversation.task;
@@ -38,19 +41,22 @@ export function ChatHeader({
 				<p className="truncate font-semibold text-foreground">
 					{otherUser?.name || defaultOtherUserLabel}
 				</p>
-				<p className="truncate text-muted-foreground text-xs">{task.title}</p>
+				<p className="truncate text-muted-foreground text-xs">{task?.title}</p>
 			</div>
-			<Badge
-				variant="outline"
-				className="shrink-0 border-primary/30 text-primary"
-			>
-				<Clock className="mr-1 h-3 w-3" />
-				{task.status === "IN_PROGRESS"
-					? "Гүйцэтгэж буй"
-					: task.status === "COMPLETED"
-						? "Дууссан"
-						: "Идэвхтэй"}
-			</Badge>
+			<div className="flex items-center gap-2">
+				{extraActions}
+				<Badge
+					variant="outline"
+					className="shrink-0 border-primary/30 text-primary"
+				>
+					<Clock className="mr-1 h-3 w-3" />
+					{task?.status === "IN_PROGRESS"
+						? "Гүйцэтгэж буй"
+						: task?.status === "COMPLETED"
+							? "Дууссан"
+							: "Идэвхтэй"}
+				</Badge>
+			</div>
 		</div>
 	);
 }

@@ -1,11 +1,13 @@
-import type { MessageApiResponse, TaskApiResponse } from "@ajil-go/contract";
+import type { ConversationApiResponse, MessageApiResponse, TaskApiResponse } from "@ajil-go/contract";
 
 export interface Conversation {
+	id: string;
 	taskId: string;
 	task: TaskApiResponse;
 	messages: MessageApiResponse[];
 	lastMessage: MessageApiResponse | null;
 	unreadCount: number;
+	isPinned: boolean;
 	otherUser: {
 		id: string;
 		name: string;
@@ -29,7 +31,7 @@ export const MESSAGES_PAGE_CONFIG: Record<
 		defaultOtherUserLabel: "Захиалагч",
 	},
 	client: {
-		headerSubtitle: "Даалгавартай холбоотой харилцаа",
-		defaultOtherUserLabel: "Хэрэглэгч",
+		headerSubtitle: "Гүйцэтгэгчидтэй харилцаа",
+		defaultOtherUserLabel: "Гүйцэтгэгч",
 	},
 };

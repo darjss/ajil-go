@@ -85,6 +85,7 @@ model Task {
   bids        TaskBid[]   @relation("TaskBids")
   reviews     Review[]
   messages    Message[]
+  conversations Conversation[]
   attachments TaskAttachment[]
   payment     Payment?
 
@@ -200,20 +201,53 @@ enum ReviewType {
 // MESSAGING
 // ============================================
 
+model Conversation {
+  id            String   @id @default(cuid())
+  taskId        String
+  clientId      String   // task poster
+  workerId      String   // worker/bidder
+  
+  // Pin status for each participant
+  clientPinned  Boolean  @default(false)
+  workerPinned  Boolean  @default(false)
+  
+  // Last activity for sorting
+  lastMessageAt DateTime @default(now())
+  
+  task          Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  client        User     @relation("ClientConversations", fields: [clientId], references: [id], onDelete: Cascade)
+  worker        User     @relation("WorkerConversations", fields: [workerId], references: [id], onDelete: Cascade)
+  messages      Message[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([taskId, clientId, workerId])
+  @@index([clientId])
+  @@index([workerId])
+  @@index([lastMessageAt])
+  @@map("conversation")
+}
+
 model Message {
-  id        String   @id @default(cuid())
-  taskId    String
-  senderId  String
-  content   String
-  isRead    Boolean  @default(false)
+  id             String        @id @default(cuid())
+  conversationId String
+  senderId       String
+  content        String
+  isRead         Boolean       @default(false)
 
-  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  // Legacy support - keep taskId for migration
+  taskId         String?
+  
+  conversation   Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         User          @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  task           Task?         @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
+  createdAt      DateTime      @default(now())
 
-  @@index([taskId])
+  @@index([conversationId])
   @@index([senderId])
+  @@index([taskId])
   @@map("message")
 }
 

@@ -1,12 +1,14 @@
 import type {
 	BidApiResponse,
 	CategoryApiResponse,
+	ConversationApiResponse,
 	CreateBidBody,
 	CreateMessageBody,
 	CreateReviewBody,
 	CreateTaskBody,
 	GetBidsQuery,
 	GetCategoriesQuery,
+	GetConversationsQuery,
 	GetMessagesQuery,
 	GetReviewsQuery,
 	GetSkillsQuery,
@@ -16,7 +18,9 @@ import type {
 	PaginatedResponse,
 	ReviewApiResponse,
 	SkillApiResponse,
+	StartConversationBody,
 	TaskApiResponse,
+	TogglePinBody,
 	UpdateBidBody,
 	UpdateTaskBody,
 	UpdateUserBody,
@@ -172,6 +176,33 @@ export const usersApi = {
 		}),
 
 	delete: (id: string) => apiFetch<void>(`/users/${id}`, { method: "DELETE" }),
+};
+
+// Conversations
+export const conversationsApi = {
+	list: (query: Partial<GetConversationsQuery> = {}) =>
+		apiFetch<PaginatedResponse<ConversationApiResponse>>(
+			`/conversations${buildQueryString(query)}`,
+		),
+
+	get: (id: string) => apiFetch<ConversationApiResponse>(`/conversations/${id}`),
+
+	start: (body: StartConversationBody) =>
+		apiFetch<ConversationApiResponse>("/conversations", {
+			method: "POST",
+			body: JSON.stringify(body),
+		}),
+
+	togglePin: (body: TogglePinBody) =>
+		apiFetch<ConversationApiResponse>("/conversations/pin", {
+			method: "POST",
+			body: JSON.stringify(body),
+		}),
+
+	getByTask: (taskId: string, recipientId: string) =>
+		apiFetch<ConversationApiResponse>(
+			`/conversations/by-task/${taskId}/${recipientId}`,
+		),
 };
 
 // Messages

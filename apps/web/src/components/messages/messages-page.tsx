@@ -1,14 +1,17 @@
 "use client";
 
-import type { TaskApiResponse } from "@ajil-go/contract";
+import type { ConversationApiResponse, MessageApiResponse } from "@ajil-go/contract";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, MessageSquare, Search, Sparkles } from "lucide-react";
+import { Loader2, MessageSquare, Pin, PinOff, Search, Sparkles } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { messagesApi } from "@/lib/api";
-import { messageKeys, taskQueries, userQueries } from "@/lib/queries";
+import { conversationsApi, messagesApi } from "@/lib/api";
+import { useSocket } from "@/lib/socket";
+import { userQueries } from "@/lib/queries";
 import { ChatHeader } from "./chat-header";
 import { ConversationItem } from "./conversation-item";
 import { ConversationListSkeleton } from "./conversation-list-skeleton";
@@ -28,175 +31,364 @@ interface MessagesPageProps {
 export function MessagesPage({ userType }: MessagesPageProps) {
 	const config = MESSAGES_PAGE_CONFIG[userType];
 	const queryClient = useQueryClient();
-	const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+	const searchParams = useSearchParams();
+	const initialConversationId = searchParams.get("conversation");
+	
+	const [selectedConversationId, setSelectedConversationId] = useState<string | null>(
+		initialConversationId
+	);
 	const [newMessage, setNewMessage] = useState("");
 	const [searchQuery, setSearchQuery] = useState("");
 	const [showConversationList, setShowConversationList] = useState(true);
+	const [typingUsers, setTypingUsers] = useState<Map<string, string>>(new Map());
 	const messagesEndRef = useRef<HTMLDivElement>(null);
+	const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 	const { data: user } = useQuery(userQueries.me());
+	
+	// Socket connection
+	const {
+		isConnected,
+		joinConversation,
+		leaveConversation,
+		sendMessage: socketSendMessage,
+		startTyping,
+		stopTyping,
+		onNewMessage,
+		onNewConversationMessage,
+		onMessageRead,
+		onTypingStart,
+		onTypingStop,
+		onConversationUpdate,
+	} = useSocket();
 
-	const { data: inProgressTasks, isLoading: isLoadingInProgress } = useQuery({
-		...taskQueries.list({ status: "IN_PROGRESS", limit: 100 }),
+	// Fetch conversations
+	const { data: conversationsData, isLoading: isLoadingConversations } = useQuery({
+		queryKey: ["conversations", userType],
+		queryFn: () => conversationsApi.list({ limit: 100 }),
 		enabled: !!user?.id,
+		staleTime: 30 * 1000, // 30 seconds - prevent unnecessary refetches
+		refetchOnWindowFocus: false,
 	});
 
-	const { data: completedTasks, isLoading: isLoadingCompleted } = useQuery({
-		...taskQueries.list({ status: "COMPLETED", limit: 100 }),
-		enabled: !!user?.id,
+	// Fetch selected conversation details with messages
+	const { data: selectedConversationData, isLoading: isLoadingConversation } = useQuery({
+		queryKey: ["conversation", selectedConversationId],
+		queryFn: () => conversationsApi.get(selectedConversationId!),
+		enabled: !!selectedConversationId,
+		staleTime: 10 * 1000, // 10 seconds - WebSocket will update in real-time
+		refetchOnWindowFocus: false,
 	});
 
-	const { data: myTasks, isLoading: isLoadingMyTasks } = useQuery({
-		...taskQueries.list({ posterId: user?.id, limit: 100 }),
-		enabled: !!user?.id && userType === "client",
-	});
-
-	const allTasks = useMemo(() => {
-		const tasksMap = new Map<string, TaskApiResponse>();
-
-		if (userType === "worker") {
-			for (const t of inProgressTasks?.data || []) {
-				if (t.assignedBidId) {
-					tasksMap.set(t.id, t);
-				}
-			}
-			for (const t of completedTasks?.data || []) {
-				if (t.assignedBidId) {
-					tasksMap.set(t.id, t);
-				}
-			}
-		} else {
-			for (const t of myTasks?.data || []) {
-				if (t.status !== "OPEN" && t.status !== "CANCELLED") {
-					tasksMap.set(t.id, t);
-				}
-			}
-			for (const t of inProgressTasks?.data || []) {
-				if (t.posterId === user?.id || t.assignedBidId) {
-					tasksMap.set(t.id, t);
-				}
-			}
-		}
-
-		return Array.from(tasksMap.values());
-	}, [userType, inProgressTasks, completedTasks, myTasks, user?.id]);
-
-	const { data: allMessages, isLoading: isLoadingMessages } = useQuery({
-		queryKey: messageKeys.list({ limit: 500 }),
-		queryFn: () => messagesApi.list({ limit: 500 }),
-		enabled: !!user?.id,
-	});
-
+	// Transform conversations to our Conversation type
 	const conversations = useMemo<Conversation[]>(() => {
-		if (!user?.id || !allMessages?.data) return [];
+		if (!conversationsData?.data || !user?.id) return [];
 
-		const convMap = new Map<string, Conversation>();
+		return conversationsData.data.map((conv: any) => {
+			const isClient = conv.clientId === user.id;
+			const otherUser = isClient ? conv.worker : conv.client;
 
-		for (const task of allTasks) {
-			const taskMessages = allMessages.data.filter((m) => m.taskId === task.id);
-			if (taskMessages.length === 0) continue;
-
-			const sortedMessages = [...taskMessages].sort(
-				(a, b) =>
-					new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-			);
-
-			const otherUserId =
-				taskMessages.find((m) => m.senderId !== user.id)?.senderId ||
-				(task.posterId !== user.id ? task.posterId : null);
-
-			const otherUserMessage = taskMessages.find(
-				(m) => m.senderId === otherUserId,
-			);
-
-			convMap.set(task.id, {
-				taskId: task.id,
-				task,
-				messages: sortedMessages.reverse(),
-				lastMessage: sortedMessages[0] || null,
-				unreadCount: taskMessages.filter(
-					(m) => !m.isRead && m.senderId !== user.id,
-				).length,
-				otherUser: otherUserMessage?.sender
+			return {
+				id: conv.id,
+				taskId: conv.taskId,
+				task: conv.task,
+				messages: [],
+				lastMessage: conv.lastMessage,
+				unreadCount: conv.unreadCount || 0,
+				isPinned: conv.isPinned || false,
+				otherUser: otherUser
 					? {
-							id: otherUserMessage.sender.id,
-							name: otherUserMessage.sender.name,
-							image: otherUserMessage.sender.image,
+							id: otherUser.id,
+							name: otherUser.name,
+							image: otherUser.image || null,
 						}
-					: task.poster && task.poster.id !== user.id
-						? {
-								id: task.poster.id,
-								name: task.poster.name,
-								image: task.poster.image,
-							}
-						: null,
-			});
-		}
-
-		return Array.from(convMap.values()).sort((a, b) => {
-			const aTime = a.lastMessage
-				? new Date(a.lastMessage.createdAt).getTime()
-				: 0;
-			const bTime = b.lastMessage
-				? new Date(b.lastMessage.createdAt).getTime()
-				: 0;
-			return bTime - aTime;
+					: null,
+			};
 		});
-	}, [allTasks, allMessages, user?.id]);
+	}, [conversationsData, user?.id]);
 
+	// Filter conversations based on search
 	const filteredConversations = useMemo(() => {
 		if (!searchQuery.trim()) return conversations;
 		const query = searchQuery.toLowerCase();
 		return conversations.filter(
 			(c) =>
-				c.task.title.toLowerCase().includes(query) ||
-				c.otherUser?.name.toLowerCase().includes(query),
+				c.task?.title?.toLowerCase().includes(query) ||
+				c.otherUser?.name?.toLowerCase().includes(query),
 		);
 	}, [conversations, searchQuery]);
 
-	const selectedConversation = useMemo(
-		() => conversations.find((c) => c.taskId === selectedTaskId),
-		[conversations, selectedTaskId],
-	);
+	// Selected conversation with full data
+	const selectedConversation = useMemo<Conversation | null>(() => {
+		if (!selectedConversationData || !user?.id) return null;
 
+		const conv: any = selectedConversationData;
+		const isClient = conv.clientId === user.id;
+		const otherUser = isClient ? conv.worker : conv.client;
+
+		return {
+			id: conv.id,
+			taskId: conv.taskId,
+			task: conv.task,
+			messages: conv.messages || [],
+			lastMessage: null,
+			unreadCount: conv.unreadCount || 0,
+			isPinned: conv.isPinned || false,
+			otherUser: otherUser
+				? {
+						id: otherUser.id,
+						name: otherUser.name,
+						image: otherUser.image || null,
+					}
+				: null,
+		};
+	}, [selectedConversationData, user?.id]);
+
+	// Send message via WebSocket (much faster than HTTP)
 	const sendMessageMutation = useMutation({
-		mutationFn: (content: string) =>
-			messagesApi.create({
-				taskId: selectedTaskId as string,
-				senderId: user?.id as string,
+		mutationFn: async (content: string) => {
+			// Use WebSocket if connected, fallback to HTTP
+			if (isConnected && selectedConversationId) {
+				const result = await socketSendMessage(selectedConversationId, content);
+				if (result.error) {
+					throw new Error(result.error);
+				}
+				return result.message;
+			}
+			// Fallback to HTTP
+			return messagesApi.create({
+				conversationId: selectedConversationId!,
 				content,
-			}),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: messageKeys.all });
+			});
+		},
+		onMutate: async (content) => {
+			// Cancel outgoing refetches
+			await queryClient.cancelQueries({ queryKey: ["conversation", selectedConversationId] });
+
+			// Snapshot previous value
+			const previousConversation = queryClient.getQueryData(["conversation", selectedConversationId]);
+
+			// Optimistically add new message
+			queryClient.setQueryData(["conversation", selectedConversationId], (old: any) => {
+				if (!old) return old;
+				const optimisticMessage = {
+					id: `temp-${Date.now()}`,
+					conversationId: selectedConversationId,
+					senderId: user?.id,
+					content,
+					isRead: false,
+					createdAt: new Date().toISOString(),
+				};
+				return {
+					...old,
+					messages: [...(old.messages || []), optimisticMessage],
+				};
+			});
+
 			setNewMessage("");
+			return { previousConversation };
+		},
+		onError: (_err, _content, context) => {
+			// Rollback on error
+			if (context?.previousConversation) {
+				queryClient.setQueryData(["conversation", selectedConversationId], context.previousConversation);
+			}
+		},
+		onSettled: () => {
+			// Only refetch conversation list in background (not blocking)
+			queryClient.invalidateQueries({ queryKey: ["conversations"], refetchType: "none" });
 		},
 	});
 
+	// Mark messages as read mutation
 	const markReadMutation = useMutation({
 		mutationFn: (messageIds: string[]) => messagesApi.markRead(messageIds),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: messageKeys.all });
+		onMutate: async (messageIds) => {
+			// Optimistically mark as read in cache
+			queryClient.setQueryData(["conversation", selectedConversationId], (old: any) => {
+				if (!old) return old;
+				return {
+					...old,
+					messages: old.messages?.map((m: any) =>
+						messageIds.includes(m.id) ? { ...m, isRead: true } : m
+					),
+				};
+			});
 		},
+		// No need to refetch - server will confirm via WebSocket
 	});
 
-	const markMessagesAsRead = useCallback(
-		(conv: Conversation, userId: string) => {
-			const unreadIds = conv.messages
-				.filter((m) => !m.isRead && m.senderId !== userId)
+	// Toggle pin mutation
+	const togglePinMutation = useMutation({
+		mutationFn: (pinned: boolean) =>
+			conversationsApi.togglePin({
+				conversationId: selectedConversationId!,
+				pinned,
+			}),
+		onMutate: async (pinned) => {
+			// Optimistically update pin status
+			queryClient.setQueryData(["conversations", userType], (old: any) => {
+				if (!old?.data) return old;
+				return {
+					...old,
+					data: old.data.map((c: any) =>
+						c.id === selectedConversationId ? { ...c, isPinned: pinned } : c
+					),
+				};
+			});
+		},
+		// No need to refetch for pin toggle
+	});
+
+	// Join/leave conversation room on socket
+	useEffect(() => {
+		if (selectedConversationId && isConnected) {
+			joinConversation(selectedConversationId);
+			return () => {
+				leaveConversation(selectedConversationId);
+			};
+		}
+	}, [selectedConversationId, isConnected, joinConversation, leaveConversation]);
+
+	// Listen for new messages - update cache directly instead of refetching
+	useEffect(() => {
+		const unsubscribe = onNewMessage((message) => {
+			// Skip if this is our own message (we already added it optimistically)
+			if (message.senderId === user?.id) {
+				// Replace the temp message with the real one from server
+				if (message.conversationId === selectedConversationId) {
+					queryClient.setQueryData(["conversation", selectedConversationId], (old: any) => {
+						if (!old) return old;
+						// Remove temp messages and avoid duplicates
+						const filteredMessages = old.messages?.filter(
+							(m: any) => !m.id.startsWith("temp-") && m.id !== message.id
+						) || [];
+						return {
+							...old,
+							messages: [...filteredMessages, message],
+						};
+					});
+				}
+				return;
+			}
+			
+			// Add message from other user to conversation cache
+			if (message.conversationId === selectedConversationId) {
+				queryClient.setQueryData(["conversation", selectedConversationId], (old: any) => {
+					if (!old) return old;
+					// Avoid duplicates
+					const exists = old.messages?.some((m: any) => m.id === message.id);
+					if (exists) return old;
+					return {
+						...old,
+						messages: [...(old.messages || []), message],
+					};
+				});
+			}
+			// Update conversation list (lastMessage) in background
+			queryClient.invalidateQueries({ queryKey: ["conversations"], refetchType: "none" });
+		});
+		return unsubscribe;
+	}, [onNewMessage, selectedConversationId, queryClient, user?.id]);
+
+	// Listen for new message notifications (for chat list update)
+	useEffect(() => {
+		const unsubscribe = onNewConversationMessage((data) => {
+			// Update conversation list with new message info
+			queryClient.setQueryData(["conversations", userType], (old: any) => {
+				if (!old?.data) return old;
+				return {
+					...old,
+					data: old.data.map((c: any) => {
+						if (c.id === data.conversationId) {
+							return {
+								...c,
+								lastMessage: data.lastMessage,
+								// Increment unread count if not our own message and not currently viewing
+								unreadCount: data.senderId !== user?.id && data.conversationId !== selectedConversationId
+									? (c.unreadCount || 0) + 1
+									: c.unreadCount,
+							};
+						}
+						return c;
+					}).sort((a: any, b: any) => {
+						// Pinned first, then by last message time
+						if (a.isPinned && !b.isPinned) return -1;
+						if (!a.isPinned && b.isPinned) return 1;
+						const aTime = a.lastMessage?.createdAt || a.createdAt;
+						const bTime = b.lastMessage?.createdAt || b.createdAt;
+						return new Date(bTime).getTime() - new Date(aTime).getTime();
+					}),
+				};
+			});
+		});
+		return unsubscribe;
+	}, [onNewConversationMessage, queryClient, userType, user?.id, selectedConversationId]);
+
+	// Listen for message read events - update cache directly
+	useEffect(() => {
+		const unsubscribe = onMessageRead((data) => {
+			if (data.conversationId === selectedConversationId) {
+				queryClient.setQueryData(["conversation", selectedConversationId], (old: any) => {
+					if (!old) return old;
+					return {
+						...old,
+						messages: old.messages?.map((m: any) =>
+							data.messageIds?.includes(m.id) ? { ...m, isRead: true } : m
+						),
+					};
+				});
+			}
+		});
+		return unsubscribe;
+	}, [onMessageRead, selectedConversationId, queryClient]);
+
+	// Listen for typing indicators
+	useEffect(() => {
+		const unsubTypingStart = onTypingStart(({ conversationId, userId, userName }) => {
+			if (conversationId === selectedConversationId && userId !== user?.id) {
+				setTypingUsers((prev) => new Map(prev).set(userId, userName));
+			}
+		});
+
+		const unsubTypingStop = onTypingStop(({ conversationId, userId }) => {
+			if (conversationId === selectedConversationId) {
+				setTypingUsers((prev) => {
+					const newMap = new Map(prev);
+					newMap.delete(userId);
+					return newMap;
+				});
+			}
+		});
+
+		return () => {
+			unsubTypingStart();
+			unsubTypingStop();
+		};
+	}, [onTypingStart, onTypingStop, selectedConversationId, user?.id]);
+
+	// Listen for conversation updates (e.g., when other user pins/unpins)
+	useEffect(() => {
+		const unsubscribe = onConversationUpdate(() => {
+			// Refetch in background only
+			queryClient.invalidateQueries({ queryKey: ["conversations"], refetchType: "none" });
+		});
+		return unsubscribe;
+	}, [onConversationUpdate, queryClient]);
+
+	// Mark messages as read when viewing conversation
+	useEffect(() => {
+		if (selectedConversation && user?.id) {
+			const unreadIds = selectedConversation.messages
+				.filter((m) => !m.isRead && m.senderId !== user.id)
 				.map((m) => m.id);
 			if (unreadIds.length > 0) {
 				markReadMutation.mutate(unreadIds);
 			}
-		},
-		[markReadMutation],
-	);
-
-	useEffect(() => {
-		if (selectedConversation && user?.id) {
-			markMessagesAsRead(selectedConversation, user.id);
 		}
-	}, [selectedConversation, user?.id, markMessagesAsRead]);
+	}, [selectedConversation?.messages.length, user?.id]);
 
+	// Scroll to bottom when new messages arrive
 	const messageCount = selectedConversation?.messages.length ?? 0;
 	useEffect(() => {
 		if (messagesEndRef.current && messageCount > 0) {
@@ -204,27 +396,54 @@ export function MessagesPage({ userType }: MessagesPageProps) {
 		}
 	}, [messageCount]);
 
+	// Handle typing
+	const handleInputChange = useCallback(
+		(value: string) => {
+			setNewMessage(value);
+
+			if (selectedConversationId && value.trim()) {
+				startTyping(selectedConversationId);
+
+				if (typingTimeoutRef.current) {
+					clearTimeout(typingTimeoutRef.current);
+				}
+
+				typingTimeoutRef.current = setTimeout(() => {
+					stopTyping(selectedConversationId);
+				}, 2000);
+			}
+		},
+		[selectedConversationId, startTyping, stopTyping],
+	);
+
 	const handleSend = useCallback(() => {
 		const trimmed = newMessage.trim();
-		if (!trimmed || !selectedTaskId || sendMessageMutation.isPending) return;
+		if (!trimmed || !selectedConversationId || sendMessageMutation.isPending) return;
+
+		if (typingTimeoutRef.current) {
+			clearTimeout(typingTimeoutRef.current);
+		}
+		stopTyping(selectedConversationId);
 		sendMessageMutation.mutate(trimmed);
-	}, [newMessage, selectedTaskId, sendMessageMutation]);
+	}, [newMessage, selectedConversationId, sendMessageMutation, stopTyping]);
 
 	const handleBack = useCallback(() => {
-		setSelectedTaskId(null);
+		setSelectedConversationId(null);
 		setShowConversationList(true);
 	}, []);
 
-	const handleSelectConversation = useCallback((taskId: string) => {
-		setSelectedTaskId(taskId);
+	const handleSelectConversation = useCallback((conversationId: string) => {
+		setSelectedConversationId(conversationId);
 		setShowConversationList(false);
 	}, []);
 
-	const isLoading =
-		isLoadingInProgress ||
-		isLoadingCompleted ||
-		(userType === "client" && isLoadingMyTasks) ||
-		isLoadingMessages;
+	const handleTogglePin = useCallback(() => {
+		if (selectedConversation) {
+			togglePinMutation.mutate(!selectedConversation.isPinned);
+		}
+	}, [selectedConversation, togglePinMutation]);
+
+	const isLoading = isLoadingConversations;
 
 	if (!user) {
 		return (
@@ -233,6 +452,9 @@ export function MessagesPage({ userType }: MessagesPageProps) {
 			</div>
 		);
 	}
+
+	const totalUnread = conversations.reduce((acc, c) => acc + c.unreadCount, 0);
+	const typingUserName = typingUsers.size > 0 ? Array.from(typingUsers.values())[0] : null;
 
 	return (
 		<div className="flex h-screen flex-col bg-muted">
@@ -246,12 +468,18 @@ export function MessagesPage({ userType }: MessagesPageProps) {
 							{config.headerSubtitle}
 						</p>
 					</div>
-					{conversations.length > 0 && (
-						<Badge variant="secondary" className="bg-primary/10 text-primary">
-							{conversations.reduce((acc, c) => acc + c.unreadCount, 0)}{" "}
-							уншаагүй
-						</Badge>
-					)}
+					<div className="flex items-center gap-2">
+						{!isConnected && (
+							<Badge variant="outline" className="border-yellow-500 text-yellow-500">
+								Холбогдоогүй
+							</Badge>
+						)}
+						{totalUnread > 0 && (
+							<Badge variant="secondary" className="bg-primary/10 text-primary">
+								{totalUnread} уншаагүй
+							</Badge>
+						)}
+					</div>
 				</div>
 			</header>
 
@@ -260,7 +488,7 @@ export function MessagesPage({ userType }: MessagesPageProps) {
 					className={`${
 						showConversationList ? "flex" : "hidden"
 					} w-full flex-col border-border border-r bg-background lg:flex lg:w-80 xl:w-96 ${
-						selectedTaskId ? "hidden lg:flex" : ""
+						selectedConversationId ? "hidden lg:flex" : ""
 					}`}
 				>
 					<div className="shrink-0 border-border border-b p-3">
@@ -288,12 +516,12 @@ export function MessagesPage({ userType }: MessagesPageProps) {
 							<div className="space-y-1 p-2">
 								{filteredConversations.map((conv) => (
 									<ConversationItem
-										key={conv.taskId}
+										key={conv.id}
 										conversation={conv}
-										isActive={conv.taskId === selectedTaskId}
+										isActive={conv.id === selectedConversationId}
 										currentUserId={user.id}
 										defaultOtherUserLabel={config.defaultOtherUserLabel}
-										onClick={() => handleSelectConversation(conv.taskId)}
+										onClick={() => handleSelectConversation(conv.id)}
 									/>
 								))}
 							</div>
@@ -303,21 +531,42 @@ export function MessagesPage({ userType }: MessagesPageProps) {
 
 				<main
 					className={`${
-						selectedTaskId ? "flex" : "hidden lg:flex"
+						selectedConversationId ? "flex" : "hidden lg:flex"
 					} flex-1 flex-col bg-muted`}
 				>
 					{!selectedConversation ? (
-						<EmptyState
-							icon={Sparkles}
-							title="Харилцаа сонгох"
-							description="Зүүн талаас харилцаа сонгоно уу."
-						/>
+						isLoadingConversation ? (
+							<div className="flex flex-1 items-center justify-center">
+								<Loader2 className="h-8 w-8 animate-spin text-primary" />
+							</div>
+						) : (
+							<EmptyState
+								icon={Sparkles}
+								title="Харилцаа сонгох"
+								description="Зүүн талаас харилцаа сонгоно уу."
+							/>
+						)
 					) : (
 						<>
 							<ChatHeader
 								conversation={selectedConversation}
 								defaultOtherUserLabel={config.defaultOtherUserLabel}
 								onBack={handleBack}
+								extraActions={
+									<Button
+										variant="ghost"
+										size="icon"
+										onClick={handleTogglePin}
+										disabled={togglePinMutation.isPending}
+										title={selectedConversation.isPinned ? "Бэхлэлт арилгах" : "Бэхлэх"}
+									>
+										{selectedConversation.isPinned ? (
+											<PinOff className="h-5 w-5" />
+										) : (
+											<Pin className="h-5 w-5" />
+										)}
+									</Button>
+								}
 							/>
 
 							<ScrollArea className="flex-1 p-4">
@@ -347,11 +596,16 @@ export function MessagesPage({ userType }: MessagesPageProps) {
 										<div ref={messagesEndRef} />
 									</div>
 								)}
+								{typingUserName && (
+									<div className="mt-2 text-muted-foreground text-sm italic">
+										{typingUserName} бичиж байна...
+									</div>
+								)}
 							</ScrollArea>
 
 							<MessageInput
 								value={newMessage}
-								onChange={setNewMessage}
+								onChange={handleInputChange}
 								onSend={handleSend}
 								isPending={sendMessageMutation.isPending}
 							/>

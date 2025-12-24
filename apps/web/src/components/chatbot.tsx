@@ -21,8 +21,6 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import ReactMarkdown from "react-markdown";
-
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -345,8 +343,8 @@ function ChatMessage({ message }: { message: Message }) {
 				{/* Text content */}
 				{parsed.text && (
 					<div className="rounded-2xl rounded-tl-md bg-muted/70 px-4 py-2.5">
-						<div className="prose prose-sm dark:prose-invert max-w-none text-sm [&_li]:my-0.5 [&_p]:my-1 [&_ul]:my-1">
-							<ReactMarkdown>{parsed.text}</ReactMarkdown>
+						<div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap text-sm">
+							{parsed.text}
 						</div>
 					</div>
 				)}
