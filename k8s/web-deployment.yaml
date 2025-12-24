@@ -41,6 +41,17 @@ spec:
             # This avoids DNS resolution issues when fetching from within the cluster
             - name: INTERNAL_API_URL
               value: "http://server.ajil-go.svc.cluster.local:3001"
+            # Upstash Redis for caching
+            - name: UPSTASH_REDIS_REST_URL
+              valueFrom:
+                secretKeyRef:
+                  name: ajil-go-secrets
+                  key: UPSTASH_REDIS_REST_URL
+            - name: UPSTASH_REDIS_REST_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: ajil-go-secrets
+                  key: UPSTASH_REDIS_REST_TOKEN
           resources:
             requests:
               cpu: 100m

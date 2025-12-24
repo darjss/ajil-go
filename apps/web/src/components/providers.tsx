@@ -1,42 +1,17 @@
 "use client";
 
-import {
-	isServer,
-	QueryClient,
-	QueryClientProvider,
-} from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ReactQueryStreamedHydration } from "@tanstack/react-query-next-experimental";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import Snowfall from "react-snowfall";
+
+import { getQueryClient } from "@/lib/get-query-client";
 import { SocketProvider } from "@/lib/socket";
+
 import { Chatbot } from "./chatbot";
 import { ThemeProvider } from "./theme-provider";
 import { Toaster } from "./ui/sonner";
-
-function makeQueryClient() {
-	return new QueryClient({
-		defaultOptions: {
-			queries: {
-				staleTime: 1000 * 60, // 1 minute
-				refetchOnWindowFocus: false,
-			},
-		},
-	});
-}
-
-let browserQueryClient: QueryClient | undefined;
-
-function getQueryClient() {
-	if (isServer) {
-		// Server: always make a new query client
-		return makeQueryClient();
-	}
-	// Browser: make a new query client if we don't already have one
-	// This is very important, so we don't re-make a new client if React
-	// suspends during the initial render.
-	if (!browserQueryClient) browserQueryClient = makeQueryClient();
-	return browserQueryClient;
-}
 
 export function SnowfallEffect() {
 	return (
@@ -57,23 +32,25 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 	const queryClient = getQueryClient();
 
 	return (
-		<QueryClientProvider client={queryClient}>
-			<ReactQueryStreamedHydration>
-				<ThemeProvider
-					attribute="class"
-					defaultTheme="system"
-					enableSystem
-					disableTransitionOnChange
-				>
-					<SocketProvider>
-						<SnowfallEffect />
-						{children}
-						<Chatbot />
-						<Toaster richColors />
-					</SocketProvider>
-				</ThemeProvider>
-			</ReactQueryStreamedHydration>
-			<ReactQueryDevtools initialIsOpen={false} />
-		</QueryClientProvider>
+		<NuqsAdapter>
+			<QueryClientProvider client={queryClient}>
+				<ReactQueryStreamedHydration>
+					<ThemeProvider
+						attribute="class"
+						defaultTheme="system"
+						enableSystem
+						disableTransitionOnChange
+					>
+						<SocketProvider>
+							<SnowfallEffect />
+							{children}
+							<Chatbot />
+							<Toaster richColors />
+						</SocketProvider>
+					</ThemeProvider>
+				</ReactQueryStreamedHydration>
+				<ReactQueryDevtools initialIsOpen={false} />
+			</QueryClientProvider>
+		</NuqsAdapter>
 	);
 }
