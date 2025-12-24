@@ -3,10 +3,11 @@ import { type BetterAuthOptions, betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 
 export const auth = betterAuth<BetterAuthOptions>({
+	baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3001",
 	database: prismaAdapter(prisma, {
 		provider: "postgresql",
 	}),
-	trustedOrigins: [process.env.CORS_ORIGIN || ""],
+	trustedOrigins: [process.env.CORS_ORIGIN || "http://localhost:3000"],
 	emailAndPassword: {
 		enabled: true,
 	},
@@ -76,8 +77,8 @@ export const auth = betterAuth<BetterAuthOptions>({
 	},
 	advanced: {
 		defaultCookieAttributes: {
-			sameSite: "none",
-			secure: true,
+			sameSite: "lax",
+			secure: process.env.NODE_ENV === "production",
 			httpOnly: true,
 		},
 	},

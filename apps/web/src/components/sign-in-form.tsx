@@ -100,7 +100,7 @@ export default function SignInForm({
 						onClick={() => {
 							authClient.signIn.social({
 								provider: "google",
-								callbackURL: "/dashboard",
+								callbackURL: `${window.location.origin}/dashboard`,
 							});
 						}}
 					>
