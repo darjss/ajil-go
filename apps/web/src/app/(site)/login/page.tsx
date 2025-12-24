@@ -56,7 +56,7 @@ export default function LoginPage() {
 	const handleGoogleSignIn = () => {
 		authClient.signIn.social({
 			provider: "google",
-			callbackURL: "/dashboard",
+			callbackURL: `${window.location.origin}/dashboard`,
 		});
 	};
 
