@@ -130,15 +130,13 @@ jobs:
 
       - name: Deploy to EKS
         run: |
-          # Update server deployment with new image
-          kubectl set image deployment/server \
-            server=${{ env.ECR_REGISTRY }}/ajil-go/server:${{ github.sha }} \
-            -n ajil-go
+          # Update image tags in deployment manifests
+          sed -i "s|ajil-go/server:latest|ajil-go/server:${{ github.sha }}|g" k8s/server-deployment.yaml
+          sed -i "s|ajil-go/web:latest|ajil-go/web:${{ github.sha }}|g" k8s/web-deployment.yaml
           
-          # Update web deployment with new image
-          kubectl set image deployment/web \
-            web=${{ env.ECR_REGISTRY }}/ajil-go/web:${{ github.sha }} \
-            -n ajil-go
+          # Apply full deployment manifests (includes env vars, resources, etc.)
+          kubectl apply -f k8s/server-deployment.yaml
+          kubectl apply -f k8s/web-deployment.yaml
           
           # Wait for rollouts to complete
           kubectl rollout status deployment/server -n ajil-go --timeout=300s
