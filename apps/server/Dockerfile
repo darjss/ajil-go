@@ -4,7 +4,7 @@ FROM node:20-alpine AS base
 RUN corepack enable && corepack prepare pnpm@10.18.3 --activate
 WORKDIR /app
 
-# Stage 2: Install dependencies
+# Stage 2: Install all dependencies
 FROM base AS deps
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 COPY packages/db/package.json packages/db/
@@ -26,7 +26,7 @@ COPY . .
 # Generate Prisma client
 RUN pnpm --filter @ajil-go/db exec prisma generate
 
-# Build the server
+# Build the server (tsdown bundles all dependencies)
 RUN pnpm --filter server build
 
 # Stage 4: Production runner
@@ -39,13 +39,13 @@ ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 fastify
 
-# Copy built application
+# Copy built application (single bundled file)
 COPY --from=builder /app/apps/server/dist ./dist
 COPY --from=builder /app/apps/server/package.json ./
 
-# Copy Prisma generated client
+# Copy Prisma generated client (required at runtime)
 COPY --from=builder /app/packages/db/prisma/generated ./node_modules/.prisma/client
-COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/node_modules/.pnpm/@prisma+client@*/node_modules/@prisma/client ./node_modules/@prisma/client
 
 # Set ownership
 RUN chown -R fastify:nodejs /app
@@ -58,4 +58,4 @@ EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:3001/ || exit 1
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/index.mjs"]
