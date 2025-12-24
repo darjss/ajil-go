@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ajil-go
+  labels:
+    app.kubernetes.io/name: ajil-go
+    app.kubernetes.io/managed-by: kubectl

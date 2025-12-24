@@ -1,11 +1,25 @@
-name: CI
+name: CI/CD
 
 on:
   push:
+    branches: [main, deploy]
   pull_request:
 
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-southeast-1
+  ECR_REGISTRY: 804257878061.dkr.ecr.ap-southeast-1.amazonaws.com
+  EKS_CLUSTER_NAME: ajil-go-cluster
+
 jobs:
-  ci:
+  # ===========================================
+  # Job 1: Lint and Type Check
+  # ===========================================
+  test:
+    name: Lint & Type Check
     runs-on: ubuntu-latest
 
     steps:
@@ -48,3 +62,95 @@ jobs:
 
       - name: Type check
         run: pnpm check-types
+
+  # ===========================================
+  # Job 2: Build and Push Docker Images to ECR
+  # ===========================================
+  build-and-push:
+    name: Build & Push ${{ matrix.app }}
+    needs: test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/deploy'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: [server, web]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::804257878061:role/github-actions-ecr-role
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/${{ matrix.app }}/Dockerfile
+          push: true
+          tags: |
+            ${{ env.ECR_REGISTRY }}/ajil-go/${{ matrix.app }}:${{ github.sha }}
+            ${{ env.ECR_REGISTRY }}/ajil-go/${{ matrix.app }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ===========================================
+  # Job 3: Deploy to EKS
+  # ===========================================
+  deploy:
+    name: Deploy to EKS
+    needs: build-and-push
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/deploy'
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::804257878061:role/github-actions-eks-role
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+
+      - name: Deploy to EKS
+        run: |
+          # Update server deployment with new image
+          kubectl set image deployment/server \
+            server=${{ env.ECR_REGISTRY }}/ajil-go/server:${{ github.sha }} \
+            -n ajil-go
+          
+          # Update web deployment with new image
+          kubectl set image deployment/web \
+            web=${{ env.ECR_REGISTRY }}/ajil-go/web:${{ github.sha }} \
+            -n ajil-go
+          
+          # Wait for rollouts to complete
+          kubectl rollout status deployment/server -n ajil-go --timeout=300s
+          kubectl rollout status deployment/web -n ajil-go --timeout=300s
+
+      - name: Verify deployment
+        run: |
+          echo "=== Pod Status ==="
+          kubectl get pods -n ajil-go
+          echo ""
+          echo "=== Service Status ==="
+          kubectl get svc -n ajil-go
+          echo ""
+          echo "=== Ingress Status ==="
+          kubectl get ingress -n ajil-go
