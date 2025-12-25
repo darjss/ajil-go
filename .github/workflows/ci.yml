@@ -138,9 +138,38 @@ jobs:
           kubectl apply -f k8s/server-deployment.yaml
           kubectl apply -f k8s/web-deployment.yaml
           
-          # Wait for rollouts to complete
-          kubectl rollout status deployment/server -n ajil-go --timeout=300s
-          kubectl rollout status deployment/web -n ajil-go --timeout=300s
+          # Wait for rollouts to complete with better error handling
+          echo "=== Waiting for server deployment ==="
+          if ! kubectl rollout status deployment/server -n ajil-go --timeout=300s; then
+            echo "=== Server deployment failed! Debugging info: ==="
+            echo "--- Pod Status ---"
+            kubectl get pods -n ajil-go -l app=server -o wide
+            echo "--- Pod Descriptions ---"
+            kubectl describe pods -n ajil-go -l app=server
+            echo "--- Pod Logs (last 100 lines) ---"
+            kubectl logs -n ajil-go -l app=server --tail=100 --all-containers=true || true
+            echo "--- Events ---"
+            kubectl get events -n ajil-go --sort-by='.lastTimestamp' | tail -30
+            echo "=== Rolling back server deployment ==="
+            kubectl rollout undo deployment/server -n ajil-go
+            exit 1
+          fi
+          
+          echo "=== Waiting for web deployment ==="
+          if ! kubectl rollout status deployment/web -n ajil-go --timeout=300s; then
+            echo "=== Web deployment failed! Debugging info: ==="
+            echo "--- Pod Status ---"
+            kubectl get pods -n ajil-go -l app=web -o wide
+            echo "--- Pod Descriptions ---"
+            kubectl describe pods -n ajil-go -l app=web
+            echo "--- Pod Logs (last 100 lines) ---"
+            kubectl logs -n ajil-go -l app=web --tail=100 --all-containers=true || true
+            echo "--- Events ---"
+            kubectl get events -n ajil-go --sort-by='.lastTimestamp' | tail -30
+            echo "=== Rolling back web deployment ==="
+            kubectl rollout undo deployment/web -n ajil-go
+            exit 1
+          fi
 
       - name: Verify deployment
         run: |
