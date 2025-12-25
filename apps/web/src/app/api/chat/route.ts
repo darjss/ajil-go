@@ -1,5 +1,4 @@
 import { createGroq } from "@ai-sdk/groq";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { Redis } from "@upstash/redis";
 import { streamText } from "ai";
 import { type NextRequest, NextResponse } from "next/server";
