@@ -8,6 +8,7 @@ import {
 } from "fastify-type-provider-zod";
 import authPlugin from "./plugins/auth";
 import prisma from "./plugins/prisma";
+import redisPlugin from "./plugins/redis";
 import socketPlugin from "./plugins/socket";
 import routes from "./routes";
 
@@ -31,6 +32,7 @@ fastify.setSerializerCompiler(serializerCompiler);
 // Register plugins
 fastify.register(fastifyCors, baseCorsConfig);
 fastify.register(prisma);
+fastify.register(redisPlugin);
 fastify.register(authPlugin);
 fastify.register(socketPlugin);
 

@@ -74,10 +74,15 @@ export default async function tasksRoutes(fastify: FastifyInstance) {
 			preHandler: fastify.authenticate,
 		},
 		async (request, reply) => {
-			// Check ownership
+			// Check ownership - allow both poster and assigned worker
 			const existingTask = await fastify.prisma.task.findUnique({
 				where: { id: request.params.id },
-				select: { posterId: true },
+				select: {
+					posterId: true,
+					assignedBid: {
+						select: { bidderId: true },
+					},
+				},
 			});
 
 			if (!existingTask) {
@@ -86,10 +91,32 @@ export default async function tasksRoutes(fastify: FastifyInstance) {
 					.send({ error: "Task not found", code: "TASK_NOT_FOUND" });
 			}
 
-			if (existingTask.posterId !== request.user?.id) {
+			const isPoster = existingTask.posterId === request.user?.id;
+			const isAssignedWorker =
+				existingTask.assignedBid?.bidderId === request.user?.id;
+
+			// Assigned worker can only update status to IN_PROGRESS or COMPLETED
+			if (!isPoster && !isAssignedWorker) {
 				return reply
 					.status(403)
 					.send({ error: "Forbidden", code: "FORBIDDEN" });
+			}
+
+			// If user is worker (not poster), restrict what they can update
+			if (!isPoster && isAssignedWorker) {
+				const allowedWorkerStatuses = ["IN_PROGRESS", "COMPLETED"];
+				const isStatusOnlyUpdate =
+					Object.keys(request.body).length === 1 && request.body.status;
+				const isAllowedStatus =
+					request.body.status &&
+					allowedWorkerStatuses.includes(request.body.status);
+
+				if (!isStatusOnlyUpdate || !isAllowedStatus) {
+					return reply.status(403).send({
+						error: "Workers can only update status to IN_PROGRESS or COMPLETED",
+						code: "FORBIDDEN",
+					});
+				}
 			}
 
 			const task = await handlers.updateTask(

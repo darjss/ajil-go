@@ -1,5 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import authRoutes from "./auth/index.js";
+import benchmarkRoutes from "./benchmark/index.js";
 import categoriesRoutes from "./categories/index.js";
 import conversationsRoutes from "./conversations/index.js";
 import healthRoutes from "./health/index.js";
@@ -17,6 +18,9 @@ import usersRoutes from "./users/index.js";
 export default async function routes(fastify: FastifyInstance) {
 	// Health check routes
 	await fastify.register(healthRoutes, { prefix: "/health" });
+
+	// Benchmark routes
+	await fastify.register(benchmarkRoutes, { prefix: "/benchmark" });
 
 	// Auth routes (better-auth handler)
 	await fastify.register(authRoutes, { prefix: "/auth" });

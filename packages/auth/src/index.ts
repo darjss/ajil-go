@@ -1,11 +1,39 @@
 import prisma from "@ajil-go/db";
+import { Redis } from "@upstash/redis";
 import { type BetterAuthOptions, betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+
+// Create Redis client for secondary storage (sessions, rate limiting)
+const redis =
+	process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+		? new Redis({
+				url: process.env.UPSTASH_REDIS_REST_URL,
+				token: process.env.UPSTASH_REDIS_REST_TOKEN,
+			})
+		: null;
 
 export const auth = betterAuth<BetterAuthOptions>({
 	baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3001",
 	database: prismaAdapter(prisma, {
 		provider: "postgresql",
+	}),
+	...(redis && {
+		secondaryStorage: {
+			get: async (key) => {
+				const value = await redis.get<string>(key);
+				return value ?? null;
+			},
+			set: async (key, value, ttl) => {
+				if (ttl) {
+					await redis.set(key, value, { ex: ttl });
+				} else {
+					await redis.set(key, value);
+				}
+			},
+			delete: async (key) => {
+				await redis.del(key);
+			},
+		},
 	}),
 	trustedOrigins: [
 		process.env.CORS_ORIGIN || "http://localhost:3000",

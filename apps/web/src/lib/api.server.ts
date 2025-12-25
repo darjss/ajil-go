@@ -1,4 +1,6 @@
 import type {
+	CategoryApiResponse,
+	GetCategoriesQuery,
 	GetTasksQuery,
 	PaginatedResponse,
 	TaskApiResponse,
@@ -78,4 +80,10 @@ export const serverApi = {
 		),
 
 	getTask: (id: string) => serverFetch<TaskApiResponse>(`/tasks/${id}`),
+
+	// Categories
+	getCategories: (query: Partial<GetCategoriesQuery> = {}) =>
+		serverFetch<PaginatedResponse<CategoryApiResponse>>(
+			`/categories${buildQueryString(query)}`,
+		),
 };

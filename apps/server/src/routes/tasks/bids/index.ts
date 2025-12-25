@@ -90,10 +90,15 @@ export default async function bidsRoutes(fastify: FastifyInstance) {
 			preHandler: fastify.authenticate,
 		},
 		async (request, reply) => {
-			// Check ownership
+			// Check ownership - allow both bidder and task owner
 			const existingBid = await fastify.prisma.taskBid.findUnique({
 				where: { id: request.params.id },
-				select: { bidderId: true },
+				select: {
+					bidderId: true,
+					task: {
+						select: { posterId: true },
+					},
+				},
 			});
 
 			if (!existingBid) {
@@ -102,7 +107,10 @@ export default async function bidsRoutes(fastify: FastifyInstance) {
 					.send({ error: "Bid not found", code: "BID_NOT_FOUND" });
 			}
 
-			if (existingBid.bidderId !== request.user?.id) {
+			const isBidOwner = existingBid.bidderId === request.user?.id;
+			const isTaskOwner = existingBid.task.posterId === request.user?.id;
+
+			if (!isBidOwner && !isTaskOwner) {
 				return reply
 					.status(403)
 					.send({ error: "Forbidden", code: "FORBIDDEN" });
@@ -127,10 +135,15 @@ export default async function bidsRoutes(fastify: FastifyInstance) {
 			preHandler: fastify.authenticate,
 		},
 		async (request, reply) => {
-			// Check ownership
+			// Check ownership - allow both bidder and task owner
 			const existingBid = await fastify.prisma.taskBid.findUnique({
 				where: { id: request.params.id },
-				select: { bidderId: true },
+				select: {
+					bidderId: true,
+					task: {
+						select: { posterId: true },
+					},
+				},
 			});
 
 			if (!existingBid) {
@@ -139,7 +152,10 @@ export default async function bidsRoutes(fastify: FastifyInstance) {
 					.send({ error: "Bid not found", code: "BID_NOT_FOUND" });
 			}
 
-			if (existingBid.bidderId !== request.user?.id) {
+			const isBidOwner = existingBid.bidderId === request.user?.id;
+			const isTaskOwner = existingBid.task.posterId === request.user?.id;
+
+			if (!isBidOwner && !isTaskOwner) {
 				return reply
 					.status(403)
 					.send({ error: "Forbidden", code: "FORBIDDEN" });

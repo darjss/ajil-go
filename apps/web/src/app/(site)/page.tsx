@@ -1,5 +1,3 @@
-"use client";
-
 import {
 	ArrowRight,
 	CheckCircle2,
@@ -17,20 +15,12 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function Home() {
-	const [mounted, setMounted] = useState(false);
-
-	useEffect(() => {
-		setMounted(true);
-	}, []);
-
-	if (!mounted) return null;
-
 	return (
 		<main className="min-h-screen overflow-x-hidden bg-background text-foreground selection:bg-primary/30">
 			<section className="relative flex min-h-[92vh] flex-col border-border border-b bg-[linear-gradient(to_bottom,transparent_0%,var(--primary)_100%)]/5 pt-20">
