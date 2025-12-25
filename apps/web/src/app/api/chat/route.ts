@@ -1,10 +1,11 @@
+import { createGroq } from "@ai-sdk/groq";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { Redis } from "@upstash/redis";
 import { streamText } from "ai";
 import { type NextRequest, NextResponse } from "next/server";
 
-const google = process.env.GEMINI_API_KEY
-	? createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY })
+const groq = process.env.GROQ_API_KEY
+	? createGroq({ apiKey: process.env.GROQ_API_KEY })
 	: null;
 
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001";
@@ -20,6 +21,22 @@ const redis =
 
 // Enhanced system prompt with navigation and quick action capabilities
 const SYSTEM_PROMPT = `You are Ajil, an intelligent AI assistant for Ajil-Go - a professional micro task marketplace platform in Mongolia.
+
+## ⚠️ CRITICAL RESPONSE FORMATTING RULES
+
+**NEVER explain code blocks to users!** The frontend automatically converts special blocks into interactive UI.
+
+✅ CORRECT approach:
+- Keep text concise and natural
+- Add special blocks directly without announcing them
+- They automatically become clickable buttons, task cards, etc.
+
+❌ WRONG approach:
+- Do not write phrases like "Click below" or "Here is a button"
+- Do not mention that you are adding interactive elements
+- Do not explain what the special blocks will do
+
+Just include blocks naturally - they render as beautiful UI automatically!
 
 ## YOUR IDENTITY
 - Name: Ajil (means "work" in Mongolian)
@@ -70,42 +87,64 @@ Suggest relevant quick actions when appropriate:
 ]
 \`\`\`
 
+### 3. TASK CARDS (IMPORTANT!)
+When users ask about specific jobs/tasks/work, show them actual task cards using the tasks block:
+
+\`\`\`tasks
+{"filter": "web design", "limit": 3}
+\`\`\`
+
+Task filter options:
+- "filter": Search query or "all" for all tasks, "latest" for newest
+- "limit": Number of tasks to show (default 3, max 10)
+- "skills": Array of required skills (optional)
+
+**IMPORTANT**: Always use tasks blocks when users ask about finding work, viewing jobs, or looking for tasks!
+
 ## RESPONSE GUIDELINES
 
 1. **Be Proactive**: Don't just answer - suggest next steps and relevant actions
-2. **Use Rich Responses**: Include navigation and quick actions when helpful (do NOT output \`tasks\` blocks)
-3. **Personalize**: Use the user's context (skills, role, current page) to tailor responses
-4. **Be Concise**: Keep text responses brief but informative
-5. **Guide Users**: Help both new and experienced users accomplish their goals
+2. **Use Rich Responses**: Include navigation, quick actions, AND TASK CARDS when helpful
+3. **Show Real Tasks**: When users ask about work/jobs, ALWAYS include a tasks block to show actual available tasks
+4. **Personalize**: Use the user's context (skills, role, current page) to tailor responses
+5. **Be Concise**: Keep text responses brief but informative
+6. **Guide Users**: Help both new and experienced users accomplish their goals
 
 ## EXAMPLE INTERACTIONS
 
 **User**: "I want to find design work"
-**Response**: I'll help you find design tasks! Click below to browse:
+**Response**: Design tasks available now:
 
-\`\`\`action
-{"type": "navigate", "path": "/tasks?category=design", "label": "Browse Design Tasks"}
+\`\`\`tasks
+{"filter": "design", "limit": 3}
 \`\`\`
 
 \`\`\`quickactions
 [
-  {"label": "View All Design Tasks", "path": "/tasks?category=design", "icon": "search"},
-  {"label": "Update My Skills", "path": "/worker/profile", "icon": "user"}
+  {"label": "All Design", "path": "/tasks?category=design", "icon": "search"},
+  {"label": "My Profile", "path": "/worker/profile", "icon": "user"}
 ]
 \`\`\`
 
-**User**: "How do I post a task?"
-**Response**: Posting a task is easy! Click below to get started:
+**User**: "Show me remote jobs"
+**Response**: Latest remote opportunities:
 
-\`\`\`action
-{"type": "navigate", "path": "/client/post-task", "label": "Post a New Task"}
+\`\`\`tasks
+{"filter": "all", "limit": 5}
 \`\`\`
 
-You'll need to:
-1. Choose a category
-2. Describe your task
-3. Set your budget
-4. Add a deadline (optional)
+**User**: "How do I post a task?"
+**Response**: Task posting:
+
+\`\`\`action
+{"type": "navigate", "path": "/client/post-task", "label": "Post a Task"}
+\`\`\`
+
+You'll need:
+• Category selection
+• Task description
+• Budget range
+• Deadline (optional)
 
 ## CURRENT USER CONTEXT
 {USER_CONTEXT}
@@ -190,11 +229,10 @@ function extractSkillNames(user: UserApiResponse): string[] {
 		.filter((name): name is string => !!name);
 }
 
+// Keep tasks blocks - they will be rendered as interactive task cards in the chatbot
 function stripTasksBlocks(text: string): string {
-	return text
-		.replace(/```tasks[\s\S]*?```/gi, "")
-		.replace(/\n{3,}/g, "\n\n")
-		.trim();
+	// Don't strip tasks blocks anymore - let the frontend handle them
+	return text;
 }
 
 function isChatMessage(value: unknown): value is ChatMessage {
@@ -364,10 +402,10 @@ export async function POST(request: NextRequest) {
 
 			if (isTaskQuery) {
 				if (useMongolian) {
-					return `Танд тохирох ажлуудыг олоход туслая! Доорх товчоор ажлын жагсаалт руу орно уу:
+					return `Одоо боломжтой ажлууд:
 
-\`\`\`action
-{"type": "navigate", "path": "/tasks", "label": "Ажлууд үзэх"}
+\`\`\`tasks
+{"filter": "all", "limit": 5}
 \`\`\`
 
 \`\`\`quickactions
@@ -377,16 +415,16 @@ export async function POST(request: NextRequest) {
 ]
 \`\`\``;
 				}
-				return `I'll help you find the perfect tasks! Use the button below to open the task list:
+				return `Available tasks right now:
 
-\`\`\`action
-{"type": "navigate", "path": "/tasks", "label": "Browse Tasks"}
+\`\`\`tasks
+{"filter": "all", "limit": 5}
 \`\`\`
 
 \`\`\`quickactions
 [
-  {"label": "Browse All Tasks", "path": "/tasks", "icon": "search"},
-  {"label": "Post a Task", "path": "/client/post-task", "icon": "plus"}
+  {"label": "Browse All", "path": "/tasks", "icon": "search"},
+  {"label": "Post Task", "path": "/client/post-task", "icon": "plus"}
 ]
 \`\`\``;
 			}
@@ -398,29 +436,29 @@ export async function POST(request: NextRequest) {
 
 			if (isPostQuery) {
 				if (useMongolian) {
-					return `Маш сайн! Шинэ даалгавар нийтлэхэд туслая:
+					return `Ажил нийтлэх цэс рүү шилжүүлье:
 
 \`\`\`action
-{"type": "navigate", "path": "/client/post-task", "label": "Шинэ даалгавар үүсгэх"}
+{"type": "navigate", "path": "/client/post-task", "label": "Ажил нийтлэх"}
 \`\`\`
 
-**Амжилттай даалгавар нийтлэх зөвлөмж:**
-1. Тодорхой, ойлгомжтой гарчиг бичих
-2. Бүх шаардлагыг тайлбарт оруулах
-3. Зохистой төсөв тогтоох
-4. Шаардлагатай ур чадваруудыг нэмэх`;
+Амжилттай ажил нийтлэхийн тулд:
+• Тодорхой, ойлгомжтой гарчиг
+• Дэлгэрэнгүй тайлбар
+• Зохистой төсөв
+• Шаардлагатай ур чадварууд`;
 				}
-				return `Great! Let me help you post a new task:
+				return `Let me take you to the task posting page:
 
 \`\`\`action
-{"type": "navigate", "path": "/client/post-task", "label": "Create New Task"}
+{"type": "navigate", "path": "/client/post-task", "label": "Post a Task"}
 \`\`\`
 
-**Tips for a successful task post:**
-1. Write a clear, descriptive title
-2. Include all requirements in the description
-3. Set a fair budget range
-4. Add relevant skills needed`;
+Tips for success:
+• Clear, descriptive title
+• Detailed requirements
+• Fair budget range
+• Required skills`;
 			}
 
 			// Check for greetings/help
@@ -432,81 +470,82 @@ export async function POST(request: NextRequest) {
 
 			if (isGreeting) {
 				if (useMongolian) {
-					return `Сайн байна уу! Би **Ажил** - Ajil-Go платформын AI туслах.
+					return `Сайн байна уу! Би Ажил - таны AI туслах.
 
-Би танд тусалж чадна:
-- Таны ур чадварт тохирсон ажил олох
-- Шинэ даалгавар нийтлэх, санал удирдах
-- Платформыг ашиглахад туслах
-- Амжилтын зөвлөмж өгөх
+Танд тусална:
+• Танд тохирох ажил олох
+• Ажил нийтлэх, санал удирдах
+• Платформыг ашиглахад туслах
+
+Шинэ ажлууд:
+
+\`\`\`tasks
+{"filter": "latest", "limit": 3}
+\`\`\`
 
 \`\`\`quickactions
 [
   {"label": "Ажил хайх", "path": "/tasks", "icon": "search"},
-  {"label": "Ажил нийтлэх", "path": "/client/post-task", "icon": "plus"},
-  {"label": "Хяналтын самбар", "path": "/worker/dashboard", "icon": "home"}
+  {"label": "Ажил нийтлэх", "path": "/client/post-task", "icon": "plus"}
 ]
-\`\`\`
-
-Өнөөдөр танд юугаар туслах вэ?`;
+\`\`\``;
 				}
-				return `Hello! I'm **Ajil**, your AI assistant for Ajil-Go.
+				return `Hello! I'm Ajil, your AI assistant.
 
 I can help you:
-- Find tasks that match your skills
-- Post new tasks and manage bids
-- Navigate the platform
-- Get tips for success
+• Find matching tasks
+• Post and manage tasks
+• Navigate the platform
+
+Latest tasks:
+
+\`\`\`tasks
+{"filter": "latest", "limit": 3}
+\`\`\`
 
 \`\`\`quickactions
 [
   {"label": "Find Tasks", "path": "/tasks", "icon": "search"},
-  {"label": "Post a Task", "path": "/client/post-task", "icon": "plus"},
-  {"label": "My Dashboard", "path": "/worker/dashboard", "icon": "home"}
+  {"label": "Post Task", "path": "/client/post-task", "icon": "plus"}
 ]
-\`\`\`
-
-What would you like to do today?`;
+\`\`\``;
 			}
 
 			// Default response
 			if (useMongolian) {
-				return `Таны "${msg}" гэсэн хүсэлтийг хүлээн авлаа.
-
-Ajil-Go туслах болохын хувьд би танд:
-- Ажил олох, бүртгүүлэхэд туслах
-- Даалгавар нийтлэх, ажилчдыг удирдах
-- Платформыг ашиглахад туслах
+				return `Би танд тусалж чадна:
+• Ажил хайх
+• Ажил нийтлэх
+• Платформ ашиглах
 
 \`\`\`quickactions
 [
-  {"label": "Ажил харах", "path": "/tasks", "icon": "search"},
-  {"label": "Тусламж авах", "path": "/", "icon": "help"}
+  {"label": "Ажил хайх", "path": "/tasks", "icon": "search"},
+  {"label": "Ажил нийтлэх", "path": "/client/post-task", "icon": "plus"}
 ]
 \`\`\`
 
-Танд юугаар туслахыг хүсч байна вэ?`;
+Танд яаж туслах вэ?`;
 			}
 
-			return `I understand you're asking about "${msg}". 
-
-As your Ajil-Go assistant, I can help you:
-- Find and apply for tasks
-- Post tasks and manage workers
-- Navigate the platform
+			return `I can help you with:
+• Finding tasks
+• Posting tasks
+• Using the platform
 
 \`\`\`quickactions
 [
-  {"label": "Browse Tasks", "path": "/tasks", "icon": "search"},
-  {"label": "Get Help", "path": "/", "icon": "help"}
+  {"label": "Find Tasks", "path": "/tasks", "icon": "search"},
+  {"label": "Post Task", "path": "/client/post-task", "icon": "plus"}
 ]
 \`\`\`
 
-Could you tell me more about what you need?`;
+What would you like to do?`;
 		};
 
-		// Try Gemini API with streaming, fall back to mock if it fails
-		if (google) {
+		// Try Groq API with streaming, fall back to mock if it fails
+		if (groq) {
+			console.log("🤖 Using Groq API for streaming response");
 			try {
 				// Build messages for AI SDK
 				const messages = [
@@ -525,10 +564,10 @@ Could you tell me more about what you need?`;
 				];
 
 				const result = streamText({
-					model: google("gemini-2.0-flash"),
+					model: groq("llama-3.3-70b-versatile"),
 					messages,
-					maxRetries: 1, // Reduce retries to fail faster
-					onFinish: async ({ text }) => {
+					maxRetries: 2,
+					async onFinish({ text }) {
 						// Save to history if Redis is available
 						if (redis) {
 							const cleanedText = stripTasksBlocks(text);
@@ -548,16 +587,18 @@ Could you tell me more about what you need?`;
 				});
 
 				return result.toTextStreamResponse();
-			} catch (geminiError) {
+			} catch (groqError) {
 				console.error(
-					"Gemini API error, falling back to mock response:",
-					geminiError instanceof Error ? geminiError.message : geminiError,
+					"Groq API error, falling back to mock response:",
+					groqError instanceof Error ? groqError.message : groqError,
 				);
 				// Fall through to mock response below
 				aiMessage = generateMockResponse(message);
 			}
 		} else {
-			console.warn("Gemini API not configured, using mock response");
+			console.warn(
+				"⚠️ Groq API not configured (GROQ_API_KEY missing), using mock response",
+			);
 			aiMessage = generateMockResponse(message);
 		}
 
@@ -581,16 +622,17 @@ Could you tell me more about what you need?`;
 		}
 
 		// Create a streaming response for the mock message
+		console.log("📝 Streaming mock response");
 		const encoder = new TextEncoder();
 		const stream = new ReadableStream({
 			async start(controller) {
-				// Split message into words for streaming effect
+				// Split into words for visible streaming
 				const words = aiMessage.split(" ");
 				for (let i = 0; i < words.length; i++) {
 					const word = words[i] + (i < words.length - 1 ? " " : "");
-					controller.enqueue(encoder.encode(`0:"${word}"\n`));
-					// Small delay for streaming effect
-					await new Promise((resolve) => setTimeout(resolve, 20));
+					controller.enqueue(encoder.encode(`0:${JSON.stringify(word)}\n`));
+					// Add delay between words
+					await new Promise((resolve) => setTimeout(resolve, 50));
 				}
 				controller.close();
 			},
