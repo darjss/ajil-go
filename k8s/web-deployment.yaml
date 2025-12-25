@@ -52,6 +52,12 @@ spec:
                 secretKeyRef:
                   name: ajil-go-secrets
                   key: UPSTASH_REDIS_REST_TOKEN
+            # GROQ API key for AI features
+            - name: GROQ_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ajil-go-secrets
+                  key: GROQ_API_KEY
           resources:
             requests:
               cpu: 100m
